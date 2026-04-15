@@ -10,11 +10,12 @@ Three production-ready detection modules have been added to Shadow Toolkit to ex
 
 ## 📋 Modules Implemented
 
-### 1. **SSL/TLS Certificate Analyzer**
+### 1. SSL/TLS Certificate Analyzer
 
 Analyzes domain certificates for security issues, misconfigurations, and compliance violations.
 
 **Features:**
+
 - Certificate validity and expiration checks
 - Cipher suite analysis and strength rating
 - Signature algorithm validation (detects MD5, SHA1)
@@ -24,6 +25,7 @@ Analyzes domain certificates for security issues, misconfigurations, and complia
 - Certificate chain analysis
 
 **CLI Usage:**
+
 ```bash
 # Analyze example.com on default HTTPS port
 python -m shadow_toolkit ssl analyze example.com
@@ -36,7 +38,8 @@ python -m shadow_toolkit sslanalyze example.com --timeout 10.0
 ```
 
 **Example Output:**
-```
+
+```text
 [CRITICAL] Weak signature algorithm: sha1WithRSAEncryption
 [HIGH] RSA key size (1024 bits) too weak
 [WARNING] Certificate expires in 15 days
@@ -44,18 +47,21 @@ python -m shadow_toolkit sslanalyze example.com --timeout 10.0
 ```
 
 **Integration Pattern:**
+
 Emits `SSLCertificateEvent` telemetry packets to notification hub when:
+
 - Certificate expires within 30 days (WARNING)
 - Weak cryptography detected (CRITICAL)
 - Self-signed cert in production (WARNING)
 
 ---
 
-### 2. **Secret Detection Engine**
+### 2. Secret Detection Engine
 
 Scans code, configs, and repositories for exposed secrets with entropy-based and pattern-based detection.
 
 **Features:**
+
 - 15+ secret pattern types (API keys, tokens, credentials, private keys)
 - AWS, Azure, GCP credential detection
 - GitHub, GitLab, Slack token detection
@@ -66,9 +72,10 @@ Scans code, configs, and repositories for exposed secrets with entropy-based and
 - Context-aware line display with surrounding code
 
 **Supported Secrets:**
+
 - AWS Access Keys & Secrets
 - Azure SAS Tokens & Connection Strings
-- GitHub & GitLab Personal Tokens  
+- GitHub & GitLab Personal Tokens
 - Slack Bot Tokens & Webhooks
 - Database Passwords & Connection Strings
 - SSH/RSA/EC Private Keys
@@ -76,6 +83,7 @@ Scans code, configs, and repositories for exposed secrets with entropy-based and
 - Encryption Keys
 
 **CLI Usage:**
+
 ```bash
 # Scan directory recursively
 python -m shadow_toolkit detect-secrets ./src --recursive
@@ -91,7 +99,8 @@ python -m shadow_toolkit detect-secrets ./src -w 8
 ```
 
 **Example Output:**
-```
+
+```text
 SECRET DETECTION SCAN REPORT
 ==================================================
 Files Scanned:    42
@@ -118,17 +127,20 @@ DETECTED SECRETS:
 ```
 
 **Integration Pattern:**
+
 Emits `SecretDetectionEvent` telemetry packets for:
+
 - High-confidence findings (confidence >= 80%) → EMAIL+SLACK
 - Critical secret types (AWS, Azure, Private Keys) → SMS+ESCALATION
 
 ---
 
-### 3. **Compliance Scanner**
+### 3. Compliance Scanner
 
 Automated compliance checking for PCI-DSS, HIPAA, SOC2, and other frameworks.
 
 **Features:**
+
 - **PCI-DSS 3.2.1** checks (10+ controls)
   - Firewall configuration (1.1)
   - Default credentials (2.1)
@@ -149,6 +161,7 @@ Automated compliance checking for PCI-DSS, HIPAA, SOC2, and other frameworks.
 - **GDPR & ISO 27001** (coming in Phase 2)
 
 **Configuration Format (JSON):**
+
 ```json
 {
   "firewall": {
@@ -189,6 +202,7 @@ Automated compliance checking for PCI-DSS, HIPAA, SOC2, and other frameworks.
 ```
 
 **CLI Usage:**
+
 ```bash
 # Scan all frameworks
 python -m shadow_toolkit compliance --config compliance-config.json
@@ -201,7 +215,8 @@ python -m shadow_toolkit compliance --config config.json --severity critical
 ```
 
 **Example Output:**
-```
+
+```text
 COMPLIANCE SCAN REPORT
 ==================================================
 Frameworks:       pci_dss, hipaa
@@ -225,7 +240,9 @@ CRITICAL ISSUES:
 ```
 
 **Integration Pattern:**
+
 Emits `ComplianceEvent` telemetry packets for:
+
 - Compliance score drops below threshold → ALERT
 - Critical violations detected → ESCALATION
 - Monthly compliance trend tracking
@@ -276,7 +293,7 @@ All three modules emit events that flow through the Notification Hub:
 
 ## 📊 Dependencies Added
 
-```
+```text
 pyOpenSSL>=24.0.0      # SSL/TLS certificate analysis
 certifi>=2024.0.0      # CA bundle for SSL verification
 cryptography>=42.0.0   # Cryptographic primitives
@@ -301,12 +318,12 @@ All dependencies are production-ready and widely used.
 
 | Module | Purpose | ETA |
 |--------|---------|-----|
-| **API Security Tester** | OpenAPI mapping, auth bypass detection | May 2026 |
-| **Kubernetes Pod Analyzer** | RBAC audit, network policies | May 2026 |
-| **Threat Feed Aggregator** | VirusTotal, OTX, URLhaus integration | June 2026 |
-| **SIEM Export Module** | Splunk/ELK/ArcSight export | June 2026 |
-| **Vulnerability Correlator** | Link findings across modules | July 2026 |
-| **Incident Timeline Gen** | Reconstruct attack sequences | July 2026 |
+| API Security Tester | OpenAPI mapping, auth bypass detection | May 2026 |
+| Kubernetes Pod Analyzer | RBAC audit, network policies | May 2026 |
+| Threat Feed Aggregator | VirusTotal, OTX, URLhaus integration | June 2026 |
+| SIEM Export Module | Splunk/ELK/ArcSight export | June 2026 |
+| Vulnerability Correlator | Link findings across modules | July 2026 |
+| Incident Timeline Gen | Reconstruct attack sequences | July 2026 |
 
 ---
 
@@ -316,7 +333,7 @@ All dependencies are production-ready and widely used.
 
 ```bash
 # Audit all production domains
-cat production_domains.txt | xargs -I {} python -m shadow_toolkit sslanalyze {} 
+cat production_domains.txt | xargs -I {} python -m shadow_toolkit sslanalyze {}
 ```
 
 ### Example 2: Code Review for Secrets
