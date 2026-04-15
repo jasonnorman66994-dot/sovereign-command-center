@@ -1,0 +1,140 @@
+[
+  {
+    "tactic": "Initial Access",
+    "technique": "Phishing / Spam Burst",
+    "technique_id": "T1566",
+    "scenarios": [10, 11, 13]
+  },
+  {
+    "tactic": "Initial Access",
+    "technique": "Supply Chain Compromise",
+    "technique_id": "T1195",
+    "scenarios": [12]
+  },
+  {
+    "tactic": "Initial Access",
+    "technique": "Valid Accounts",
+    "technique_id": "T1078",
+    "scenarios": [16]
+  },
+  {
+    "tactic": "Execution",
+    "technique": "User Execution",
+    "technique_id": "T1204",
+    "scenarios": [10, 13]
+  },
+  {
+    "tactic": "Execution",
+    "technique": "PowerShell Execution",
+    "technique_id": "T1059.001",
+    "scenarios": [11, 15]
+  },
+  {
+    "tactic": "Persistence",
+    "technique": "Mailbox Rule Modification",
+    "technique_id": "T1114.003",
+    "scenarios": [10, 13]
+  },
+  {
+    "tactic": "Persistence",
+    "technique": "Account Manipulation",
+    "technique_id": "T1098",
+    "scenarios": [16]
+  },
+  {
+    "tactic": "Privilege Escalation",
+    "technique": "Abuse Elevation Control Mechanisms",
+    "technique_id": "T1548",
+    "scenarios": [10, 13, 16]
+  },
+  {
+    "tactic": "Privilege Escalation",
+    "technique": "Exploitation for Privilege Escalation",
+    "technique_id": "T1068",
+    "scenarios": [13]
+  },
+  {
+    "tactic": "Defense Evasion",
+    "technique": "Indicator Removal",
+    "technique_id": "T1070",
+    "scenarios": [10, 11, 13]
+  },
+  {
+    "tactic": "Defense Evasion",
+    "technique": "Obfuscated/Encrypted Payloads",
+    "technique_id": "T1027",
+    "scenarios": [12]
+  },
+  {
+    "tactic": "Credential Access",
+    "technique": "Credential Dumping",
+    "technique_id": "T1003",
+    "scenarios": [15, 16]
+  },
+  {
+    "tactic": "Credential Access",
+    "technique": "Brute Force",
+    "technique_id": "T1110",
+    "scenarios": [11]
+  },
+  {
+    "tactic": "Discovery",
+    "technique": "Account Discovery",
+    "technique_id": "T1087",
+    "scenarios": [10, 15]
+  },
+  {
+    "tactic": "Discovery",
+    "technique": "Cloud Service Discovery",
+    "technique_id": "T1526",
+    "scenarios": [16]
+  },
+  {
+    "tactic": "Lateral Movement",
+    "technique": "Remote Services",
+    "technique_id": "T1021",
+    "scenarios": [15, 16]
+  },
+  {
+    "tactic": "Lateral Movement",
+    "technique": "Pass-the-Token",
+    "technique_id": "T1134.002",
+    "scenarios": [11]
+  },
+  {
+    "tactic": "Collection",
+    "technique": "Email Collection",
+    "technique_id": "T1114",
+    "scenarios": [10, 13]
+  },
+  {
+    "tactic": "Collection",
+    "technique": "Data Staging",
+    "technique_id": "T1074",
+    "scenarios": [15]
+  },
+  {
+    "tactic": "Exfiltration",
+    "technique": "Exfiltration Over Web Services",
+    "technique_id": "T1567",
+    "scenarios": [10, 13, 15]
+  },
+  {
+    "tactic": "Exfiltration",
+    "technique": "Exfiltration to Cloud Storage",
+    "technique_id": "T1537",
+    "scenarios": [16]
+  },
+  {
+    "tactic": "Impact",
+    "technique": "Inhibit System Recovery",
+    "technique_id": "T1490",
+    "scenarios": [10, 13]
+  },
+  {
+    "tactic": "Impact",
+    "technique": "Data Encryption for Impact",
+    "technique_id": "T1486",
+    "scenarios": [10]
+  }
+]
