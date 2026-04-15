@@ -10,7 +10,27 @@
 
 > ⚠ **FOR AUTHORIZED USE ONLY** — Only use on systems you own or have explicit written permission to test. Unauthorized access to computer systems is illegal.
 
+[![Quality Gates](https://github.com/jasonnorman66994-dot/sovereign-command-center/actions/workflows/quality-gates.yml/badge.svg?branch=main)](https://github.com/jasonnorman66994-dot/sovereign-command-center/actions/workflows/quality-gates.yml)
+[![Release](https://img.shields.io/github/v/tag/jasonnorman66994-dot/sovereign-command-center?label=release)](https://github.com/jasonnorman66994-dot/sovereign-command-center/releases)
+
 A Python-based offensive security toolkit with 10 modules for penetration testing, vulnerability assessment, and defensive security.
+
+---
+
+## ✅ Quality Gates
+
+This repository enforces validation in local Git hooks and CI:
+
+- Pre-commit hook runs `smoke_check.ps1 -Mode Quick`
+- Pre-push hook runs `smoke_check.ps1 -Mode Full`
+- GitHub Actions workflow runs Quick checks on pull requests and Full checks on pushes/tags
+
+Run locally:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\smoke_check.ps1 -Mode Quick
+powershell -ExecutionPolicy Bypass -File .\smoke_check.ps1 -Mode Full
+```
 
 ---
 
