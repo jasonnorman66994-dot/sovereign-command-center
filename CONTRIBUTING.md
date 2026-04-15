@@ -42,6 +42,57 @@ Manual CI job:
 
 - GitHub Actions -> `Telemetry Harness` -> `Run workflow`
 
+## Scenario Analysis & Reporting
+
+### Creating Scenario Event Files
+
+Add synthetic event files to support attack chain timeline analysis:
+
+```json
+[
+  {
+    "event": "email_spam_burst",
+    "count": 150,
+    "source": "attacker@example.com",
+    "timestamp": "2026-04-15T12:01:00Z"
+  },
+  {
+    "event": "privilege_escalation_attempt",
+    "account": "admin-service",
+    "timestamp": "2026-04-15T12:05:00Z"
+  }
+]
+```
+
+File naming: `scenario{N}_events.json` where N is the scenario number.
+
+### Updating ATT&CK Heatmap Dataset
+
+When adding or modifying scenarios, update `data/unified_mitre_heatmap.json`:
+
+```json
+{
+  "tactic": "Initial Access",
+  "technique": "Phishing / Spam Burst",
+  "technique_id": "T1566",
+  "scenarios": [10, 11, 13]
+}
+```
+
+Run the generator to produce updated report:
+
+```powershell
+python generate_unified_mitre_heatmap.py
+```
+
+### Leadership Report
+
+The consolidated leadership report (`leadership_attack_coverage_timeline_report.md`) is manually maintained. Update when:
+
+- New scenarios are added to the main corpus
+- ATT&CK coverage profile changes significantly
+- Timeline narratives need revision for clarity
+
 ## Git Hooks
 
 Repository-local hooks are enabled via `core.hooksPath=.githooks`.

@@ -52,6 +52,54 @@ Manual CI validation is available in GitHub Actions via `Telemetry Harness` work
 
 ---
 
+## 📊 Scenario Analysis & Reporting Tools
+
+SHADOW-TOOLZ includes data-driven analysis tools for cross-scenario attack pattern assessment and leadership reporting.
+
+### Attack Chain Timeline Generator
+
+Map synthetic event JSON to ATT&CK-style phases with automatic classification:
+
+```powershell
+python attack_chain_timeline.py scenario13_events.json --format table
+python attack_chain_timeline.py scenario13_events.json --format json
+python attack_chain_timeline.py scenario13_events.json --no-colour
+```
+
+Input format: JSON array of event objects with `event`, `timestamp`, and optional metadata.
+
+Output: Markdown table or JSON with phase classification, timestamps, and details.
+
+### Unified MITRE ATT&CK Heatmap
+
+Generate ATT&CK technique coverage heatmaps from scenario mappings:
+
+```powershell
+python generate_unified_mitre_heatmap.py
+python generate_unified_mitre_heatmap.py --input data/unified_mitre_heatmap.json --output my_heatmap.md
+```
+
+Heat levels:
+
+- High: 5+ scenarios
+- Medium: 3-4 scenarios
+- Low: 1-2 scenarios
+- None: not observed
+
+Default dataset: `data/unified_mitre_heatmap.json` (Scenario 10–16 mapping)
+
+Output: Markdown report with technique frequency, summary, and interpretation.
+
+### Leadership Report
+
+Pre-generated consolidated report combining ATT&CK coverage and timeline narrative across all scenarios:
+
+- File: [leadership_attack_coverage_timeline_report.md](leadership_attack_coverage_timeline_report.md)
+- Covers: Scenario 10–16 timeline progression and heat analysis
+- Audience: Executive and detection engineering leadership
+
+---
+
 ## 📧 Email Security Playbooks & Automation
 
 | 📄 Resource | Description |
