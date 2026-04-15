@@ -1,0 +1,68 @@
+[
+  {
+    "event": "serialized_payload_delivered",
+    "endpoint": "POST /v1/profile/update",
+    "source_ip": "198.51.100.42",
+    "payload_size_bytes": 4096,
+    "signature_match": false,
+    "timestamp": "2026-04-15T20:12:01Z"
+  },
+  {
+    "event": "unexpected_process_spawn",
+    "parent_process": "profile-api",
+    "child_process": "/usr/bin/python3 decode.py",
+    "user": "www-data",
+    "timestamp": "2026-04-15T20:12:08Z"
+  },
+  {
+    "event": "signature_mismatch",
+    "detector": "IDS-rule-engine",
+    "note": "No known CVE or exploit fingerprint matched",
+    "timestamp": "2026-04-15T20:12:10Z"
+  },
+  {
+    "event": "container_capability_request",
+    "capability": "NET_ADMIN",
+    "pod": "profile-api-7d9f8b",
+    "namespace": "prod",
+    "timestamp": "2026-04-15T20:13:02Z"
+  },
+  {
+    "event": "privilege_escalation_attempt",
+    "account": "www-data",
+    "target_capability": "NET_ADMIN",
+    "action": "network interface modification attempt",
+    "timestamp": "2026-04-15T20:13:15Z"
+  },
+  {
+    "event": "internal_ssh_to_db",
+    "source_pod": "profile-api-7d9f8b",
+    "destination_host": "db-admin-01",
+    "destination_user": "postgres",
+    "port": 22,
+    "timestamp": "2026-04-15T20:14:03Z"
+  },
+  {
+    "event": "large_outbound_transfer",
+    "destination_ip": "198.51.100.42",
+    "protocol": "HTTPS",
+    "bytes_transferred": 50331648,
+    "baseline_bytes": 5033164,
+    "deviation_percent": 900,
+    "timestamp": "2026-04-15T20:14:22Z"
+  },
+  {
+    "event": "cron_job_created",
+    "path": "/tmp/keepalive.sh",
+    "schedule": "* * * * *",
+    "user": "www-data",
+    "timestamp": "2026-04-15T20:15:01Z"
+  },
+  {
+    "event": "ueba_anomaly_score",
+    "entity": "profile-api-7d9f8b",
+    "score": 99,
+    "signals": ["exploit", "runtime", "lateral_movement", "exfiltration"],
+    "timestamp": "2026-04-15T20:15:30Z"
+  }
+]
