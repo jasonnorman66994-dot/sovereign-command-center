@@ -58,3 +58,24 @@ class ComplianceEvent(BaseModel):
     finding: str
     remediation: str
     compliance_score: float = 0.0  # 0-100
+
+
+class APISecurityEvent(BaseModel):
+    """API security finding event."""
+
+    target: str
+    finding_type: str
+    severity: str
+    evidence: str
+    remediation: str
+
+
+class KubernetesPodSecurityEvent(BaseModel):
+    """Kubernetes pod security finding event."""
+
+    namespace: str
+    pod: str
+    finding_type: str
+    severity: str
+    evidence: str
+    remediation: str

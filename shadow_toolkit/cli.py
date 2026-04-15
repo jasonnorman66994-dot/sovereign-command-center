@@ -24,7 +24,13 @@ BANNER = r"""
 
 
 def main():
-    print(BANNER.format(version=__version__))
+    banner_text = BANNER.format(version=__version__)
+    try:
+        print(banner_text)
+    except UnicodeEncodeError:
+        # Fallback for terminals using limited code pages.
+        safe_banner = banner_text.encode("ascii", errors="ignore").decode("ascii")
+        print(safe_banner)
 
     parser = argparse.ArgumentParser(
         description="Shadow Toolkit - Ethical Security Testing Suite",
@@ -268,6 +274,31 @@ def main():
         help="Filter by severity (default: all)",
     )
 
+    # -- API Security Tester (Phase 2) --
+    api_sec_parser = subparsers.add_parser(
+        "api-security", help="API security tester (OpenAPI + live posture checks)"
+    )
+    api_sec_parser.add_argument(
+        "target", help="Logical target name for report output"
+    )
+    api_sec_parser.add_argument(
+        "--spec", help="Path to OpenAPI spec (JSON/YAML)"
+    )
+    api_sec_parser.add_argument(
+        "--live", help="Live endpoint URL for safe posture checks"
+    )
+    api_sec_parser.add_argument(
+        "--timeout", type=float, default=5.0, help="HTTP timeout in seconds"
+    )
+
+    # -- Kubernetes Pod Analyzer (Phase 2) --
+    k8s_parser = subparsers.add_parser(
+        "k8s-pod-audit", help="Kubernetes pod security analyzer"
+    )
+    k8s_parser.add_argument(
+        "input", help="Path to pod JSON/YAML (kubectl get pods -o json)"
+    )
+
     # -- Dashboard --
     subparsers.add_parser(
         "dashboard", help="Interactive TUI dashboard (requires: pip install rich)"
@@ -443,6 +474,14 @@ def main():
         scanner = ComplianceScanner()
         result = scanner.scan(config, frameworks=frameworks)
         print(format_report(result))
+    elif args.module == "api-security":
+        from shadow_toolkit.api_security_tester import run_api_security_tester
+
+        run_api_security_tester(args)
+    elif args.module == "k8s-pod-audit":
+        from shadow_toolkit.kubernetes_pod_analyzer import run_kubernetes_pod_analyzer
+
+        run_kubernetes_pod_analyzer(args)
     elif args.module == "sentinel":
         from shadow_toolkit.sentinel_baseline import run_sentinel
 
