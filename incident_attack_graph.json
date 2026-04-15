@@ -1,0 +1,1466 @@
+{
+  "generated_at": "2026-04-14T17:53:18",
+  "ontology": {
+    "node_types": [
+      "Scenario",
+      "User",
+      "Mailbox",
+      "Session",
+      "Identity Provider",
+      "Federation Trust",
+      "OAuth App",
+      "Service Principal",
+      "Device / Node",
+      "Container / Pod",
+      "VM / Workload",
+      "Pipeline / Artifact",
+      "Storage Bucket / Blob",
+      "Network Endpoint",
+      "TPM / Secure Enclave",
+      "Hardware Attestation",
+      "Attacker Infrastructure",
+      "Event / Log Entry"
+    ],
+    "relationship_types": [
+      "compromised_by",
+      "issues_token_to",
+      "assumes_role_in",
+      "executes_on",
+      "exfiltrates_to",
+      "modifies",
+      "creates_persistence_in",
+      "moves_laterally_to",
+      "forges_attestation_for",
+      "extracts_key_from",
+      "deploys_artifact_to",
+      "encrypts",
+      "spoofs_identity_of",
+      "abused_by",
+      "replayed_by",
+      "signing_key_stolen_by",
+      "targets",
+      "observed_in",
+      "validated_by"
+    ]
+  },
+  "summary": {
+    "scenario_count": 17,
+    "node_count": 57,
+    "edge_count": 78,
+    "terminal_scenario": "SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE",
+    "terminal_classification": "Hardware Root-of-Trust Compromise - TPM/Secure Enclave Extraction"
+  },
+  "nodes": [
+    {
+      "id": "infra:attacker-185.199.220.14",
+      "type": "Attacker Infrastructure",
+      "label": "Attacker Infrastructure (185.199.220.14)",
+      "layer": "attacker",
+      "criticality": "Critical"
+    },
+    {
+      "id": "pod:payments-sidecar",
+      "type": "Container / Pod",
+      "label": "payments-sidecar"
+    },
+    {
+      "id": "node:db-admin-01",
+      "type": "Device / Node",
+      "label": "db-admin-01"
+    },
+    {
+      "id": "node:fileserver-02",
+      "type": "Device / Node",
+      "label": "fileserver-02"
+    },
+    {
+      "id": "node:k8s-node-01",
+      "type": "Device / Node",
+      "label": "k8s-node-01"
+    },
+    {
+      "id": "node:node-7",
+      "type": "Device / Node",
+      "label": "node-7"
+    },
+    {
+      "id": "federation:tenant-a-to-tenant-b",
+      "type": "Federation Trust",
+      "label": "Tenant A \u2192 Tenant B Federation Trust"
+    },
+    {
+      "id": "attestation:node-7",
+      "type": "Hardware Attestation",
+      "label": "node-7 attestation"
+    },
+    {
+      "id": "idp:idp.example.com",
+      "type": "Identity Provider",
+      "label": "idp.example.com"
+    },
+    {
+      "id": "idp:tenant-identity-plane",
+      "type": "Identity Provider",
+      "label": "Tenant Identity Plane"
+    },
+    {
+      "id": "mailbox:ceo-mailbox@example.com",
+      "type": "Mailbox",
+      "label": "CEO Mailbox"
+    },
+    {
+      "id": "mailbox:finance.user@example.com",
+      "type": "Mailbox",
+      "label": "Finance User Mailbox"
+    },
+    {
+      "id": "mailbox:finance_lead@example.com",
+      "type": "Mailbox",
+      "label": "Finance Lead Mailbox"
+    },
+    {
+      "id": "endpoint:mail-relay-01",
+      "type": "Network Endpoint",
+      "label": "mail-relay-01"
+    },
+    {
+      "id": "endpoint:vendor-integration-gateway",
+      "type": "Network Endpoint",
+      "label": "Vendor Integration Gateway"
+    },
+    {
+      "id": "oauth:analyticssync",
+      "type": "OAuth App",
+      "label": "AnalyticsSync"
+    },
+    {
+      "id": "oauth:rogue-consent-app",
+      "type": "OAuth App",
+      "label": "Rogue OAuth Consent App"
+    },
+    {
+      "id": "artifact:malicious-build",
+      "type": "Pipeline / Artifact",
+      "label": "malicious-build"
+    },
+    {
+      "id": "pipeline:release-pipeline",
+      "type": "Pipeline / Artifact",
+      "label": "release-pipeline"
+    },
+    {
+      "id": "scenario:SCENARIO_10_SERVICE_PRINCIPAL_HIJACK",
+      "type": "Scenario",
+      "label": "SCENARIO_10_SERVICE_PRINCIPAL_HIJACK",
+      "title": "Service Principal Hijack",
+      "layer": "cloud",
+      "risk": "Critical",
+      "classification": "Cloud Workload Compromise - Service Principal Hijack",
+      "signals": 6,
+      "actions": 6,
+      "response_latency_minutes": 5.0,
+      "containment_latency_minutes": 5.0
+    },
+    {
+      "id": "scenario:SCENARIO_11_K8S_SIDECAR_BREAKOUT",
+      "type": "Scenario",
+      "label": "SCENARIO_11_K8S_SIDECAR_BREAKOUT",
+      "title": "Kubernetes Sidecar Breakout",
+      "layer": "container",
+      "risk": "Critical",
+      "classification": "Kubernetes Container Breakout and Node Compromise",
+      "signals": 6,
+      "actions": 6,
+      "response_latency_minutes": 8.0,
+      "containment_latency_minutes": 8.0
+    },
+    {
+      "id": "scenario:SCENARIO_12_SUPPLY_CHAIN_POISONING",
+      "type": "Scenario",
+      "label": "SCENARIO_12_SUPPLY_CHAIN_POISONING",
+      "title": "CI/CD Pipeline Poisoning",
+      "layer": "supply-chain",
+      "risk": "Critical",
+      "classification": "Supply-Chain Compromise - CI/CD Pipeline Poisoning",
+      "signals": 6,
+      "actions": 6,
+      "response_latency_minutes": 5.0,
+      "containment_latency_minutes": 5.0
+    },
+    {
+      "id": "scenario:SCENARIO_13_ZERO_DAY_EXPLOIT",
+      "type": "Scenario",
+      "label": "SCENARIO_13_ZERO_DAY_EXPLOIT",
+      "title": "Zero-Day Runtime Exploit",
+      "layer": "runtime",
+      "risk": "Critical",
+      "classification": "Zero-Day Exploitation and Runtime Compromise",
+      "signals": 6,
+      "actions": 6,
+      "response_latency_minutes": 5.25,
+      "containment_latency_minutes": 8.25
+    },
+    {
+      "id": "scenario:SCENARIO_14_HYBRID_CLOUD_RANSOMWARE",
+      "type": "Scenario",
+      "label": "SCENARIO_14_HYBRID_CLOUD_RANSOMWARE",
+      "title": "Hybrid-Cloud Ransomware",
+      "layer": "ransomware",
+      "risk": "Critical",
+      "classification": "Hybrid-Cloud Ransomware Detonation",
+      "signals": 7,
+      "actions": 6,
+      "response_latency_minutes": 3.29,
+      "containment_latency_minutes": 6.29
+    },
+    {
+      "id": "scenario:SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE",
+      "type": "Scenario",
+      "label": "SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE",
+      "title": "Cross-Tenant Federation Abuse",
+      "layer": "identity-federation",
+      "risk": "Critical",
+      "classification": "Cross-Tenant Cloud Takeover - Federation Abuse",
+      "signals": 6,
+      "actions": 6,
+      "response_latency_minutes": 4.0,
+      "containment_latency_minutes": 6.0
+    },
+    {
+      "id": "scenario:SCENARIO_16_OIDC_SIGNING_KEY_THEFT",
+      "type": "Scenario",
+      "label": "SCENARIO_16_OIDC_SIGNING_KEY_THEFT",
+      "title": "Global Identity Provider Compromise",
+      "layer": "identity-core",
+      "risk": "Critical",
+      "classification": "Global Identity Provider Compromise - OIDC Signing Key Theft",
+      "signals": 6,
+      "actions": 6,
+      "response_latency_minutes": 3.0,
+      "containment_latency_minutes": 6.0
+    },
+    {
+      "id": "scenario:SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE",
+      "type": "Scenario",
+      "label": "SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE",
+      "title": "Hardware Root-of-Trust Compromise",
+      "layer": "hardware-trust",
+      "risk": "Critical",
+      "classification": "Hardware Root-of-Trust Compromise - TPM/Secure Enclave Extraction",
+      "signals": 6,
+      "actions": 6,
+      "response_latency_minutes": 3.0,
+      "containment_latency_minutes": 6.0
+    },
+    {
+      "id": "scenario:SCENARIO_1_SPAM_BURST",
+      "type": "Scenario",
+      "label": "SCENARIO_1_SPAM_BURST",
+      "title": "Spam Burst / Relay Probing",
+      "layer": "email-edge",
+      "risk": "Medium",
+      "classification": "Spam burst / relay probing",
+      "signals": 4,
+      "actions": 4,
+      "response_latency_minutes": 2.0,
+      "containment_latency_minutes": 2.0
+    },
+    {
+      "id": "scenario:SCENARIO_2_MALWARE_ATTACHMENT",
+      "type": "Scenario",
+      "label": "SCENARIO_2_MALWARE_ATTACHMENT",
+      "title": "Malware Attachment Attempt",
+      "layer": "email-edge",
+      "risk": "High",
+      "classification": "Malware attachment attempt",
+      "signals": 4,
+      "actions": 4,
+      "response_latency_minutes": 2.0,
+      "containment_latency_minutes": 2.0
+    },
+    {
+      "id": "scenario:SCENARIO_3_UNAUTHORIZED_ACCESS",
+      "type": "Scenario",
+      "label": "SCENARIO_3_UNAUTHORIZED_ACCESS",
+      "title": "Unauthorized Access / Credential Compromise",
+      "layer": "identity",
+      "risk": "High",
+      "classification": "Unauthorized access / credential compromise",
+      "signals": 4,
+      "actions": 6,
+      "response_latency_minutes": 5.0,
+      "containment_latency_minutes": 5.0
+    },
+    {
+      "id": "scenario:SCENARIO_4_BEC_ATTEMPT",
+      "type": "Scenario",
+      "label": "SCENARIO_4_BEC_ATTEMPT",
+      "title": "Business Email Compromise Attempt",
+      "layer": "identity",
+      "risk": "Critical",
+      "classification": "Business Email Compromise (BEC) - Active Account Takeover",
+      "signals": 5,
+      "actions": 7,
+      "response_latency_minutes": 2.0,
+      "containment_latency_minutes": 2.0
+    },
+    {
+      "id": "scenario:SCENARIO_5_OAUTH_ABUSE",
+      "type": "Scenario",
+      "label": "SCENARIO_5_OAUTH_ABUSE",
+      "title": "OAuth Consent Abuse",
+      "layer": "identity",
+      "risk": "High",
+      "classification": "OAuth Consent Abuse",
+      "signals": 4,
+      "actions": 6,
+      "response_latency_minutes": 2.0,
+      "containment_latency_minutes": 2.0
+    },
+    {
+      "id": "scenario:SCENARIO_6_VENDOR_COMPROMISE",
+      "type": "Scenario",
+      "label": "SCENARIO_6_VENDOR_COMPROMISE",
+      "title": "Vendor Compromise",
+      "layer": "supply-chain",
+      "risk": "Critical",
+      "classification": "Vendor Email Compromise",
+      "signals": 5,
+      "actions": 6,
+      "response_latency_minutes": 5.0,
+      "containment_latency_minutes": 5.0
+    },
+    {
+      "id": "scenario:SCENARIO_7_INSIDER_MISUSE",
+      "type": "Scenario",
+      "label": "SCENARIO_7_INSIDER_MISUSE",
+      "title": "Insider Misuse",
+      "layer": "cloud",
+      "risk": "Critical",
+      "classification": "Insider Misuse - Privilege Creep and Data Exfiltration",
+      "signals": 5,
+      "actions": 6,
+      "response_latency_minutes": 2.0,
+      "containment_latency_minutes": 2.0
+    },
+    {
+      "id": "scenario:SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL",
+      "type": "Scenario",
+      "label": "SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL",
+      "title": "Token Replay and Impossible Travel",
+      "layer": "identity",
+      "risk": "Critical",
+      "classification": "Token Replay and Impossible Travel",
+      "signals": 5,
+      "actions": 6,
+      "response_latency_minutes": 2.0,
+      "containment_latency_minutes": 2.0
+    },
+    {
+      "id": "scenario:SCENARIO_9_LATERAL_MOVEMENT_OAUTH",
+      "type": "Scenario",
+      "label": "SCENARIO_9_LATERAL_MOVEMENT_OAUTH",
+      "title": "Lateral Movement via OAuth App",
+      "layer": "cloud",
+      "risk": "Critical",
+      "classification": "Lateral Movement via Compromised OAuth App",
+      "signals": 5,
+      "actions": 6,
+      "response_latency_minutes": 2.0,
+      "containment_latency_minutes": 2.0
+    },
+    {
+      "id": "spn:shadow-app",
+      "type": "Service Principal",
+      "label": "shadow-app"
+    },
+    {
+      "id": "spn:sp-prod-backup-manager",
+      "type": "Service Principal",
+      "label": "sp-prod-backup-manager"
+    },
+    {
+      "id": "session:dev-lead-primary",
+      "type": "Session",
+      "label": "dev_lead primary session"
+    },
+    {
+      "id": "storage:customer-records",
+      "type": "Storage Bucket / Blob",
+      "label": "customer-records"
+    },
+    {
+      "id": "storage:staging-bucket",
+      "type": "Storage Bucket / Blob",
+      "label": "staging-bucket"
+    },
+    {
+      "id": "tpm:node-7",
+      "type": "TPM / Secure Enclave",
+      "label": "node-7 TPM / Secure Enclave"
+    },
+    {
+      "id": "user:ceo-mailbox@example.com",
+      "type": "User",
+      "label": "ceo-mailbox@example.com"
+    },
+    {
+      "id": "user:ceo@example.com",
+      "type": "User",
+      "label": "ceo@example.com"
+    },
+    {
+      "id": "user:contractor_jane@tenantA.com",
+      "type": "User",
+      "label": "contractor_jane@tenantA.com"
+    },
+    {
+      "id": "user:dev_lead@example.com",
+      "type": "User",
+      "label": "dev_lead@example.com"
+    },
+    {
+      "id": "user:finance.user@example.com",
+      "type": "User",
+      "label": "finance.user@example.com"
+    },
+    {
+      "id": "user:finance_lead@example.com",
+      "type": "User",
+      "label": "finance_lead@example.com"
+    },
+    {
+      "id": "user:hr_manager@example.com",
+      "type": "User",
+      "label": "hr_manager@example.com"
+    },
+    {
+      "id": "user:privileged.analyst@example.com",
+      "type": "User",
+      "label": "privileged.analyst@example.com"
+    },
+    {
+      "id": "user:vendor-automation-user",
+      "type": "User",
+      "label": "vendor-automation-user"
+    },
+    {
+      "id": "user:workstation-admin",
+      "type": "User",
+      "label": "workstation-admin"
+    },
+    {
+      "id": "service:profile-api",
+      "type": "VM / Workload",
+      "label": "profile-api"
+    },
+    {
+      "id": "workload:prod-app-01",
+      "type": "VM / Workload",
+      "label": "prod-app-01"
+    },
+    {
+      "id": "workload:prod-db-01",
+      "type": "VM / Workload",
+      "label": "prod-db-01"
+    },
+    {
+      "id": "workload:production-backup-plane",
+      "type": "VM / Workload",
+      "label": "Production Backup Plane"
+    },
+    {
+      "id": "workload:shadow-db",
+      "type": "VM / Workload",
+      "label": "shadow-db"
+    }
+  ],
+  "edges": [
+    {
+      "source": "scenario:SCENARIO_10_SERVICE_PRINCIPAL_HIJACK",
+      "relationship": "targets",
+      "target": "spn:sp-prod-backup-manager",
+      "note": "SCENARIO_10_SERVICE_PRINCIPAL_HIJACK centers on sp-prod-backup-manager"
+    },
+    {
+      "source": "scenario:SCENARIO_10_SERVICE_PRINCIPAL_HIJACK",
+      "relationship": "targets",
+      "target": "workload:production-backup-plane",
+      "note": "SCENARIO_10_SERVICE_PRINCIPAL_HIJACK centers on Production Backup Plane"
+    },
+    {
+      "source": "scenario:SCENARIO_11_K8S_SIDECAR_BREAKOUT",
+      "relationship": "targets",
+      "target": "node:k8s-node-01",
+      "note": "SCENARIO_11_K8S_SIDECAR_BREAKOUT centers on k8s-node-01"
+    },
+    {
+      "source": "scenario:SCENARIO_11_K8S_SIDECAR_BREAKOUT",
+      "relationship": "targets",
+      "target": "pod:payments-sidecar",
+      "note": "SCENARIO_11_K8S_SIDECAR_BREAKOUT centers on payments-sidecar"
+    },
+    {
+      "source": "scenario:SCENARIO_12_SUPPLY_CHAIN_POISONING",
+      "relationship": "targets",
+      "target": "artifact:malicious-build",
+      "note": "SCENARIO_12_SUPPLY_CHAIN_POISONING centers on malicious-build"
+    },
+    {
+      "source": "scenario:SCENARIO_12_SUPPLY_CHAIN_POISONING",
+      "relationship": "targets",
+      "target": "pipeline:release-pipeline",
+      "note": "SCENARIO_12_SUPPLY_CHAIN_POISONING centers on release-pipeline"
+    },
+    {
+      "source": "scenario:SCENARIO_13_ZERO_DAY_EXPLOIT",
+      "relationship": "targets",
+      "target": "node:db-admin-01",
+      "note": "SCENARIO_13_ZERO_DAY_EXPLOIT centers on db-admin-01"
+    },
+    {
+      "source": "scenario:SCENARIO_13_ZERO_DAY_EXPLOIT",
+      "relationship": "targets",
+      "target": "service:profile-api",
+      "note": "SCENARIO_13_ZERO_DAY_EXPLOIT centers on profile-api"
+    },
+    {
+      "source": "scenario:SCENARIO_14_HYBRID_CLOUD_RANSOMWARE",
+      "relationship": "targets",
+      "target": "node:fileserver-02",
+      "note": "SCENARIO_14_HYBRID_CLOUD_RANSOMWARE centers on fileserver-02"
+    },
+    {
+      "source": "scenario:SCENARIO_14_HYBRID_CLOUD_RANSOMWARE",
+      "relationship": "targets",
+      "target": "storage:customer-records",
+      "note": "SCENARIO_14_HYBRID_CLOUD_RANSOMWARE centers on customer-records"
+    },
+    {
+      "source": "scenario:SCENARIO_14_HYBRID_CLOUD_RANSOMWARE",
+      "relationship": "targets",
+      "target": "workload:prod-app-01",
+      "note": "SCENARIO_14_HYBRID_CLOUD_RANSOMWARE centers on prod-app-01"
+    },
+    {
+      "source": "scenario:SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE",
+      "relationship": "targets",
+      "target": "federation:tenant-a-to-tenant-b",
+      "note": "SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE centers on Tenant A \u2192 Tenant B Federation Trust"
+    },
+    {
+      "source": "scenario:SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE",
+      "relationship": "targets",
+      "target": "spn:shadow-app",
+      "note": "SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE centers on shadow-app"
+    },
+    {
+      "source": "scenario:SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE",
+      "relationship": "targets",
+      "target": "user:contractor_jane@tenantA.com",
+      "note": "SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE centers on contractor_jane@tenantA.com"
+    },
+    {
+      "source": "scenario:SCENARIO_16_OIDC_SIGNING_KEY_THEFT",
+      "relationship": "targets",
+      "target": "idp:idp.example.com",
+      "note": "SCENARIO_16_OIDC_SIGNING_KEY_THEFT centers on idp.example.com"
+    },
+    {
+      "source": "scenario:SCENARIO_16_OIDC_SIGNING_KEY_THEFT",
+      "relationship": "targets",
+      "target": "mailbox:finance_lead@example.com",
+      "note": "SCENARIO_16_OIDC_SIGNING_KEY_THEFT centers on Finance Lead Mailbox"
+    },
+    {
+      "source": "scenario:SCENARIO_16_OIDC_SIGNING_KEY_THEFT",
+      "relationship": "targets",
+      "target": "user:ceo@example.com",
+      "note": "SCENARIO_16_OIDC_SIGNING_KEY_THEFT centers on ceo@example.com"
+    },
+    {
+      "source": "scenario:SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE",
+      "relationship": "targets",
+      "target": "attestation:node-7",
+      "note": "SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE centers on node-7 attestation"
+    },
+    {
+      "source": "scenario:SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE",
+      "relationship": "targets",
+      "target": "node:node-7",
+      "note": "SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE centers on node-7"
+    },
+    {
+      "source": "scenario:SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE",
+      "relationship": "targets",
+      "target": "tpm:node-7",
+      "note": "SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE centers on node-7 TPM / Secure Enclave"
+    },
+    {
+      "source": "scenario:SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE",
+      "relationship": "targets",
+      "target": "workload:prod-db-01",
+      "note": "SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE centers on prod-db-01"
+    },
+    {
+      "source": "scenario:SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE",
+      "relationship": "targets",
+      "target": "workload:shadow-db",
+      "note": "SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE centers on shadow-db"
+    },
+    {
+      "source": "scenario:SCENARIO_1_SPAM_BURST",
+      "relationship": "targets",
+      "target": "endpoint:mail-relay-01",
+      "note": "SCENARIO_1_SPAM_BURST centers on mail-relay-01"
+    },
+    {
+      "source": "scenario:SCENARIO_2_MALWARE_ATTACHMENT",
+      "relationship": "targets",
+      "target": "mailbox:finance.user@example.com",
+      "note": "SCENARIO_2_MALWARE_ATTACHMENT centers on Finance User Mailbox"
+    },
+    {
+      "source": "scenario:SCENARIO_2_MALWARE_ATTACHMENT",
+      "relationship": "targets",
+      "target": "user:finance.user@example.com",
+      "note": "SCENARIO_2_MALWARE_ATTACHMENT centers on finance.user@example.com"
+    },
+    {
+      "source": "scenario:SCENARIO_3_UNAUTHORIZED_ACCESS",
+      "relationship": "targets",
+      "target": "user:workstation-admin",
+      "note": "SCENARIO_3_UNAUTHORIZED_ACCESS centers on workstation-admin"
+    },
+    {
+      "source": "scenario:SCENARIO_4_BEC_ATTEMPT",
+      "relationship": "targets",
+      "target": "mailbox:ceo-mailbox@example.com",
+      "note": "SCENARIO_4_BEC_ATTEMPT centers on CEO Mailbox"
+    },
+    {
+      "source": "scenario:SCENARIO_4_BEC_ATTEMPT",
+      "relationship": "targets",
+      "target": "user:ceo-mailbox@example.com",
+      "note": "SCENARIO_4_BEC_ATTEMPT centers on ceo-mailbox@example.com"
+    },
+    {
+      "source": "scenario:SCENARIO_5_OAUTH_ABUSE",
+      "relationship": "targets",
+      "target": "idp:tenant-identity-plane",
+      "note": "SCENARIO_5_OAUTH_ABUSE centers on Tenant Identity Plane"
+    },
+    {
+      "source": "scenario:SCENARIO_5_OAUTH_ABUSE",
+      "relationship": "targets",
+      "target": "oauth:rogue-consent-app",
+      "note": "SCENARIO_5_OAUTH_ABUSE centers on Rogue OAuth Consent App"
+    },
+    {
+      "source": "scenario:SCENARIO_6_VENDOR_COMPROMISE",
+      "relationship": "targets",
+      "target": "endpoint:vendor-integration-gateway",
+      "note": "SCENARIO_6_VENDOR_COMPROMISE centers on Vendor Integration Gateway"
+    },
+    {
+      "source": "scenario:SCENARIO_6_VENDOR_COMPROMISE",
+      "relationship": "targets",
+      "target": "user:vendor-automation-user",
+      "note": "SCENARIO_6_VENDOR_COMPROMISE centers on vendor-automation-user"
+    },
+    {
+      "source": "scenario:SCENARIO_7_INSIDER_MISUSE",
+      "relationship": "targets",
+      "target": "storage:staging-bucket",
+      "note": "SCENARIO_7_INSIDER_MISUSE centers on staging-bucket"
+    },
+    {
+      "source": "scenario:SCENARIO_7_INSIDER_MISUSE",
+      "relationship": "targets",
+      "target": "user:privileged.analyst@example.com",
+      "note": "SCENARIO_7_INSIDER_MISUSE centers on privileged.analyst@example.com"
+    },
+    {
+      "source": "scenario:SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL",
+      "relationship": "targets",
+      "target": "session:dev-lead-primary",
+      "note": "SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL centers on dev_lead primary session"
+    },
+    {
+      "source": "scenario:SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL",
+      "relationship": "targets",
+      "target": "user:dev_lead@example.com",
+      "note": "SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL centers on dev_lead@example.com"
+    },
+    {
+      "source": "scenario:SCENARIO_9_LATERAL_MOVEMENT_OAUTH",
+      "relationship": "targets",
+      "target": "oauth:analyticssync",
+      "note": "SCENARIO_9_LATERAL_MOVEMENT_OAUTH centers on AnalyticsSync"
+    },
+    {
+      "source": "scenario:SCENARIO_9_LATERAL_MOVEMENT_OAUTH",
+      "relationship": "targets",
+      "target": "user:finance_lead@example.com",
+      "note": "SCENARIO_9_LATERAL_MOVEMENT_OAUTH centers on finance_lead@example.com"
+    },
+    {
+      "source": "scenario:SCENARIO_9_LATERAL_MOVEMENT_OAUTH",
+      "relationship": "targets",
+      "target": "user:hr_manager@example.com",
+      "note": "SCENARIO_9_LATERAL_MOVEMENT_OAUTH centers on hr_manager@example.com"
+    },
+    {
+      "source": "spn:sp-prod-backup-manager",
+      "relationship": "compromised_by",
+      "target": "infra:attacker-185.199.220.14",
+      "note": "Service principal compromise unlocks workload actions.",
+      "scenario_id": "SCENARIO_10_SERVICE_PRINCIPAL_HIJACK"
+    },
+    {
+      "source": "spn:sp-prod-backup-manager",
+      "relationship": "executes_on",
+      "target": "workload:production-backup-plane",
+      "note": "Hijacked service principal operates directly on production workloads.",
+      "scenario_id": "SCENARIO_10_SERVICE_PRINCIPAL_HIJACK"
+    },
+    {
+      "source": "pod:payments-sidecar",
+      "relationship": "compromised_by",
+      "target": "infra:attacker-185.199.220.14",
+      "note": "Attacker gains runtime control of the sidecar path.",
+      "scenario_id": "SCENARIO_11_K8S_SIDECAR_BREAKOUT"
+    },
+    {
+      "source": "pod:payments-sidecar",
+      "relationship": "moves_laterally_to",
+      "target": "node:k8s-node-01",
+      "note": "Breakout escapes container isolation into the node.",
+      "scenario_id": "SCENARIO_11_K8S_SIDECAR_BREAKOUT"
+    },
+    {
+      "source": "artifact:malicious-build",
+      "relationship": "deploys_artifact_to",
+      "target": "pipeline:release-pipeline",
+      "note": "Poisoned artifact contaminates the release path.",
+      "scenario_id": "SCENARIO_12_SUPPLY_CHAIN_POISONING"
+    },
+    {
+      "source": "pipeline:release-pipeline",
+      "relationship": "compromised_by",
+      "target": "infra:attacker-185.199.220.14",
+      "note": "Automation trust is subverted by attacker-controlled artifact flow.",
+      "scenario_id": "SCENARIO_12_SUPPLY_CHAIN_POISONING"
+    },
+    {
+      "source": "service:profile-api",
+      "relationship": "compromised_by",
+      "target": "infra:attacker-185.199.220.14",
+      "note": "Zero-day exploitation gains code execution in the public service.",
+      "scenario_id": "SCENARIO_13_ZERO_DAY_EXPLOIT"
+    },
+    {
+      "source": "service:profile-api",
+      "relationship": "creates_persistence_in",
+      "target": "node:db-admin-01",
+      "note": "Persistence follows successful runtime compromise.",
+      "scenario_id": "SCENARIO_13_ZERO_DAY_EXPLOIT"
+    },
+    {
+      "source": "service:profile-api",
+      "relationship": "moves_laterally_to",
+      "target": "node:db-admin-01",
+      "note": "Runtime compromise pivots laterally to administrative data paths.",
+      "scenario_id": "SCENARIO_13_ZERO_DAY_EXPLOIT"
+    },
+    {
+      "source": "node:fileserver-02",
+      "relationship": "encrypts",
+      "target": "infra:attacker-185.199.220.14",
+      "note": "On-premise host is encrypted by attacker payloads.",
+      "scenario_id": "SCENARIO_14_HYBRID_CLOUD_RANSOMWARE"
+    },
+    {
+      "source": "storage:customer-records",
+      "relationship": "encrypts",
+      "target": "infra:attacker-185.199.220.14",
+      "note": "Object storage is rewritten and effectively encrypted.",
+      "scenario_id": "SCENARIO_14_HYBRID_CLOUD_RANSOMWARE"
+    },
+    {
+      "source": "workload:prod-app-01",
+      "relationship": "encrypts",
+      "target": "infra:attacker-185.199.220.14",
+      "note": "Cloud workloads are encrypted under the same detonation path.",
+      "scenario_id": "SCENARIO_14_HYBRID_CLOUD_RANSOMWARE"
+    },
+    {
+      "source": "federation:tenant-a-to-tenant-b",
+      "relationship": "abused_by",
+      "target": "infra:attacker-185.199.220.14",
+      "note": "Cross-tenant federation path is abused as a privilege bridge.",
+      "scenario_id": "SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE"
+    },
+    {
+      "source": "spn:shadow-app",
+      "relationship": "creates_persistence_in",
+      "target": "federation:tenant-a-to-tenant-b",
+      "note": "Rogue service principal extends persistence in the federation plane.",
+      "scenario_id": "SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE"
+    },
+    {
+      "source": "user:contractor_jane@tenantA.com",
+      "relationship": "assumes_role_in",
+      "target": "federation:tenant-a-to-tenant-b",
+      "note": "Federated identity assumes privileged control via the trust path.",
+      "scenario_id": "SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE"
+    },
+    {
+      "source": "idp:idp.example.com",
+      "relationship": "issues_token_to",
+      "target": "user:ceo@example.com",
+      "note": "Forged but valid tokens are minted for privileged identities.",
+      "scenario_id": "SCENARIO_16_OIDC_SIGNING_KEY_THEFT"
+    },
+    {
+      "source": "idp:idp.example.com",
+      "relationship": "signing_key_stolen_by",
+      "target": "infra:attacker-185.199.220.14",
+      "note": "Attacker steals the IdP signing key and becomes the trust anchor.",
+      "scenario_id": "SCENARIO_16_OIDC_SIGNING_KEY_THEFT"
+    },
+    {
+      "source": "user:ceo@example.com",
+      "relationship": "moves_laterally_to",
+      "target": "mailbox:finance_lead@example.com",
+      "note": "Forged identity pivots across cloud and SaaS services.",
+      "scenario_id": "SCENARIO_16_OIDC_SIGNING_KEY_THEFT"
+    },
+    {
+      "source": "attestation:node-7",
+      "relationship": "forges_attestation_for",
+      "target": "workload:shadow-db",
+      "note": "Forged attestation causes shadow workloads to appear trusted.",
+      "scenario_id": "SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE"
+    },
+    {
+      "source": "node:node-7",
+      "relationship": "compromised_by",
+      "target": "infra:attacker-185.199.220.14",
+      "note": "Node-level compromise reaches the hardware root of trust.",
+      "scenario_id": "SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE"
+    },
+    {
+      "source": "tpm:node-7",
+      "relationship": "extracts_key_from",
+      "target": "infra:attacker-185.199.220.14",
+      "note": "Hardware-backed key material is extracted from the trust anchor.",
+      "scenario_id": "SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE"
+    },
+    {
+      "source": "workload:shadow-db",
+      "relationship": "exfiltrates_to",
+      "target": "infra:attacker-185.199.220.14",
+      "note": "Data leaves the cloned workload after disk decryption and trust bypass.",
+      "scenario_id": "SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE"
+    },
+    {
+      "source": "workload:shadow-db",
+      "relationship": "spoofs_identity_of",
+      "target": "workload:prod-db-01",
+      "note": "Cloned workload impersonates the production database tier.",
+      "scenario_id": "SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE"
+    },
+    {
+      "source": "endpoint:mail-relay-01",
+      "relationship": "compromised_by",
+      "target": "infra:attacker-185.199.220.14",
+      "note": "Spam and relay probing pressure the email edge.",
+      "scenario_id": "SCENARIO_1_SPAM_BURST"
+    },
+    {
+      "source": "mailbox:finance.user@example.com",
+      "relationship": "compromised_by",
+      "target": "infra:attacker-185.199.220.14",
+      "note": "Attachment delivery targets inbox execution paths.",
+      "scenario_id": "SCENARIO_2_MALWARE_ATTACHMENT"
+    },
+    {
+      "source": "user:workstation-admin",
+      "relationship": "compromised_by",
+      "target": "infra:attacker-185.199.220.14",
+      "note": "Credential stuffing pattern leads to account compromise.",
+      "scenario_id": "SCENARIO_3_UNAUTHORIZED_ACCESS"
+    },
+    {
+      "source": "mailbox:ceo-mailbox@example.com",
+      "relationship": "modifies",
+      "target": "infra:attacker-185.199.220.14",
+      "note": "Reply-to and mailbox rules are altered during BEC.",
+      "scenario_id": "SCENARIO_4_BEC_ATTEMPT"
+    },
+    {
+      "source": "user:ceo-mailbox@example.com",
+      "relationship": "compromised_by",
+      "target": "infra:attacker-185.199.220.14",
+      "note": "Executive identity takeover drives fraud operations.",
+      "scenario_id": "SCENARIO_4_BEC_ATTEMPT"
+    },
+    {
+      "source": "idp:tenant-identity-plane",
+      "relationship": "issues_token_to",
+      "target": "oauth:rogue-consent-app",
+      "note": "Consent flow grants attacker-controlled token access.",
+      "scenario_id": "SCENARIO_5_OAUTH_ABUSE"
+    },
+    {
+      "source": "oauth:rogue-consent-app",
+      "relationship": "compromised_by",
+      "target": "infra:attacker-185.199.220.14",
+      "note": "Unverified app uses high-risk delegated scopes.",
+      "scenario_id": "SCENARIO_5_OAUTH_ABUSE"
+    },
+    {
+      "source": "endpoint:vendor-integration-gateway",
+      "relationship": "targets",
+      "target": "infra:attacker-185.199.220.14",
+      "note": "Vendor access path becomes the attacker ingress route.",
+      "scenario_id": "SCENARIO_6_VENDOR_COMPROMISE"
+    },
+    {
+      "source": "user:vendor-automation-user",
+      "relationship": "compromised_by",
+      "target": "infra:attacker-185.199.220.14",
+      "note": "Vendor automation identity seeds downstream compromise.",
+      "scenario_id": "SCENARIO_6_VENDOR_COMPROMISE"
+    },
+    {
+      "source": "user:privileged.analyst@example.com",
+      "relationship": "compromised_by",
+      "target": "infra:attacker-185.199.220.14",
+      "note": "Insider or coerced privileged access drives data staging.",
+      "scenario_id": "SCENARIO_7_INSIDER_MISUSE"
+    },
+    {
+      "source": "user:privileged.analyst@example.com",
+      "relationship": "exfiltrates_to",
+      "target": "storage:staging-bucket",
+      "note": "Insider stages data into controlled storage paths.",
+      "scenario_id": "SCENARIO_7_INSIDER_MISUSE"
+    },
+    {
+      "source": "session:dev-lead-primary",
+      "relationship": "replayed_by",
+      "target": "infra:attacker-185.199.220.14",
+      "note": "Bearer token replay drives the impossible travel signal.",
+      "scenario_id": "SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL"
+    },
+    {
+      "source": "session:dev-lead-primary",
+      "relationship": "spoofs_identity_of",
+      "target": "user:dev_lead@example.com",
+      "note": "Attacker reuses valid session state to impersonate the user.",
+      "scenario_id": "SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL"
+    },
+    {
+      "source": "oauth:analyticssync",
+      "relationship": "compromised_by",
+      "target": "infra:attacker-185.199.220.14",
+      "note": "Attacker-controlled app becomes a lateral movement hub.",
+      "scenario_id": "SCENARIO_9_LATERAL_MOVEMENT_OAUTH"
+    },
+    {
+      "source": "oauth:analyticssync",
+      "relationship": "moves_laterally_to",
+      "target": "user:finance_lead@example.com",
+      "note": "OAuth token abuse pivots across multiple identities.",
+      "scenario_id": "SCENARIO_9_LATERAL_MOVEMENT_OAUTH"
+    },
+    {
+      "source": "oauth:analyticssync",
+      "relationship": "moves_laterally_to",
+      "target": "user:hr_manager@example.com",
+      "note": "OAuth app laterally accesses additional users.",
+      "scenario_id": "SCENARIO_9_LATERAL_MOVEMENT_OAUTH"
+    }
+  ],
+  "scenario_mappings": [
+    {
+      "scenario_id": "SCENARIO_1_SPAM_BURST",
+      "title": "Spam Burst / Relay Probing",
+      "layer": "email-edge",
+      "description": "Inbound spam burst and relay probing against the monitored tenant edge.",
+      "classification": "Spam burst / relay probing",
+      "risk": "Medium",
+      "primary_entities": [
+        "endpoint:mail-relay-01"
+      ],
+      "relationships": [
+        {
+          "source": "endpoint:mail-relay-01",
+          "relationship": "compromised_by",
+          "target": "infra:attacker-185.199.220.14",
+          "note": "Spam and relay probing pressure the email edge."
+        }
+      ]
+    },
+    {
+      "scenario_id": "SCENARIO_2_MALWARE_ATTACHMENT",
+      "title": "Malware Attachment Attempt",
+      "layer": "email-edge",
+      "description": "Malware-laced message delivery targeting user inbox workflows.",
+      "classification": "Malware attachment attempt",
+      "risk": "High",
+      "primary_entities": [
+        "user:finance.user@example.com",
+        "mailbox:finance.user@example.com"
+      ],
+      "relationships": [
+        {
+          "source": "mailbox:finance.user@example.com",
+          "relationship": "compromised_by",
+          "target": "infra:attacker-185.199.220.14",
+          "note": "Attachment delivery targets inbox execution paths."
+        }
+      ]
+    },
+    {
+      "scenario_id": "SCENARIO_3_UNAUTHORIZED_ACCESS",
+      "title": "Unauthorized Access / Credential Compromise",
+      "layer": "identity",
+      "description": "Credential compromise enables unauthorized access and suspicious session start.",
+      "classification": "Unauthorized access / credential compromise",
+      "risk": "High",
+      "primary_entities": [
+        "user:workstation-admin"
+      ],
+      "relationships": [
+        {
+          "source": "user:workstation-admin",
+          "relationship": "compromised_by",
+          "target": "infra:attacker-185.199.220.14",
+          "note": "Credential stuffing pattern leads to account compromise."
+        }
+      ]
+    },
+    {
+      "scenario_id": "SCENARIO_4_BEC_ATTEMPT",
+      "title": "Business Email Compromise Attempt",
+      "layer": "identity",
+      "description": "Mailbox takeover and message manipulation drive financial fraud risk.",
+      "classification": "Business Email Compromise (BEC) - Active Account Takeover",
+      "risk": "Critical",
+      "primary_entities": [
+        "mailbox:ceo-mailbox@example.com",
+        "user:ceo-mailbox@example.com"
+      ],
+      "relationships": [
+        {
+          "source": "mailbox:ceo-mailbox@example.com",
+          "relationship": "modifies",
+          "target": "infra:attacker-185.199.220.14",
+          "note": "Reply-to and mailbox rules are altered during BEC."
+        },
+        {
+          "source": "user:ceo-mailbox@example.com",
+          "relationship": "compromised_by",
+          "target": "infra:attacker-185.199.220.14",
+          "note": "Executive identity takeover drives fraud operations."
+        }
+      ]
+    },
+    {
+      "scenario_id": "SCENARIO_5_OAUTH_ABUSE",
+      "title": "OAuth Consent Abuse",
+      "layer": "identity",
+      "description": "Rogue OAuth application gains privileged delegated access.",
+      "classification": "OAuth Consent Abuse",
+      "risk": "High",
+      "primary_entities": [
+        "oauth:rogue-consent-app",
+        "idp:tenant-identity-plane"
+      ],
+      "relationships": [
+        {
+          "source": "oauth:rogue-consent-app",
+          "relationship": "compromised_by",
+          "target": "infra:attacker-185.199.220.14",
+          "note": "Unverified app uses high-risk delegated scopes."
+        },
+        {
+          "source": "idp:tenant-identity-plane",
+          "relationship": "issues_token_to",
+          "target": "oauth:rogue-consent-app",
+          "note": "Consent flow grants attacker-controlled token access."
+        }
+      ]
+    },
+    {
+      "scenario_id": "SCENARIO_6_VENDOR_COMPROMISE",
+      "title": "Vendor Compromise",
+      "layer": "supply-chain",
+      "description": "Downstream fraud path begins with compromised vendor automation access.",
+      "classification": "Vendor Email Compromise",
+      "risk": "Critical",
+      "primary_entities": [
+        "user:vendor-automation-user",
+        "endpoint:vendor-integration-gateway"
+      ],
+      "relationships": [
+        {
+          "source": "user:vendor-automation-user",
+          "relationship": "compromised_by",
+          "target": "infra:attacker-185.199.220.14",
+          "note": "Vendor automation identity seeds downstream compromise."
+        },
+        {
+          "source": "endpoint:vendor-integration-gateway",
+          "relationship": "targets",
+          "target": "infra:attacker-185.199.220.14",
+          "note": "Vendor access path becomes the attacker ingress route."
+        }
+      ]
+    },
+    {
+      "scenario_id": "SCENARIO_7_INSIDER_MISUSE",
+      "title": "Insider Misuse",
+      "layer": "cloud",
+      "description": "Privileged insider abuse expands access and stages data for exfiltration.",
+      "classification": "Insider Misuse - Privilege Creep and Data Exfiltration",
+      "risk": "Critical",
+      "primary_entities": [
+        "user:privileged.analyst@example.com",
+        "storage:staging-bucket"
+      ],
+      "relationships": [
+        {
+          "source": "user:privileged.analyst@example.com",
+          "relationship": "exfiltrates_to",
+          "target": "storage:staging-bucket",
+          "note": "Insider stages data into controlled storage paths."
+        },
+        {
+          "source": "user:privileged.analyst@example.com",
+          "relationship": "compromised_by",
+          "target": "infra:attacker-185.199.220.14",
+          "note": "Insider or coerced privileged access drives data staging."
+        }
+      ]
+    },
+    {
+      "scenario_id": "SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL",
+      "title": "Token Replay and Impossible Travel",
+      "layer": "identity",
+      "description": "Session hijack uses replayed tokens across impossible travel conditions.",
+      "classification": "Token Replay and Impossible Travel",
+      "risk": "Critical",
+      "primary_entities": [
+        "session:dev-lead-primary",
+        "user:dev_lead@example.com"
+      ],
+      "relationships": [
+        {
+          "source": "session:dev-lead-primary",
+          "relationship": "replayed_by",
+          "target": "infra:attacker-185.199.220.14",
+          "note": "Bearer token replay drives the impossible travel signal."
+        },
+        {
+          "source": "session:dev-lead-primary",
+          "relationship": "spoofs_identity_of",
+          "target": "user:dev_lead@example.com",
+          "note": "Attacker reuses valid session state to impersonate the user."
+        }
+      ]
+    },
+    {
+      "scenario_id": "SCENARIO_9_LATERAL_MOVEMENT_OAUTH",
+      "title": "Lateral Movement via OAuth App",
+      "layer": "cloud",
+      "description": "OAuth application abuse impersonates multiple users and pivots across cloud data paths.",
+      "classification": "Lateral Movement via Compromised OAuth App",
+      "risk": "Critical",
+      "primary_entities": [
+        "oauth:analyticssync",
+        "user:finance_lead@example.com",
+        "user:hr_manager@example.com"
+      ],
+      "relationships": [
+        {
+          "source": "oauth:analyticssync",
+          "relationship": "moves_laterally_to",
+          "target": "user:finance_lead@example.com",
+          "note": "OAuth token abuse pivots across multiple identities."
+        },
+        {
+          "source": "oauth:analyticssync",
+          "relationship": "moves_laterally_to",
+          "target": "user:hr_manager@example.com",
+          "note": "OAuth app laterally accesses additional users."
+        },
+        {
+          "source": "oauth:analyticssync",
+          "relationship": "compromised_by",
+          "target": "infra:attacker-185.199.220.14",
+          "note": "Attacker-controlled app becomes a lateral movement hub."
+        }
+      ]
+    },
+    {
+      "scenario_id": "SCENARIO_10_SERVICE_PRINCIPAL_HIJACK",
+      "title": "Service Principal Hijack",
+      "layer": "cloud",
+      "description": "Compromised service principal seizes production workload permissions.",
+      "classification": "Cloud Workload Compromise - Service Principal Hijack",
+      "risk": "Critical",
+      "primary_entities": [
+        "spn:sp-prod-backup-manager",
+        "workload:production-backup-plane"
+      ],
+      "relationships": [
+        {
+          "source": "spn:sp-prod-backup-manager",
+          "relationship": "compromised_by",
+          "target": "infra:attacker-185.199.220.14",
+          "note": "Service principal compromise unlocks workload actions."
+        },
+        {
+          "source": "spn:sp-prod-backup-manager",
+          "relationship": "executes_on",
+          "target": "workload:production-backup-plane",
+          "note": "Hijacked service principal operates directly on production workloads."
+        }
+      ]
+    },
+    {
+      "scenario_id": "SCENARIO_11_K8S_SIDECAR_BREAKOUT",
+      "title": "Kubernetes Sidecar Breakout",
+      "layer": "container",
+      "description": "Container breakout crosses the pod boundary and reaches the underlying node.",
+      "classification": "Kubernetes Container Breakout and Node Compromise",
+      "risk": "Critical",
+      "primary_entities": [
+        "pod:payments-sidecar",
+        "node:k8s-node-01"
+      ],
+      "relationships": [
+        {
+          "source": "pod:payments-sidecar",
+          "relationship": "moves_laterally_to",
+          "target": "node:k8s-node-01",
+          "note": "Breakout escapes container isolation into the node."
+        },
+        {
+          "source": "pod:payments-sidecar",
+          "relationship": "compromised_by",
+          "target": "infra:attacker-185.199.220.14",
+          "note": "Attacker gains runtime control of the sidecar path."
+        }
+      ]
+    },
+    {
+      "scenario_id": "SCENARIO_12_SUPPLY_CHAIN_POISONING",
+      "title": "CI/CD Pipeline Poisoning",
+      "layer": "supply-chain",
+      "description": "Malicious artifact drift enters production through poisoned automation.",
+      "classification": "Supply-Chain Compromise - CI/CD Pipeline Poisoning",
+      "risk": "Critical",
+      "primary_entities": [
+        "pipeline:release-pipeline",
+        "artifact:malicious-build"
+      ],
+      "relationships": [
+        {
+          "source": "artifact:malicious-build",
+          "relationship": "deploys_artifact_to",
+          "target": "pipeline:release-pipeline",
+          "note": "Poisoned artifact contaminates the release path."
+        },
+        {
+          "source": "pipeline:release-pipeline",
+          "relationship": "compromised_by",
+          "target": "infra:attacker-185.199.220.14",
+          "note": "Automation trust is subverted by attacker-controlled artifact flow."
+        }
+      ]
+    },
+    {
+      "scenario_id": "SCENARIO_13_ZERO_DAY_EXPLOIT",
+      "title": "Zero-Day Runtime Exploit",
+      "layer": "runtime",
+      "description": "Public-facing service compromise expands into runtime control, exfiltration, and persistence.",
+      "classification": "Zero-Day Exploitation and Runtime Compromise",
+      "risk": "Critical",
+      "primary_entities": [
+        "service:profile-api",
+        "node:db-admin-01"
+      ],
+      "relationships": [
+        {
+          "source": "service:profile-api",
+          "relationship": "compromised_by",
+          "target": "infra:attacker-185.199.220.14",
+          "note": "Zero-day exploitation gains code execution in the public service."
+        },
+        {
+          "source": "service:profile-api",
+          "relationship": "moves_laterally_to",
+          "target": "node:db-admin-01",
+          "note": "Runtime compromise pivots laterally to administrative data paths."
+        },
+        {
+          "source": "service:profile-api",
+          "relationship": "creates_persistence_in",
+          "target": "node:db-admin-01",
+          "note": "Persistence follows successful runtime compromise."
+        }
+      ]
+    },
+    {
+      "scenario_id": "SCENARIO_14_HYBRID_CLOUD_RANSOMWARE",
+      "title": "Hybrid-Cloud Ransomware",
+      "layer": "ransomware",
+      "description": "Cross-environment encryption strikes on-prem systems, cloud VMs, Kubernetes workloads, and storage.",
+      "classification": "Hybrid-Cloud Ransomware Detonation",
+      "risk": "Critical",
+      "primary_entities": [
+        "node:fileserver-02",
+        "workload:prod-app-01",
+        "storage:customer-records"
+      ],
+      "relationships": [
+        {
+          "source": "node:fileserver-02",
+          "relationship": "encrypts",
+          "target": "infra:attacker-185.199.220.14",
+          "note": "On-premise host is encrypted by attacker payloads."
+        },
+        {
+          "source": "workload:prod-app-01",
+          "relationship": "encrypts",
+          "target": "infra:attacker-185.199.220.14",
+          "note": "Cloud workloads are encrypted under the same detonation path."
+        },
+        {
+          "source": "storage:customer-records",
+          "relationship": "encrypts",
+          "target": "infra:attacker-185.199.220.14",
+          "note": "Object storage is rewritten and effectively encrypted."
+        }
+      ]
+    },
+    {
+      "scenario_id": "SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE",
+      "title": "Cross-Tenant Federation Abuse",
+      "layer": "identity-federation",
+      "description": "Federation trust abuse enables privileged cross-tenant takeover.",
+      "classification": "Cross-Tenant Cloud Takeover - Federation Abuse",
+      "risk": "Critical",
+      "primary_entities": [
+        "federation:tenant-a-to-tenant-b",
+        "user:contractor_jane@tenantA.com",
+        "spn:shadow-app"
+      ],
+      "relationships": [
+        {
+          "source": "federation:tenant-a-to-tenant-b",
+          "relationship": "abused_by",
+          "target": "infra:attacker-185.199.220.14",
+          "note": "Cross-tenant federation path is abused as a privilege bridge."
+        },
+        {
+          "source": "user:contractor_jane@tenantA.com",
+          "relationship": "assumes_role_in",
+          "target": "federation:tenant-a-to-tenant-b",
+          "note": "Federated identity assumes privileged control via the trust path."
+        },
+        {
+          "source": "spn:shadow-app",
+          "relationship": "creates_persistence_in",
+          "target": "federation:tenant-a-to-tenant-b",
+          "note": "Rogue service principal extends persistence in the federation plane."
+        }
+      ]
+    },
+    {
+      "scenario_id": "SCENARIO_16_OIDC_SIGNING_KEY_THEFT",
+      "title": "Global Identity Provider Compromise",
+      "layer": "identity-core",
+      "description": "OIDC signing key theft collapses the trust anchor for all downstream identities.",
+      "classification": "Global Identity Provider Compromise - OIDC Signing Key Theft",
+      "risk": "Critical",
+      "primary_entities": [
+        "idp:idp.example.com",
+        "user:ceo@example.com",
+        "mailbox:finance_lead@example.com"
+      ],
+      "relationships": [
+        {
+          "source": "idp:idp.example.com",
+          "relationship": "signing_key_stolen_by",
+          "target": "infra:attacker-185.199.220.14",
+          "note": "Attacker steals the IdP signing key and becomes the trust anchor."
+        },
+        {
+          "source": "idp:idp.example.com",
+          "relationship": "issues_token_to",
+          "target": "user:ceo@example.com",
+          "note": "Forged but valid tokens are minted for privileged identities."
+        },
+        {
+          "source": "user:ceo@example.com",
+          "relationship": "moves_laterally_to",
+          "target": "mailbox:finance_lead@example.com",
+          "note": "Forged identity pivots across cloud and SaaS services."
+        }
+      ]
+    },
+    {
+      "scenario_id": "SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE",
+      "title": "Hardware Root-of-Trust Compromise",
+      "layer": "hardware-trust",
+      "description": "TPM and Secure Enclave extraction destroy the deepest trust anchor in the environment.",
+      "classification": "Hardware Root-of-Trust Compromise - TPM/Secure Enclave Extraction",
+      "risk": "Critical",
+      "primary_entities": [
+        "node:node-7",
+        "tpm:node-7",
+        "attestation:node-7",
+        "workload:prod-db-01",
+        "workload:shadow-db"
+      ],
+      "relationships": [
+        {
+          "source": "tpm:node-7",
+          "relationship": "extracts_key_from",
+          "target": "infra:attacker-185.199.220.14",
+          "note": "Hardware-backed key material is extracted from the trust anchor."
+        },
+        {
+          "source": "attestation:node-7",
+          "relationship": "forges_attestation_for",
+          "target": "workload:shadow-db",
+          "note": "Forged attestation causes shadow workloads to appear trusted."
+        },
+        {
+          "source": "workload:shadow-db",
+          "relationship": "spoofs_identity_of",
+          "target": "workload:prod-db-01",
+          "note": "Cloned workload impersonates the production database tier."
+        },
+        {
+          "source": "workload:shadow-db",
+          "relationship": "exfiltrates_to",
+          "target": "infra:attacker-185.199.220.14",
+          "note": "Data leaves the cloned workload after disk decryption and trust bypass."
+        },
+        {
+          "source": "node:node-7",
+          "relationship": "compromised_by",
+          "target": "infra:attacker-185.199.220.14",
+          "note": "Node-level compromise reaches the hardware root of trust."
+        }
+      ]
+    }
+  ]
+}

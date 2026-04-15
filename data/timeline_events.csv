@@ -1,0 +1,66 @@
+Time;Scenario;Key Event;User/Identity;Detection;Response
+03:12;1;Spam burst against monitored tenant;mail-relay-01;Detected;Alert triggered, sender blocklist updated
+03:45;2;Malware attachment detonated in inbox workflow;finance.user@example.com;Detected;Alert triggered, attachment quarantine initiated
+04:15;3;Unauthorized access from stolen credentials;workstation-admin;Detected;Account disabled, session revoked
+06:02;4;Business email compromise workflow abuse;ceo-mailbox@example.com;Detected;Mailbox rules disabled, alert triggered
+07:22;5;OAuth abuse through rogue consent grant;app-registration-ops;Detected;OAuth grant deleted, consent review initiated
+10:12;6;Vendor compromise creates downstream fraud path;vendor-automation-user;Detected;Vendor access disabled, rollback initiated
+13:22;7;Insider misuse expands privileged access and staging;privileged.analyst@example.com;Detected;Privileged session disabled, exfil alert triggered
+15:03;8;Token replay and impossible travel session hijack;dev_lead@example.com;Detected;Token blacklisted, account locked
+16:12;9;Lateral movement via shadow OAuth application;dev_lead@example.com;Detected;OAuth grant deleted, malicious app disabled
+17:22;10;Service principal hijack of production workload;sp-prod-backup-manager;Detected;Service Principal disabled, secrets rotated
+18:12;11;K8s sidecar breakout reaches node boundary;sp-prod-backup-manager;Detected;Pod deleted, node cordoned, policy enforced
+19:12;12;Supply-chain poisoning causes artifact drift;automation-bot (impersonated);Detected;Pipeline halted, rollback initiated
+20:12;13;Serialized exploit payload targets public profile API;profile-api;Behavioral anomaly;Endpoint disabled, alert triggered
+20:13;13;Unexpected python process spawn and NET_ADMIN request;profile-api;Runtime anomaly;Pod isolated, secrets rotated
+20:14;13;SSH lateral movement and 48 MB exfiltration to attacker IP;profile-api;UEBA escalation;Attacker IP blocked, secrets rotated
+20:15;13;Cron persistence created after full runtime compromise;profile-api;UEBA critical;Forensics started, clean rebuild initiated
+21:12;14;Untrusted encryptor launches on on-prem file server;fileserver-02;EDR anomaly;Host isolated, ransomware response initiated
+21:12;14;Golden ticket used by backup service account for hybrid pivot;svc-backup;Identity anomaly;Service account disabled, Kerberos review started
+21:13;14;Cloud VM mass encryption and sustained CPU saturation detected;prod-app-01;Compute anomaly;VM quarantined, backup jobs halted
+21:13;14;Kubernetes workload deletes application data and overwrites root filesystem;payments-api;Runtime anomaly;Node quarantined, workload contained
+21:14;14;Object storage rewritten to locked extensions at catastrophic volume;customer-records;Storage anomaly;Bucket access blocked, snapshot review initiated
+21:14;14;Ransom note written to system banner on compromised host;hybrid-runtime;Behavioral anomaly;IR war room activated
+21:15;14;Outbound status beacon confirms detonation success;hybrid-estate;C2 detection;Attacker IP blocked, executive escalation initiated
+22:12;15;Federated token issued from compromised Tenant A using unknown device fingerprint;contractor_jane@tenantA.com;Federation anomaly;Federation trust review initiated, token issuance triaged
+22:12;15;Federated identity assumes Tenant B global admin role outside normal policy;contractor_jane@tenantA.com;IAM anomaly;Cross-tenant role assumption blocked, privileged session revoked
+22:13;15;Rogue service principal created and restricted secrets container accessed;shadow-app;Cloud control-plane anomaly;Service principal disabled, secret rotation initiated
+22:14;15;Rogue federation trust created and 6.2 GB outbound transfer confirms exfiltration;tenantB federation plane;UEBA critical;Federation trust disabled, attacker IP blocked, emergency rotation started
+23:12;16;IdP admin login from attacker IP bypasses MFA through abused trusted-device path;idp-admin;Identity anomaly;Admin session isolated, emergency IdP incident declared
+23:12;16;OIDC signing key exported from keystore without approved change control;oidc-signing-key-01;Keystore anomaly;Key rotation initiated, token trust review started
+23:13;16;Forged 48-hour token validates and assumes GlobalAdmin without interactive MFA;ceo@example.com;Token policy anomaly;Global token invalidation initiated, privileged sessions revoked
+23:14;16;Multi-service impersonation and rogue signing key creation establish persistence;idp trust plane;Identity collapse;Rogue key removed, IdP rebuild started
+23:15;16;12.4 GB outbound transfer confirms global identity-enabled exfiltration;global identity fabric;UEBA critical;Attacker IP blocked, leadership and compliance escalation activated
+00:12;17;Non-allowlisted process reads TPM PCR state and opens enclave debug session on node-7;node-7;Hardware anomaly;Node isolated, hardware incident declared
+00:13;17;Raw export of vm-disk-key confirms TPM or enclave key extraction;node-7 TPM;Trust-anchor anomaly;Key rotation and attestation revocation initiated
+00:13;17;Healthy attestation report conflicts with boot log and PCR history;node-7 attestation;Attestation anomaly;Remote attestation trust revoked
+00:14;17;Shadow VM clone created from prod-db-01 using stolen disk key and forged trust;shadow-db;Workload identity bypass;Clone quarantined, workload identity blocked
+00:15;17;9.4 GB outbound transfer confirms exfiltration from cloned trusted workload;shadow-db;UEBA critical;Attacker IP blocked, hardware rebuild workflow started
+01:05;18;DNS tunneling detected over legitimate resolver using high-entropy subdomains;dns-resolver-01;DNS anomaly;Resolver query logging enabled, suspicious domains sinkholed
+01:06;18;C2 beacon traffic exfiltrates staged credentials over DNS TXT records;malware-implant;UEBA escalation;Outbound DNS blocked, endpoint isolated
+01:07;18;Attacker pivots to internal LDAP server using tunneled session;ldap-server-01;Network anomaly;LDAP access revoked, lateral path blocked
+01:08;18;22.1 MB of AD schema data exfiltrated via DNS tunnel before containment;ldap-server-01;UEBA critical;Full AD audit initiated, affected accounts reset
+02:10;19;Rogue container image pushed to private registry with embedded reverse shell;ci-pipeline-bot;Registry anomaly;Image quarantined, pipeline paused, registry audit started
+02:11;19;Reverse shell activates in staging environment and beacons to attacker C2;staging-runner-03;Runtime anomaly;Container terminated, network egress blocked
+02:12;19;Attacker escalates to cluster-admin via misconfigured RBAC binding;staging-runner-03;RBAC anomaly;Binding revoked, cluster audit initiated
+02:13;19;Cluster secrets and service account tokens harvested before detection;k8s-api-server;Credential anomaly;All tokens rotated, impacted services restarted
+02:45;20;AI model inference endpoint receives adversarial prompt to extract system context;ai-inference-01;Prompt injection anomaly;Request blocked, inference logs reviewed
+02:46;20;Follow-up prompt extracts partial training data sample via model inversion;ai-inference-01;Data leakage anomaly;Model endpoint suspended, red team review initiated
+02:47;20;Attacker uses extracted schema to craft targeted spear-phish against ML team;ml-team@example.com;Phishing anomaly;Mailbox quarantined, phishing campaign blocked
+02:48;20;14.3 MB of proprietary model weights confirmed exfiltrated via inference API;ai-inference-01;UEBA critical;Model endpoint disabled, IP blocked, legal escalation initiated
+03:30;21;Compromised prompt template package is published to internal registry;prompt-ci-bot;Supply chain anomaly;Package quarantined, dependency freeze initiated
+03:31;21;Poisoned prompt template deploys to orchestration layer without review;agent-orchestrator;Policy drift anomaly;Deployment halted, approval workflow enforced
+03:32;21;Injected hidden instructions force model to reveal retrieval context;agent-orchestrator;Prompt integrity anomaly;Session blocked, template rollback initiated
+03:33;21;7.8 MB of indexed knowledge snippets exfiltrated through chained prompts;knowledge-index;UEBA critical;Index access revoked, legal and IR escalation initiated
+04:02;22;SIEM API token used from new ASN outside approved geofence;siem-api-token-prod;Access anomaly;Token revoked, emergency auth reset initiated
+04:03;22;Detection suppression rules modified to hide credential theft alerts;siem-control-plane;Control-plane anomaly;Rule set restored, change window locked
+04:04;22;Attacker deletes 36 minutes of audit logs via privileged API call;siem-control-plane;Log integrity anomaly;Immutable backup restore initiated
+04:05;22;Parallel data exfiltration reaches 18.6 MB before containment window closes;soc-data-lake;UEBA critical;Egress blocked, cross-platform hunt launched
+04:40;23;Compromised CI runner signs a malicious hotfix artifact and tags it as production-ready;release-runner-02;Build integrity anomaly;Signing key revoked, release channel frozen
+04:41;23;Poisoned hotfix deploys to payment API and silently disables transaction integrity checks;payments-api;Runtime policy anomaly;Deployment rolled back, integrity guardrails re-enabled
+04:42;23;Attacker triggers fraudulent settlement bursts through manipulated validation pipeline;settlement-worker-01;Fraud pattern anomaly;Settlement queue paused, reconciliation initiated
+04:43;23;11.7 MB of payment metadata exported via trusted partner webhook before kill switch;partner-webhook-gateway;UEBA critical;Webhook disabled, legal and finance escalation initiated
+05:10;24;Compromised MDM profile pushes stealth VPN and root certificate to executive laptops;mdm-controller;Endpoint configuration anomaly;Profile revoked, fleet certificate rotation initiated
+05:11;24;Shadow VPN channel reroutes sensitive collaboration traffic to attacker relay;exec-laptop-fleet;Network trust anomaly;VPN tunnel blocked, endpoint isolation enforced
+05:12;24;Credential replay against privileged SaaS admin console succeeds from managed device posture;saas-admin-console;Identity posture anomaly;Session revoked, conditional access tightened
+05:13;24;9.9 MB of board and legal documents exfiltrated from cloud drive during trust window;exec-docs-tenant;UEBA critical;Drive access frozen, incident disclosure workflow initiated

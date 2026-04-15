@@ -1,0 +1,33 @@
+{
+  "scenario_id": "SCENARIO_1_SPAM_BURST",
+  "expected": {
+    "classification": "Spam burst / relay probing",
+    "signals": [
+      "High-frequency inbound attempts",
+      "Relay access denied",
+      "Authentication failures",
+      "Bot-like reconnect behavior"
+    ],
+    "actions": [
+      "Block source IP",
+      "Increase rate-limit thresholds",
+      "Verify no internal accounts were compromised",
+      "Monitor for repeat attempts"
+    ],
+    "risk_level": "Medium"
+  },
+  "rubric_weights": {
+    "threat_identification": 0.3,
+    "signal_recognition": 0.25,
+    "recommended_actions": 0.25,
+    "risk_assessment": 0.1,
+    "clarity_structure": 0.1
+  },
+  "scoring_logic": {
+    "classification_match": "exact_or_close",
+    "signal_match": "percentage_overlap",
+    "action_match": "percentage_overlap",
+    "risk_match": "exact_or_close",
+    "clarity": "llm_quality_metric"
+  }
+}

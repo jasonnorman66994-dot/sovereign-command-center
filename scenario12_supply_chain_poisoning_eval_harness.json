@@ -1,0 +1,37 @@
+{
+  "scenario_id": "SCENARIO_12_SUPPLY_CHAIN_POISONING",
+  "expected": {
+    "classification": "Supply-Chain Compromise - CI/CD Pipeline Poisoning",
+    "signals": [
+      "Unauthorized commit to pipeline template",
+      "Unknown GPG signature",
+      "Malicious build step",
+      "Artifact hash mismatch",
+      "Outbound callback to attacker",
+      "Secret harvesting behavior"
+    ],
+    "actions": [
+      "Halt deployments",
+      "Revoke automation-bot credentials",
+      "Block attacker IP",
+      "Roll back artifacts",
+      "Audit pipeline history",
+      "Rebuild CI/CD environment"
+    ],
+    "risk_level": "Critical"
+  },
+  "rubric_weights": {
+    "threat_identification": 0.25,
+    "signal_recognition": 0.25,
+    "recommended_actions": 0.25,
+    "risk_assessment": 0.15,
+    "clarity_structure": 0.10
+  },
+  "scoring_logic": {
+    "classification_match": "exact_or_close",
+    "signal_match": "percentage_overlap",
+    "action_match": "percentage_overlap",
+    "risk_match": "exact",
+    "clarity": "llm_quality_metric"
+  }
+}

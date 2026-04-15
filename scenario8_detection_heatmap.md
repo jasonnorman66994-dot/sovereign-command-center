@@ -1,0 +1,16 @@
+# Scenario 8 Detection Heatmap
+
+| Hour | User                    | Red Flag Count |
+|------|-------------------------|---------------|
+| 00   | svc_backup@enterprise.com | 2             |
+| 01   | user_201@enterprise.com   | 3             |
+| 02   | user_202@enterprise.com   | 3             |
+| 03   | svc_automation@enterprise.com | 2         |
+| 03   | user_203@enterprise.com   | 1             |
+| 04   | user_204@enterprise.com   | 3             |
+| 05   | user_205@enterprise.com   | 3             |
+| 07   | user_207@enterprise.com   | 3             |
+| 08   | user_208@enterprise.com   | 2             |
+| 12   | user_212@enterprise.com   | 2             |
+| 13   | svc_hr@enterprise.com     | 1             |
+| 15   | user_214@enterprise.com   | 3             |

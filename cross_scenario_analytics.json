@@ -1,0 +1,395 @@
+{
+  "SCENARIO_10_SERVICE_PRINCIPAL_HIJACK": {
+    "signals": [
+      "Foreign IP service principal login",
+      "Large blob downloads",
+      "Long-lived secret creation",
+      "Old leaked secret",
+      "Unauthorized role assignment attempt",
+      "VM manipulation"
+    ],
+    "actions": [
+      "Audit IAM role changes",
+      "Block attacker IP",
+      "Disable service principal",
+      "Revoke secrets and tokens",
+      "Rotate all workload secrets",
+      "Stop malicious VM"
+    ],
+    "risk_levels": [
+      "Critical"
+    ],
+    "classifications": [
+      "Cloud Workload Compromise - Service Principal Hijack"
+    ]
+  },
+  "SCENARIO_11_K8S_SIDECAR_BREAKOUT": {
+    "signals": [
+      "Cloud API secret access",
+      "Host filesystem mount attempt",
+      "Kubelet client cert access",
+      "SYS_ADMIN capability escalation",
+      "Sidecar integrity violation",
+      "Unauthorized exec into container"
+    ],
+    "actions": [
+      "Audit cloud API calls",
+      "Isolate and drain node",
+      "Quarantine compromised pod",
+      "Rebuild node from clean image",
+      "Revoke node IAM credentials",
+      "Rotate kubelet certificates"
+    ],
+    "risk_levels": [
+      "Critical"
+    ],
+    "classifications": [
+      "Kubernetes Container Breakout and Node Compromise"
+    ]
+  },
+  "SCENARIO_12_SUPPLY_CHAIN_POISONING": {
+    "signals": [
+      "Artifact hash mismatch",
+      "Malicious build step",
+      "Outbound callback to attacker",
+      "Secret harvesting behavior",
+      "Unauthorized commit to pipeline template",
+      "Unknown GPG signature"
+    ],
+    "actions": [
+      "Audit pipeline history",
+      "Block attacker IP",
+      "Halt deployments",
+      "Rebuild CI/CD environment",
+      "Revoke automation-bot credentials",
+      "Roll back artifacts"
+    ],
+    "risk_levels": [
+      "Critical"
+    ],
+    "classifications": [
+      "Supply-Chain Compromise - CI/CD Pipeline Poisoning"
+    ]
+  },
+  "SCENARIO_13_ZERO_DAY_EXPLOIT": {
+    "signals": [
+      "Large outbound data transfer",
+      "Privilege escalation attempt",
+      "SSH lateral movement",
+      "Unauthorized cron job",
+      "Unexpected process spawn",
+      "Unexpected serialized payload"
+    ],
+    "actions": [
+      "Block attacker IP",
+      "Capture forensic artifacts",
+      "Disable vulnerable endpoint",
+      "Isolate compromised pod",
+      "Patch vulnerable service",
+      "Rotate secrets"
+    ],
+    "risk_levels": [
+      "Critical"
+    ],
+    "classifications": [
+      "Zero-Day Exploitation and Runtime Compromise"
+    ]
+  },
+  "SCENARIO_14_HYBRID_CLOUD_RANSOMWARE": {
+    "signals": [
+      "Golden ticket activity",
+      "Kubernetes data destruction",
+      "Mass file encryption",
+      "Object storage rewrite",
+      "Outbound C2 beacon",
+      "Ransom note deployment",
+      "Untrusted binary execution"
+    ],
+    "actions": [
+      "Block attacker IP",
+      "Capture forensic artifacts",
+      "Disable compromised accounts",
+      "Isolate affected systems",
+      "Restore from offline backups",
+      "Rotate credentials"
+    ],
+    "risk_levels": [
+      "Critical"
+    ],
+    "classifications": [
+      "Hybrid-Cloud Ransomware Detonation"
+    ]
+  },
+  "SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE": {
+    "signals": [
+      "Creation of rogue service principal",
+      "Cross-tenant secret access",
+      "Federated identity assuming privileged role",
+      "Large outbound exfiltration",
+      "Suspicious federation token issuance",
+      "Unauthorized federation trust creation"
+    ],
+    "actions": [
+      "Audit role assumptions",
+      "Block attacker IP",
+      "Disable compromised identities",
+      "Disable federation trust",
+      "Rebuild federation trust securely",
+      "Revoke federation tokens"
+    ],
+    "risk_levels": [
+      "Critical"
+    ],
+    "classifications": [
+      "Cross-Tenant Cloud Takeover - Federation Abuse"
+    ]
+  },
+  "SCENARIO_16_OIDC_SIGNING_KEY_THEFT": {
+    "signals": [
+      "Forged tokens with abnormal lifetimes",
+      "Large outbound exfiltration",
+      "Privilege escalation via forged tokens",
+      "Rogue signing key creation",
+      "Suspicious IdP admin login",
+      "Unauthorized signing key export"
+    ],
+    "actions": [
+      "Audit token issuance",
+      "Block attacker IP",
+      "Disable IdP admin accounts",
+      "Invalidate all tokens",
+      "Rebuild IdP from clean state",
+      "Rotate OIDC signing keys"
+    ],
+    "risk_levels": [
+      "Critical"
+    ],
+    "classifications": [
+      "Global Identity Provider Compromise - OIDC Signing Key Theft"
+    ]
+  },
+  "SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE": {
+    "signals": [
+      "Enclave debug session",
+      "Forged attestation",
+      "Large outbound exfiltration",
+      "Raw key export",
+      "Unauthorized TPM access",
+      "VM clone using stolen key"
+    ],
+    "actions": [
+      "Audit VM clone operations",
+      "Block attacker IP",
+      "Isolate compromised node",
+      "Rebuild node from clean hardware",
+      "Revoke attestation trust",
+      "Rotate TPM/enclave keys"
+    ],
+    "risk_levels": [
+      "Critical"
+    ],
+    "classifications": [
+      "Hardware Root-of-Trust Compromise - TPM/Secure Enclave Extraction"
+    ]
+  },
+  "SCENARIO_1_SPAM_BURST": {
+    "signals": [
+      "Authentication failures",
+      "Bot-like reconnect behavior",
+      "High-frequency inbound attempts",
+      "Relay access denied"
+    ],
+    "actions": [
+      "Block source IP",
+      "Increase rate-limit thresholds",
+      "Monitor for repeat attempts",
+      "Verify no internal accounts were compromised"
+    ],
+    "risk_levels": [
+      "Medium"
+    ],
+    "classifications": [
+      "Spam burst / relay probing"
+    ]
+  },
+  "SCENARIO_2_MALWARE_ATTACHMENT": {
+    "signals": [
+      "Known test signature",
+      "Malware signature match",
+      "Quarantine event",
+      "Suspicious sender identity"
+    ],
+    "actions": [
+      "Check whether similar messages bypassed filters",
+      "Confirm quarantine",
+      "Notify security team",
+      "Validate AV signatures are up to date"
+    ],
+    "risk_levels": [
+      "High"
+    ],
+    "classifications": [
+      "Malware attachment attempt"
+    ]
+  },
+  "SCENARIO_3_UNAUTHORIZED_ACCESS": {
+    "signals": [
+      "Credential stuffing pattern",
+      "Multiple failed logins from rotating IPs",
+      "Sudden login success",
+      "Suspicious session start"
+    ],
+    "actions": [
+      "Block suspicious IPs",
+      "Disable account",
+      "Enforce MFA",
+      "Force password reset",
+      "Investigate credential theft vector",
+      "Terminate active session"
+    ],
+    "risk_levels": [
+      "High"
+    ],
+    "classifications": [
+      "Unauthorized access / credential compromise"
+    ]
+  },
+  "SCENARIO_4_BEC_ATTEMPT": {
+    "signals": [
+      "Financial urgency keywords",
+      "New device fingerprint",
+      "Reply-to changed to external domain",
+      "Successful login from unusual IP",
+      "Suspicious mailbox rules"
+    ],
+    "actions": [
+      "Block suspicious IP",
+      "Disable executive account",
+      "Inspect mailbox rules",
+      "Notify finance team",
+      "Review sent items for fraud",
+      "Revoke OAuth tokens",
+      "Terminate active sessions"
+    ],
+    "risk_levels": [
+      "Critical"
+    ],
+    "classifications": [
+      "Business Email Compromise (BEC) - Active Account Takeover"
+    ]
+  },
+  "SCENARIO_5_OAUTH_ABUSE": {
+    "signals": [
+      "Foreign IP token use",
+      "High-risk scopes",
+      "Mailbox forwarding rule",
+      "Unverified OAuth app"
+    ],
+    "actions": [
+      "Delete mailbox rules",
+      "Notify leadership",
+      "Remove malicious app",
+      "Reset credentials",
+      "Revoke OAuth tokens",
+      "Tenant-wide app audit"
+    ],
+    "risk_levels": [
+      "High"
+    ],
+    "classifications": [
+      "OAuth Consent Abuse"
+    ]
+  },
+  "SCENARIO_6_VENDOR_COMPROMISE": {
+    "signals": [
+      "AP team engagement",
+      "Changed banking details",
+      "Unusual vendor login region",
+      "Urgency language",
+      "Vendor mailbox forwarding rule"
+    ],
+    "actions": [
+      "Block vendor temporarily",
+      "Contact vendor security",
+      "Notify finance leadership",
+      "Quarantine email",
+      "Review AP replies",
+      "Stop payment"
+    ],
+    "risk_levels": [
+      "Critical"
+    ],
+    "classifications": [
+      "Vendor Email Compromise"
+    ]
+  },
+  "SCENARIO_7_INSIDER_MISUSE": {
+    "signals": [
+      "Access to sensitive finance files",
+      "High UEBA anomaly score",
+      "Large upload to personal cloud",
+      "Unauthorized role change",
+      "ZIP file creation"
+    ],
+    "actions": [
+      "Analyze ZIP contents",
+      "Block outbound uploads",
+      "Disable user account",
+      "Notify HR and security leadership",
+      "Revert unauthorized privileges",
+      "Review role change logs"
+    ],
+    "risk_levels": [
+      "Critical"
+    ],
+    "classifications": [
+      "Insider Misuse - Privilege Creep and Data Exfiltration"
+    ]
+  },
+  "SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL": {
+    "signals": [
+      "Device fingerprint mismatch",
+      "Impossible travel",
+      "Same token used from two locations",
+      "Sensitive repo access",
+      "Token replay warning"
+    ],
+    "actions": [
+      "Block suspicious IP",
+      "Force MFA re-enrollment",
+      "Invalidate token",
+      "Review repo downloads",
+      "Revoke all sessions",
+      "Rotate accessed secrets"
+    ],
+    "risk_levels": [
+      "Critical"
+    ],
+    "classifications": [
+      "Token Replay and Impossible Travel"
+    ]
+  },
+  "SCENARIO_9_LATERAL_MOVEMENT_OAUTH": {
+    "signals": [
+      "App impersonating multiple users",
+      "Large repo and mailbox exports",
+      "Long-lived refresh token",
+      "Single attacker IP",
+      "Unauthorized permission escalation"
+    ],
+    "actions": [
+      "Audit app permission history",
+      "Block attacker IP",
+      "Disable OAuth app",
+      "Investigate initial compromise",
+      "Revoke app tokens",
+      "Rotate accessed secrets"
+    ],
+    "risk_levels": [
+      "Critical"
+    ],
+    "classifications": [
+      "Lateral Movement via Compromised OAuth App"
+    ]
+  }
+}

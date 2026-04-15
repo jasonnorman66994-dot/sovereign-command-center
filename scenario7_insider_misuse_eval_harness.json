@@ -1,0 +1,36 @@
+{
+  "scenario_id": "SCENARIO_7_INSIDER_MISUSE",
+  "expected": {
+    "classification": "Insider Misuse - Privilege Creep and Data Exfiltration",
+    "signals": [
+      "Unauthorized role change",
+      "Access to sensitive finance files",
+      "ZIP file creation",
+      "Large upload to personal cloud",
+      "High UEBA anomaly score"
+    ],
+    "actions": [
+      "Disable user account",
+      "Block outbound uploads",
+      "Notify HR and security leadership",
+      "Review role change logs",
+      "Analyze ZIP contents",
+      "Revert unauthorized privileges"
+    ],
+    "risk_level": "Critical"
+  },
+  "rubric_weights": {
+    "threat_identification": 0.25,
+    "signal_recognition": 0.25,
+    "recommended_actions": 0.25,
+    "risk_assessment": 0.15,
+    "clarity_structure": 0.10
+  },
+  "scoring_logic": {
+    "classification_match": "exact_or_close",
+    "signal_match": "percentage_overlap",
+    "action_match": "percentage_overlap",
+    "risk_match": "exact",
+    "clarity": "llm_quality_metric"
+  }
+}

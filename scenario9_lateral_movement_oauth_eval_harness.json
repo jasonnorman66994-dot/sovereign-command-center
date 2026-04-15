@@ -1,0 +1,36 @@
+{
+  "scenario_id": "SCENARIO_9_LATERAL_MOVEMENT_OAUTH",
+  "expected": {
+    "classification": "Lateral Movement via Compromised OAuth App",
+    "signals": [
+      "Unauthorized permission escalation",
+      "App impersonating multiple users",
+      "Large repo and mailbox exports",
+      "Single attacker IP",
+      "Long-lived refresh token"
+    ],
+    "actions": [
+      "Disable OAuth app",
+      "Revoke app tokens",
+      "Block attacker IP",
+      "Audit app permission history",
+      "Investigate initial compromise",
+      "Rotate accessed secrets"
+    ],
+    "risk_level": "Critical"
+  },
+  "rubric_weights": {
+    "threat_identification": 0.25,
+    "signal_recognition": 0.25,
+    "recommended_actions": 0.25,
+    "risk_assessment": 0.15,
+    "clarity_structure": 0.10
+  },
+  "scoring_logic": {
+    "classification_match": "exact_or_close",
+    "signal_match": "percentage_overlap",
+    "action_match": "percentage_overlap",
+    "risk_match": "exact",
+    "clarity": "llm_quality_metric"
+  }
+}

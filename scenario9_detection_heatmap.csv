@@ -1,0 +1,5 @@
+hour,user,red_flag_count
+08,dev_lead@example.com,2
+08,svc_oauth@enterprise.com,1
+09,attacker_ip_45.22.11.5,2
+10,svc_oauth@enterprise.com,1

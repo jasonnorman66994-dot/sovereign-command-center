@@ -1,0 +1,3594 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shadow Toolz Distributed Dashboard</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --panel: #161b22;
+            --border: #30363d;
+            --text: #c9d1d9;
+            --muted: #8b949e;
+            --info: #58a6ff;
+            --warning: #ffa657;
+            --critical: #ff7b72;
+            --ok: #7ee787;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: "JetBrains Mono", "Fira Code", monospace;
+            background: radial-gradient(circle at top right, #1f2937 0%, var(--bg) 45%);
+            color: var(--text);
+        }
+
+        h1 {
+            margin: 0 0 12px;
+            font-size: 1.1rem;
+            color: var(--info);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 14px;
+        }
+
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .console {
+            height: 480px;
+            overflow: auto;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: #000;
+            padding: 10px;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .line {
+            margin: 0 0 6px;
+            color: var(--ok);
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .line.warning {
+            color: var(--warning);
+        }
+
+        .line.critical {
+            color: var(--critical);
+        }
+
+        .module-box {
+            margin-bottom: 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 10px;
+            min-height: 84px;
+        }
+
+        .module-box.collapsed {
+            min-height: 0;
+        }
+
+        .module-box.collapsed > :not(.module-header) {
+            display: none;
+        }
+
+        .module-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .module-actions {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .module-title {
+            color: var(--info);
+            font-size: 12px;
+            text-transform: uppercase;
+            margin: 0;
+        }
+
+        .module-toggle {
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--muted);
+            border-radius: 999px;
+            padding: 4px 9px;
+            font-size: 10px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .module-toggle:hover {
+            border-color: var(--info);
+            color: var(--info);
+        }
+
+        .shortcut-hint {
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+        .inline-help {
+            margin-top: 8px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: rgba(11, 18, 36, 0.48);
+            overflow: hidden;
+        }
+
+        .inline-help summary {
+            cursor: pointer;
+            padding: 8px 10px;
+            color: var(--info);
+            font-size: 10px;
+            letter-spacing: 0.4px;
+            list-style: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .inline-help summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .inline-help[open] summary {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .inline-help-panel {
+            padding: 0 10px 10px;
+        }
+
+        .inline-help-panel .shortcut-hint:first-child {
+            margin-top: 6px;
+        }
+
+        .audit-view {
+            font-size: 11px;
+            white-space: pre-wrap;
+            color: var(--muted);
+        }
+
+        .report-links {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .kpi-ribbon {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .filter-summary {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: -2px 0 14px;
+        }
+
+        .terminal-banner {
+            margin: 0 0 14px;
+            padding: 14px;
+            border: 1px solid rgba(249, 38, 114, 0.7);
+            border-radius: 12px;
+            background:
+                radial-gradient(circle at top right, rgba(249, 38, 114, 0.24), transparent 42%),
+                linear-gradient(135deg, rgba(63, 11, 28, 0.94), rgba(23, 11, 20, 0.94));
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+        }
+
+        .terminal-banner.pending {
+            border-color: var(--border);
+            background: linear-gradient(180deg, rgba(16, 26, 52, 0.95), rgba(11, 18, 36, 0.95));
+        }
+
+        .terminal-banner-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .terminal-banner-title {
+            color: #ffd6d2;
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .terminal-banner-label {
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 123, 114, 0.5);
+            color: #ffd6d2;
+            font-size: 10px;
+            background: rgba(255, 123, 114, 0.14);
+        }
+
+        .terminal-banner-scenario {
+            margin-top: 8px;
+            color: #fff5f4;
+            font-size: 1rem;
+        }
+
+        .terminal-banner-copy {
+            margin-top: 8px;
+            color: #f2c7cb;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .terminal-banner-callout {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 214, 210, 0.12);
+            color: #fff5f4;
+            font-size: 10px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .terminal-banner-metrics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .terminal-banner-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 214, 210, 0.16);
+            background: rgba(255, 255, 255, 0.06);
+            color: #fff5f4;
+            font-size: 10px;
+        }
+
+        .terminal-banner-pill strong {
+            color: #ffd6d2;
+        }
+
+        .filter-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            background: rgba(11, 18, 36, 0.72);
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .filter-pill strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .kpi-card {
+            background: linear-gradient(180deg, rgba(16, 26, 52, 0.95), rgba(11, 18, 36, 0.95));
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        .kpi-chart {
+            margin-top: 8px;
+            height: 26px;
+            position: relative;
+        }
+
+        .kpi-chart svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .kpi-chart circle {
+            opacity: 0.9;
+            cursor: pointer;
+        }
+
+        .sparkline-tooltip {
+            position: absolute;
+            inset: auto auto calc(100% + 6px) 0;
+            transform: translateX(-50%);
+            pointer-events: none;
+            background: rgba(8, 12, 20, 0.96);
+            color: var(--text);
+            border: 1px solid var(--info);
+            border-radius: 6px;
+            padding: 5px 7px;
+            font-size: 10px;
+            white-space: nowrap;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
+            opacity: 0;
+            transition: opacity 120ms ease;
+            z-index: 2;
+        }
+
+        .sparkline-tooltip.visible {
+            opacity: 1;
+        }
+
+        .kpi-link {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .kpi-link:hover .kpi-card {
+            border-color: var(--info);
+            box-shadow: 0 0 0 1px rgba(88, 166, 255, 0.25);
+        }
+
+        .kpi-label {
+            color: var(--muted);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .kpi-value {
+            color: var(--text);
+            font-size: 1.3rem;
+            margin-top: 6px;
+        }
+
+        .kpi-subtext {
+            color: var(--info);
+            font-size: 10px;
+            margin-top: 4px;
+        }
+
+        .report-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            border: 1px solid var(--info);
+            border-radius: 4px;
+            color: var(--info);
+            text-decoration: none;
+            font-size: 11px;
+        }
+
+        .report-link:hover {
+            background: rgba(88, 166, 255, 0.1);
+        }
+
+        .mini-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+            color: var(--text);
+        }
+
+        .mini-table th,
+        .mini-table td {
+            border-bottom: 1px solid var(--border);
+            padding: 4px 6px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .mini-table th {
+            color: var(--info);
+            font-weight: 600;
+        }
+
+        .pill-critical,
+        .pill-high,
+        .pill-medium {
+            display: inline-block;
+            border-radius: 999px;
+            padding: 2px 8px;
+            font-size: 10px;
+            letter-spacing: 0.4px;
+        }
+
+        .pill-critical {
+            color: #fff;
+            background: rgba(249, 38, 114, 0.85);
+        }
+
+        .pill-high {
+            color: #111;
+            background: rgba(255, 166, 87, 0.9);
+        }
+
+        .pill-medium {
+            color: #111;
+            background: rgba(126, 231, 135, 0.9);
+        }
+
+        .scenario-card {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px;
+            background: rgba(12, 17, 27, 0.65);
+        }
+
+        .scenario-card h4 {
+            margin: 0 0 8px;
+            color: var(--text);
+            font-size: 12px;
+        }
+
+        .scenario-card p {
+            margin: 6px 0;
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .scenario-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+
+        .timeline-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 6px;
+            font-size: 11px;
+        }
+
+        .timeline-item {
+            border-left: 2px solid var(--warning);
+            padding-left: 8px;
+            color: var(--muted);
+        }
+
+        .timeline-item strong {
+            color: var(--text);
+        }
+
+        .chip-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .scenario-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 8px;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            padding-bottom: 4px;
+            background: linear-gradient(180deg, rgba(22, 27, 34, 0.98), rgba(22, 27, 34, 0.88));
+        }
+
+        .scenario-tab {
+            border: 1px solid var(--border);
+            background: rgba(11, 18, 36, 0.7);
+            color: var(--muted);
+            border-radius: 999px;
+            padding: 5px 10px;
+            font-size: 10px;
+            cursor: pointer;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .scenario-tab.active {
+            border-color: var(--info);
+            color: var(--info);
+            box-shadow: 0 0 0 1px rgba(88, 166, 255, 0.25);
+        }
+
+        .scenario-tab-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 5px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.08);
+            color: inherit;
+            font-size: 9px;
+            line-height: 1;
+        }
+
+        .scenario-chip {
+            border: 1px solid var(--border);
+            background: rgba(11, 18, 36, 0.9);
+            color: var(--text);
+            border-radius: 999px;
+            padding: 6px 10px;
+            font-size: 10px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .scenario-chip.active {
+            border-color: var(--info);
+            color: var(--info);
+            box-shadow: 0 0 0 1px rgba(88, 166, 255, 0.3);
+        }
+
+        .scenario-detail {
+            margin-top: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px;
+            background: rgba(12, 17, 27, 0.65);
+            font-size: 11px;
+        }
+
+        .scenario-detail h4 {
+            margin: 0 0 8px;
+            color: var(--text);
+            font-size: 12px;
+        }
+
+        .scenario-detail p {
+            margin: 6px 0;
+            color: var(--muted);
+        }
+
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .detail-clear {
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--info);
+            border-radius: 999px;
+            padding: 5px 10px;
+            font-size: 10px;
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        .detail-clear:hover {
+            border-color: var(--info);
+        }
+
+        .detail-clear.secondary {
+            color: var(--muted);
+        }
+
+        .detail-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .focus-note {
+            margin-top: 8px;
+            color: var(--info);
+            font-size: 10px;
+        }
+
+        .copy-status {
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .copy-status.ok {
+            color: var(--ok);
+        }
+
+        .copy-status.warn {
+            color: var(--warning);
+        }
+
+        .copy-status.error {
+            color: var(--critical);
+        }
+
+        .metric-strip {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .metric-tile {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px;
+            background: rgba(11, 18, 36, 0.7);
+        }
+
+        .metric-tile.critical {
+            border-color: rgba(249, 38, 114, 0.7);
+            background: linear-gradient(180deg, rgba(70, 16, 31, 0.55), rgba(11, 18, 36, 0.8));
+        }
+
+        .metric-tile.high {
+            border-color: rgba(255, 166, 87, 0.7);
+            background: linear-gradient(180deg, rgba(90, 45, 11, 0.45), rgba(11, 18, 36, 0.8));
+        }
+
+        .metric-tile.medium {
+            border-color: rgba(126, 231, 135, 0.7);
+            background: linear-gradient(180deg, rgba(18, 70, 35, 0.4), rgba(11, 18, 36, 0.8));
+        }
+
+        .metric-tile-label {
+            color: var(--muted);
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+        }
+
+        .metric-tile-value {
+            color: var(--text);
+            font-size: 1rem;
+            margin-top: 5px;
+        }
+
+        .chip-hint {
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .war-room-note {
+            margin-top: 8px;
+            border: 1px solid rgba(249, 38, 114, 0.45);
+            border-radius: 8px;
+            padding: 8px 10px;
+            background: linear-gradient(180deg, rgba(63, 11, 28, 0.5), rgba(12, 17, 27, 0.78));
+            color: var(--text);
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+        .war-room-note strong {
+            color: var(--critical);
+        }
+
+        .evidence-bundle {
+            margin-top: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px;
+            background: rgba(8, 12, 20, 0.65);
+        }
+
+        .evidence-title {
+            margin: 0 0 8px;
+            color: var(--info);
+            font-size: 10px;
+            letter-spacing: 0.7px;
+            text-transform: uppercase;
+        }
+
+        .evidence-line {
+            margin: 0 0 6px;
+            font-size: 10px;
+            line-height: 1.5;
+            color: var(--text);
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .evidence-line.warning {
+            color: var(--warning);
+        }
+
+        .evidence-line.critical {
+            color: var(--critical);
+        }
+
+        .module-title.critical {
+            color: var(--critical);
+        }
+
+        .module-title.high {
+            color: var(--warning);
+        }
+
+        .module-title.medium {
+            color: var(--ok);
+        }
+
+        .module-box.isolated {
+            border-color: rgba(88, 166, 255, 0.8);
+            box-shadow: 0 0 0 1px rgba(88, 166, 255, 0.22);
+            background: linear-gradient(180deg, rgba(12, 24, 46, 0.72), rgba(12, 17, 27, 0.72));
+        }
+
+        .module-toggle.active {
+            border-color: var(--info);
+            color: var(--info);
+            background: rgba(88, 166, 255, 0.12);
+        }
+
+        .scenario-metric {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            font-size: 11px;
+            margin-top: 6px;
+        }
+
+        .latency-toolbar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .latency-toolbar select {
+            flex: 1;
+            background: #161b22;
+            color: white;
+            padding: 6px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 11px;
+        }
+
+        .latency-toolbar input {
+            flex: 1;
+            background: #161b22;
+            color: white;
+            padding: 6px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 11px;
+        }
+
+        .meta {
+            color: var(--muted);
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .focus-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 6px 10px;
+            font-size: 10px;
+            color: var(--muted);
+            background: rgba(11, 18, 36, 0.7);
+        }
+
+        .focus-badge.active {
+            color: var(--text);
+        }
+
+        .focus-badge.critical {
+            border-color: rgba(249, 38, 114, 0.75);
+            box-shadow: 0 0 0 1px rgba(249, 38, 114, 0.25);
+        }
+
+        .focus-badge.high {
+            border-color: rgba(255, 166, 87, 0.75);
+            box-shadow: 0 0 0 1px rgba(255, 166, 87, 0.2);
+        }
+
+        .focus-badge.medium {
+            border-color: rgba(126, 231, 135, 0.75);
+            box-shadow: 0 0 0 1px rgba(126, 231, 135, 0.2);
+        }
+
+        .monokai-grid-header {
+            background: #1a191f;
+            border-bottom: 2px solid #a6e22e;
+            color: #f8f8f2;
+            padding: 12px;
+            font-family: "JetBrains Mono", monospace;
+            text-align: center;
+            letter-spacing: 2px;
+            box-shadow: 0 0 15px rgba(166, 226, 46, 0.2);
+            margin-bottom: 12px;
+        }
+
+        .glitch-text {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .status-ready {
+            color: #a6e22e;
+            font-weight: bold;
+        }
+
+        .status-fail {
+            color: #f92672;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
+        .filter-panel {
+            margin-bottom: 14px;
+        }
+
+        .filter-title {
+            margin: 0 0 10px;
+            font-size: 0.9rem;
+            color: var(--info);
+        }
+
+        .filter-select {
+            background: #161b22;
+            color: white;
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-family: inherit;
+        }
+
+        .status-line {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 8px;
+        }
+
+        .status-line.ok {
+            color: var(--ok);
+        }
+
+        .status-line.warn {
+            color: var(--warning);
+        }
+
+        .status-line.error {
+            color: var(--critical);
+        }
+
+        .auth-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .action-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .auth-btn {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid var(--ok);
+            border-radius: 4px;
+            background: transparent;
+            color: var(--ok);
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .auth-btn:disabled,
+        .report-btn:disabled,
+        .detail-clear:disabled,
+        .module-toggle:disabled,
+        .filter-select:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .report-btn {
+            margin-top: 10px;
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--info);
+            border-radius: 4px;
+            background: transparent;
+            color: var(--info);
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .report-btn.secondary {
+            border-color: var(--muted);
+            color: var(--text);
+        }
+
+        .latency-summary {
+            margin: 8px 0;
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .latency-summary.medium {
+            color: var(--ok);
+        }
+
+        .latency-summary.high {
+            color: var(--warning);
+        }
+
+        .latency-summary.critical {
+            color: var(--critical);
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        @media (max-width: 900px) {
+            .kpi-ribbon {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .metric-strip {
+                grid-template-columns: 1fr;
+            }
+
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .console {
+                height: 320px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Shadow Toolz Multi-Stream Monitor</h1>
+    <div class="meta-row">
+        <div class="meta">Bridge: ws://127.0.0.1:8055/ws/telemetry</div>
+        <div id="focus-badge" class="focus-badge">Focused Scenario: none</div>
+    </div>
+
+    <div id="system-check-banner" class="monokai-grid-header">
+        <div class="glitch-text">INITIALIZING SOVEREIGN HANDSHAKE...</div>
+    </div>
+
+    <div class="panel filter-panel">
+        <h3 class="filter-title">📊 MSSP Target Filter</h3>
+        <label class="sr-only" for="business-filter">Business target filter</label>
+        <select id="business-filter" class="filter-select" title="Business target filter" onchange="filterByBusiness()">
+            <option value="all">All Targets</option>
+        </select>
+        <div id="business-status" class="status-line"></div>
+        <button id="run-report-btn" class="report-btn" onclick="runDailyReportNow()">
+            Run Daily Report Now
+        </button>
+        <div id="report-status" class="status-line"></div>
+        <div class="auth-row">
+            <button id="oidc-login-btn" class="auth-btn" onclick="startOidcLogin()">OIDC Login</button>
+            <button id="logout-btn" class="auth-btn" onclick="logoutSession()">Logout</button>
+        </div>
+        <div id="auth-status" class="status-line"></div>
+        <div id="telemetry-status" class="status-line">Telemetry pipeline: waiting for data...</div>
+        <div class="report-links">
+            <a class="report-link" href="/artifacts/mission_control_report.html" target="_blank" rel="noopener noreferrer">Open Mission Report</a>
+            <a class="report-link" href="/artifacts/mission_control_presentation.html" target="_blank" rel="noopener noreferrer">Open Presentation</a>
+            <a class="report-link" href="/artifacts/incident_attack_graph.md" target="_blank" rel="noopener noreferrer">Open Incident Graph</a>
+            <a class="report-link" href="/artifacts/incident_attack_graph.json" target="_blank" rel="noopener noreferrer">Open Graph JSON</a>
+            <a class="report-link" href="/artifacts/red_team_deliverable_package.md" target="_blank" rel="noopener noreferrer">Open Package 8</a>
+            <a class="report-link" href="/artifacts/red_team_deliverable_package.json" target="_blank" rel="noopener noreferrer">Open Package JSON</a>
+            <a class="report-link" href="/artifacts/campaign_launcher_manifest.md" target="_blank" rel="noopener noreferrer">Open Launcher Manifest</a>
+            <a class="report-link" href="/artifacts/campaign_launcher_manifest.json" target="_blank" rel="noopener noreferrer">Open Launcher JSON</a>
+        </div>
+        <div class="action-row">
+            <button id="export-dashboard-state-btn" class="report-btn secondary" onclick="exportDashboardState()">
+                Export Dashboard State
+            </button>
+            <button id="copy-view-link-btn" class="report-btn secondary" onclick="copyDashboardViewLink()">
+                Copy View Link
+            </button>
+        </div>
+        <div class="action-row">
+            <button id="export-dashboard-html-btn" class="report-btn secondary" onclick="exportDashboardHtmlSnapshot()">
+                Export HTML Snapshot
+            </button>
+            <button id="reset-view-btn" class="report-btn secondary" onclick="resetDashboardView()">
+                Reset View
+            </button>
+        </div>
+        <div class="action-row">
+            <button id="expand-all-btn" class="report-btn secondary" onclick="setAllModulesCollapsed(false)">
+                Expand All
+            </button>
+            <button id="collapse-all-btn" class="report-btn secondary" onclick="setAllModulesCollapsed(true)">
+                Collapse All
+            </button>
+        </div>
+        <div id="export-status" class="status-line"></div>
+        <details class="inline-help">
+            <summary>Controls Help</summary>
+            <div class="inline-help-panel">
+                <div class="shortcut-hint">Shortcuts: Alt+R reset view, Alt+L copy view link, Alt+C collapse all, Alt+E expand all.</div>
+                <div class="shortcut-hint">Module actions: <strong>Only</strong> isolates a single module in view. <strong>Collapse</strong> toggles only the current module.</div>
+            </div>
+        </details>
+    </div>
+
+    <div id="kpi-ribbon" class="kpi-ribbon">
+        <div class="kpi-card"><div class="kpi-label">Coverage</div><div class="kpi-value">--</div><div class="kpi-subtext">Awaiting KPI export</div></div>
+        <div class="kpi-card"><div class="kpi-label">Avg Response</div><div class="kpi-value">--</div><div class="kpi-subtext">Awaiting KPI export</div></div>
+        <div class="kpi-card"><div class="kpi-label">Avg Containment</div><div class="kpi-value">--</div><div class="kpi-subtext">Awaiting KPI export</div></div>
+        <div class="kpi-card"><div class="kpi-label">Signal Density</div><div class="kpi-value">--</div><div class="kpi-subtext">Awaiting KPI export</div></div>
+    </div>
+    <div id="terminal-scenario-banner" class="terminal-banner pending">
+        <div class="terminal-banner-header">
+            <div class="terminal-banner-title">Terminal Incident Banner</div>
+            <div class="terminal-banner-label">Awaiting analytics</div>
+        </div>
+        <div class="terminal-banner-copy">Loading the highest-pressure scenario and ransomware detonation posture from the reporting artifacts.</div>
+    </div>
+    <div id="filter-summary" class="filter-summary">
+        <div class="filter-pill"><strong>View</strong> Initializing</div>
+    </div>
+
+    <div class="layout">
+        <section class="panel">
+            <h1>Master Console</h1>
+            <div id="console" class="console"></div>
+        </section>
+
+        <section class="panel">
+            <h1>Module Views</h1>
+            <div class="module-box" data-module-key="sentinel">
+                <div class="module-header"><div class="module-title">Sentinel</div><div class="module-actions"><button type="button" class="module-toggle" data-role="isolate" aria-pressed="false" onclick="collapseOtherModules(this)">Only</button><button type="button" class="module-toggle" data-role="collapse" onclick="toggleModule(this)">Collapse</button></div></div>
+                <div id="sentinel"></div>
+            </div>
+            <div class="module-box" data-module-key="arp-detector">
+                <div class="module-header"><div class="module-title">ARP Detector</div><div class="module-actions"><button type="button" class="module-toggle" data-role="isolate" aria-pressed="false" onclick="collapseOtherModules(this)">Only</button><button type="button" class="module-toggle" data-role="collapse" onclick="toggleModule(this)">Collapse</button></div></div>
+                <div id="arp"></div>
+            </div>
+            <div class="module-box" data-module-key="wifi-analyzer">
+                <div class="module-header"><div class="module-title">WiFi Analyzer</div><div class="module-actions"><button type="button" class="module-toggle" data-role="isolate" aria-pressed="false" onclick="collapseOtherModules(this)">Only</button><button type="button" class="module-toggle" data-role="collapse" onclick="toggleModule(this)">Collapse</button></div></div>
+                <div id="wifi"></div>
+            </div>
+            <div class="module-box" data-module-key="master-audit">
+                <div class="module-header"><div class="module-title">Master Audit (Last 50)</div><div class="module-actions"><button type="button" class="module-toggle" data-role="isolate" aria-pressed="false" onclick="collapseOtherModules(this)">Only</button><button type="button" class="module-toggle" data-role="collapse" onclick="toggleModule(this)">Collapse</button></div></div>
+                <div id="audit" class="audit-view"></div>
+            </div>
+            <div class="module-box" data-module-key="scenario-drilldown">
+                <div class="module-header"><div class="module-title">Scenario Drill-Down</div><div class="module-actions"><button type="button" class="module-toggle" data-role="isolate" aria-pressed="false" onclick="collapseOtherModules(this)">Only</button><button type="button" class="module-toggle" data-role="collapse" onclick="toggleModule(this)">Collapse</button></div></div>
+                <div id="scenario-tabs" class="scenario-tabs">Awaiting analytics...</div>
+                <div id="scenario-chipbar" class="chip-bar">Awaiting analytics...</div>
+                <div class="chip-hint">Use arrow keys to move across chips. Press Enter to focus. Use Clear Focus to reset.</div>
+                <div id="scenario-detail" class="scenario-detail">Choose a scenario to sync the latency views and inspect signals.</div>
+            </div>
+            <div class="module-box" data-module-key="scenario-13-focus">
+                <div class="module-header"><div class="module-title">Terminal War-Room</div><div class="module-actions"><button type="button" class="module-toggle" data-role="isolate" aria-pressed="false" onclick="collapseOtherModules(this)">Only</button><button type="button" class="module-toggle" data-role="collapse" onclick="toggleModule(this)">Collapse</button></div></div>
+                <div class="war-room-note"><strong>Terminal Event:</strong> The highest-pressure scenario is loaded here as the suite capstone so the war-room view always follows the current terminal event.</div>
+                <div id="scenario13" class="scenario-grid">Awaiting analytics...</div>
+            </div>
+            <div class="module-box" data-module-key="focused-timeline">
+                <div class="module-header"><div id="timeline-title" class="module-title">Focused War-Room Timeline</div><div class="module-actions"><button type="button" class="module-toggle" data-role="isolate" aria-pressed="false" onclick="collapseOtherModules(this)">Only</button><button type="button" class="module-toggle" data-role="collapse" onclick="toggleModule(this)">Collapse</button></div></div>
+                <div id="scenario13-timeline" class="timeline-list">Awaiting chain data...</div>
+            </div>
+            <div class="module-box" data-module-key="response-latency">
+                <div class="module-header"><div class="module-title">Chain Response Latency</div><div class="module-actions"><button type="button" class="module-toggle" data-role="isolate" aria-pressed="false" onclick="collapseOtherModules(this)">Only</button><button type="button" class="module-toggle" data-role="collapse" onclick="toggleModule(this)">Collapse</button></div></div>
+                <div class="latency-toolbar">
+                    <select id="response-sort" onchange="refreshScenarioAnalyticsPanels()" title="Response latency sort">
+                        <option value="desc">Highest First</option>
+                        <option value="asc">Lowest First</option>
+                    </select>
+                    <select id="response-filter" onchange="refreshScenarioAnalyticsPanels()" title="Response latency filter">
+                        <option value="all">All Severities</option>
+                        <option value="critical">Critical (15m+)</option>
+                        <option value="high">High (5m+)</option>
+                        <option value="medium">Medium (under 5m)</option>
+                    </select>
+                    <input id="response-search" type="search" placeholder="Find scenario" oninput="refreshScenarioAnalyticsPanels()" aria-label="Search response latency scenarios">
+                </div>
+                <div class="detail-actions">
+                    <button type="button" class="detail-clear secondary" onclick="exportLatencyCsv('response')">Export Filtered CSV</button>
+                    <button type="button" class="detail-clear secondary" onclick="copyLatencyCsv('response')">Copy CSV</button>
+                </div>
+                <div id="response-latency-summary" class="latency-summary">Awaiting latency export...</div>
+                <div id="response-latency" class="audit-view">Awaiting latency export...</div>
+            </div>
+            <div class="module-box" data-module-key="containment-latency">
+                <div class="module-header"><div class="module-title">Chain Containment Latency</div><div class="module-actions"><button type="button" class="module-toggle" data-role="isolate" aria-pressed="false" onclick="collapseOtherModules(this)">Only</button><button type="button" class="module-toggle" data-role="collapse" onclick="toggleModule(this)">Collapse</button></div></div>
+                <div class="latency-toolbar">
+                    <select id="containment-sort" onchange="refreshScenarioAnalyticsPanels()" title="Containment latency sort">
+                        <option value="desc">Highest First</option>
+                        <option value="asc">Lowest First</option>
+                    </select>
+                    <select id="containment-filter" onchange="refreshScenarioAnalyticsPanels()" title="Containment latency filter">
+                        <option value="all">All Severities</option>
+                        <option value="critical">Critical (15m+)</option>
+                        <option value="high">High (5m+)</option>
+                        <option value="medium">Medium (under 5m)</option>
+                    </select>
+                    <input id="containment-search" type="search" placeholder="Find scenario" oninput="refreshScenarioAnalyticsPanels()" aria-label="Search containment latency scenarios">
+                </div>
+                <div class="detail-actions">
+                    <button type="button" class="detail-clear secondary" onclick="exportLatencyCsv('containment')">Export Filtered CSV</button>
+                    <button type="button" class="detail-clear secondary" onclick="copyLatencyCsv('containment')">Copy CSV</button>
+                </div>
+                <div id="containment-latency-summary" class="latency-summary">Awaiting latency export...</div>
+                <div id="containment-latency" class="audit-view">Awaiting latency export...</div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const consoleEl = document.getElementById("console");
+        const urlParams = new URLSearchParams(window.location.search);
+        let authCfg = null;
+        let accessToken = sessionStorage.getItem("shadow.access_token") || "";
+        let feed = null;
+        let currentBusinessFilter = urlParams.get("business") || sessionStorage.getItem("businessFilter") || "all";
+        let currentScenarioFocus = urlParams.get("scenario") || sessionStorage.getItem("scenarioFocus") || "";
+        let currentScenarioGroup = urlParams.get("group") || sessionStorage.getItem("scenarioGroup") || "all";
+        let currentRenderedScenario = "";
+        let knownTargets = {};
+        let latestKpis = null;
+        let latestScenarioAnalytics = null;
+        let latestResponseRows = [];
+        let latestContainmentRows = [];
+        let telemetryLastEventId = null;
+        let telemetryLastAdvanceAt = 0;
+        let terminalAutoFocusEligible = !currentScenarioFocus && !urlParams.get("scenario");
+        let websocketReconnectTimer = null;
+        let websocketReconnectDelayMs = 3000;
+        let scenarioReplayTimers = [];
+        let activeReplayScenario = "";
+        let scenarioReplayState = {
+            scenario: "",
+            evidence: [],
+            nextIndex: 0,
+            paused: false,
+            completed: false,
+        };
+        const TELEMETRY_STALE_SECONDS = 90;
+        const SCENARIO_EVIDENCE_BUNDLES = {
+            SCENARIO_13_ZERO_DAY_EXPLOIT: [
+                {
+                    line: 'Apr 14 20:12:07 edge-gw[1882]: POST /v1/profile/update src="185.199.220.14" payload="serialized-object" target="profile-api"',
+                    state: ''
+                },
+                {
+                    line: 'Apr 14 20:12:08 api-waf[1883]: anomaly: unexpected serialized payload with no matching signature or CVE fingerprint',
+                    state: 'warning'
+                },
+                {
+                    line: 'Apr 14 20:13:10 runtime13[7711]: process_spawn service="profile-api" child="/usr/bin/python3 decode.py" parent="node profile-service.js"',
+                    state: 'critical'
+                },
+                {
+                    line: 'Apr 14 20:13:14 runtime13[7711]: capability_request pod="profile-api" requested="NET_ADMIN" action="modify network interfaces"',
+                    state: 'warning'
+                },
+                {
+                    line: 'Apr 14 20:14:03 eastwest13[5122]: SSH connection source="profile-api" dest="db-admin-01" user="postgres"',
+                    state: 'critical'
+                },
+                {
+                    line: 'Apr 14 20:14:11 proxy13[5123]: OUTBOUND HTTPS dest="185.199.220.14" size=48MB baseline_delta="900%"',
+                    state: 'critical'
+                },
+                {
+                    line: 'Apr 14 20:15:02 runtime13[7711]: cron persistence created path="/tmp/keepalive.sh" schedule="* * * * *"',
+                    state: 'critical'
+                },
+                {
+                    line: 'Apr 14 20:15:10 ueba13[9911]: anomaly_score=10.0 entity="profile-api" reason="exploit + runtime deviation + lateral movement + exfiltration"',
+                    state: 'critical'
+                }
+            ],
+            SCENARIO_14_HYBRID_CLOUD_RANSOMWARE: [
+                {
+                    line: 'Apr 14 21:12:03 edr14[5501]: process_start host="fileserver-02" image="encryptor.exe" parent="svchost.exe" signature="untrusted"',
+                    state: 'critical'
+                },
+                {
+                    line: 'Apr 14 21:12:18 iam14[5502]: kerberos anomaly principal="svc-backup" artifact="golden-ticket-like TGT" pivot="on-prem to cloud"',
+                    state: 'warning'
+                },
+                {
+                    line: 'Apr 14 21:13:01 cloudvm14[5503]: mass file modification host="prod-app-01" cpu="100%" extension=".locked"',
+                    state: 'critical'
+                },
+                {
+                    line: 'Apr 14 21:13:26 k8s14[5504]: workload="payments-api" deleted application data and attempted root filesystem overwrite',
+                    state: 'critical'
+                },
+                {
+                    line: 'Apr 14 21:14:07 storage14[5505]: bucket="customer-records" rewrote objects from "*.bak" to "*.locked" at catastrophic volume',
+                    state: 'critical'
+                },
+                {
+                    line: 'Apr 14 21:14:18 runtime14[5506]: ransom note written path="/etc/motd" host="hybrid-runtime"',
+                    state: 'warning'
+                },
+                {
+                    line: 'Apr 14 21:15:02 net14[5507]: outbound beacon dest="185.199.220.14" uri="/status" purpose="detonation confirmation"',
+                    state: 'critical'
+                }
+            ],
+            SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE: [
+                {
+                    line: 'Apr 14 22:12:10 idpA[4411]: FEDERATION TOKEN ISSUED user="contractor_jane@tenantA.com" audience="tenantB.com" role="ExternalContributor"',
+                    state: ''
+                },
+                {
+                    line: 'Apr 14 22:12:11 idpA[4411]: WARNING: token issued from unknown device fingerprint="DF-9912"',
+                    state: 'warning'
+                },
+                {
+                    line: 'Apr 14 22:12:44 iamB[7712]: ROLE ASSUMED federated_user="contractor_jane@tenantA.com" role="TenantB-GlobalAdmin"',
+                    state: 'critical'
+                },
+                {
+                    line: 'Apr 14 22:12:45 iamB[7712]: WARNING: role not normally assigned to federated identities',
+                    state: 'warning'
+                },
+                {
+                    line: 'Apr 14 22:13:10 cloudapiB[8821]: LIST USERS performed_by="contractor_jane@tenantA.com"',
+                    state: ''
+                },
+                {
+                    line: 'Apr 14 22:13:11 cloudapiB[8821]: CREATE SERVICE PRINCIPAL name="shadow-app" permissions="Directory.ReadWrite.All"',
+                    state: 'critical'
+                },
+                {
+                    line: 'Apr 14 22:13:55 storageB[5512]: BLOB DOWNLOAD container="prod-secrets" size=4.8GB',
+                    state: 'critical'
+                },
+                {
+                    line: 'Apr 14 22:13:56 storageB[5512]: anomaly: federated identity accessing restricted container',
+                    state: 'warning'
+                },
+                {
+                    line: 'Apr 14 22:14:20 iamB[7712]: NEW FEDERATION TRUST CREATED issuer="shadow-app" audience="tenantB.com"',
+                    state: 'critical'
+                },
+                {
+                    line: 'Apr 14 22:14:21 iamB[7712]: WARNING: trust created without admin approval',
+                    state: 'warning'
+                },
+                {
+                    line: 'Apr 14 22:14:55 proxyB[9911]: OUTBOUND connection dest="185.199.220.14" size=6.2GB',
+                    state: 'critical'
+                },
+                {
+                    line: 'Apr 14 22:15:10 uebaB[9911]: anomaly_score=10.0 entity="contractor_jane@tenantA.com" reason="cross-tenant privilege escalation + secret access + federation abuse"',
+                    state: 'critical'
+                }
+            ],
+            SCENARIO_16_OIDC_SIGNING_KEY_THEFT: [
+                {
+                    line: 'Apr 14 23:12:10 idp-core[4411]: ADMIN LOGIN user="idp-admin" ip=185.199.220.14',
+                    state: 'warning'
+                },
+                {
+                    line: 'Apr 14 23:12:11 idp-core[4411]: WARNING: login bypassed MFA due to "trusted device" flag',
+                    state: 'critical'
+                },
+                {
+                    line: 'Apr 14 23:12:44 idp-core[7712]: KEYSTORE ACCESS action="export" key_id="oidc-signing-key-01" format="pem"',
+                    state: 'critical'
+                },
+                {
+                    line: 'Apr 14 23:12:45 idp-core[7712]: WARNING: key export operation not logged as approved',
+                    state: 'warning'
+                },
+                {
+                    line: 'Apr 14 23:13:10 authz[8821]: TOKEN VALID user="ceo@example.com" issuer="idp.example.com" device="unknown"',
+                    state: ''
+                },
+                {
+                    line: 'Apr 14 23:13:11 authz[8821]: anomaly: token lifetime=48h exceeds policy',
+                    state: 'warning'
+                },
+                {
+                    line: 'Apr 14 23:13:55 cloudapi[5512]: ROLE ASSUMED user="ceo@example.com" role="GlobalAdmin" method="oidc"',
+                    state: 'critical'
+                },
+                {
+                    line: 'Apr 14 23:13:56 cloudapi[5512]: WARNING: role normally requires interactive MFA',
+                    state: 'warning'
+                },
+                {
+                    line: 'Apr 14 23:14:20 graphapi[9911]: LIST MAILBOXES performed_by="ceo@example.com"',
+                    state: ''
+                },
+                {
+                    line: 'Apr 14 23:14:21 graphapi[9911]: DOWNLOAD MAILBOX user="finance_lead@example.com" size=1.2GB',
+                    state: 'critical'
+                },
+                {
+                    line: 'Apr 14 23:14:55 idp-core[7712]: NEW SIGNING KEY CREATED key_id="oidc-signing-key-evil" lifetime="5 years"',
+                    state: 'critical'
+                },
+                {
+                    line: 'Apr 14 23:14:56 idp-core[7712]: WARNING: key not added to rotation schedule',
+                    state: 'warning'
+                },
+                {
+                    line: 'Apr 14 23:15:10 proxy[8821]: OUTBOUND connection dest="185.199.220.14" size=12.4GB',
+                    state: 'critical'
+                }
+            ],
+            SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE: [
+                {
+                    line: 'Apr 15 00:12:10 kernel[node-7]: TPM ACCESS pid=4411 operation="read_pcr" pcr_index=0',
+                    state: 'warning'
+                },
+                {
+                    line: 'Apr 15 00:12:11 kernel[node-7]: WARNING: process not in TPM allowlist',
+                    state: 'critical'
+                },
+                {
+                    line: 'Apr 15 00:12:44 enclave[node-7]: ERROR: unauthorized enclave debug session opened',
+                    state: 'critical'
+                },
+                {
+                    line: 'Apr 15 00:12:45 enclave[node-7]: WARNING: memory dump requested by pid=4411',
+                    state: 'warning'
+                },
+                {
+                    line: 'Apr 15 00:13:10 tpm[node-7]: KEY EXPORT key_id="vm-disk-key" format="raw"',
+                    state: 'critical'
+                },
+                {
+                    line: 'Apr 15 00:13:11 tpm[node-7]: WARNING: export operation bypassed policy=deny',
+                    state: 'critical'
+                },
+                {
+                    line: 'Apr 15 00:13:55 attestation[8821]: REPORT GENERATED device="node-7" status="healthy"',
+                    state: ''
+                },
+                {
+                    line: 'Apr 15 00:13:56 attestation[8821]: anomaly: PCR values inconsistent with boot log',
+                    state: 'warning'
+                },
+                {
+                    line: 'Apr 15 00:14:20 compute[5512]: VM CLONE source="prod-db-01" target="shadow-db" disk_decryption_key="vm-disk-key"',
+                    state: 'critical'
+                },
+                {
+                    line: 'Apr 15 00:14:21 compute[5512]: WARNING: clone initiated from node-7 without approval',
+                    state: 'warning'
+                },
+                {
+                    line: 'Apr 15 00:14:55 cloudapi[9911]: ACCESS GRANTED workload="shadow-db" reason="trusted attestation"',
+                    state: 'critical'
+                },
+                {
+                    line: 'Apr 15 00:14:56 cloudapi[9911]: anomaly: attestation issuer mismatch',
+                    state: 'warning'
+                },
+                {
+                    line: 'Apr 15 00:15:10 proxy[8821]: OUTBOUND connection dest="185.199.220.14" size=9.4GB',
+                    state: 'critical'
+                }
+            ]
+        };
+
+        function authHeaders() {
+            return accessToken ? { "Authorization": `Bearer ${accessToken}` } : {};
+        }
+
+        function scenarioEvidenceBundle(scenario) {
+            return SCENARIO_EVIDENCE_BUNDLES[scenario] || [];
+        }
+
+        function clearScenarioReplayConsole(preserveContent = false) {
+            scenarioReplayTimers.forEach((timerId) => clearTimeout(timerId));
+            scenarioReplayTimers = [];
+            activeReplayScenario = "";
+            scenarioReplayState = {
+                scenario: "",
+                evidence: [],
+                nextIndex: 0,
+                paused: false,
+                completed: false,
+            };
+            if (!preserveContent) {
+                consoleEl.innerHTML = '';
+            }
+            updateReplayStatus('');
+            syncReplayControls();
+        }
+
+        function updateReplayStatus(text, state = "") {
+            const element = document.getElementById('scenario-replay-status');
+            if (!element) {
+                return;
+            }
+            element.textContent = text || '';
+            element.classList.remove('ok', 'warn', 'error');
+            if (state) {
+                element.classList.add(state);
+            }
+        }
+
+        function scenarioReplayStatusMessage(phase, scenario, currentIndex, total) {
+            const progress = `${currentIndex}/${total}`;
+            if (scenario === 'SCENARIO_16_OIDC_SIGNING_KEY_THEFT') {
+                if (phase === 'complete') {
+                    return `Identity extinction replay complete: ${total} trust-collapse evidence lines loaded.`;
+                }
+                if (phase === 'paused') {
+                    return `Identity extinction replay paused at ${progress}. Forged trust remains the active failure mode.`;
+                }
+                return `Identity extinction replay ${progress}: validating forged trust-anchor evidence...`;
+            }
+
+            if (scenario === 'SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE') {
+                if (phase === 'complete') {
+                    return `Hardware trust collapse replay complete: ${total} root-of-trust evidence lines loaded.`;
+                }
+                if (phase === 'paused') {
+                    return `Hardware trust collapse replay paused at ${progress}. Nothing above the hardware layer is trustworthy.`;
+                }
+                return `Hardware trust collapse replay ${progress}: validating TPM, enclave, and attestation failure...`;
+            }
+
+            if (phase === 'complete') {
+                return `Replay complete: ${total} evidence lines loaded.`;
+            }
+            if (phase === 'paused') {
+                return `Replay paused at ${progress}.`;
+            }
+            return `Replaying evidence ${progress}...`;
+        }
+
+        function syncReplayControls() {
+            const pauseBtn = document.getElementById('scenario-replay-pause-btn');
+            const stepBtn = document.getElementById('scenario-replay-step-btn');
+            const restartBtn = document.getElementById('scenario-replay-restart-btn');
+            const hasEvidence = scenarioReplayState.evidence.length > 0;
+            const isComplete = scenarioReplayState.completed;
+
+            if (pauseBtn) {
+                pauseBtn.disabled = !hasEvidence || isComplete;
+                pauseBtn.textContent = scenarioReplayState.paused ? 'Resume' : 'Pause';
+            }
+            if (stepBtn) {
+                stepBtn.disabled = !hasEvidence || isComplete;
+            }
+            if (restartBtn) {
+                restartBtn.disabled = !hasEvidence;
+            }
+        }
+
+        function appendScenarioReplayEntry(entry) {
+            const line = document.createElement('div');
+            line.className = `line ${entry.state || 'info'}`;
+            line.textContent = entry.line;
+            consoleEl.appendChild(line);
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+        }
+
+        function scheduleScenarioReplay(delayMs = 420) {
+            if (!scenarioReplayState.evidence.length || scenarioReplayState.paused || scenarioReplayState.completed) {
+                syncReplayControls();
+                return;
+            }
+
+            if (scenarioReplayState.nextIndex >= scenarioReplayState.evidence.length) {
+                scenarioReplayState.completed = true;
+                updateReplayStatus(
+                    scenarioReplayStatusMessage('complete', scenarioReplayState.scenario, scenarioReplayState.evidence.length, scenarioReplayState.evidence.length),
+                    'ok'
+                );
+                syncReplayControls();
+                return;
+            }
+
+            const timerId = setTimeout(() => {
+                if (activeReplayScenario !== scenarioReplayState.scenario || scenarioReplayState.paused) {
+                    return;
+                }
+
+                const entry = scenarioReplayState.evidence[scenarioReplayState.nextIndex];
+                appendScenarioReplayEntry(entry);
+                scenarioReplayState.nextIndex += 1;
+
+                if (scenarioReplayState.nextIndex >= scenarioReplayState.evidence.length) {
+                    scenarioReplayState.completed = true;
+                    updateReplayStatus(
+                        scenarioReplayStatusMessage('complete', scenarioReplayState.scenario, scenarioReplayState.evidence.length, scenarioReplayState.evidence.length),
+                        'ok'
+                    );
+                    syncReplayControls();
+                    return;
+                }
+
+                updateReplayStatus(
+                    scenarioReplayStatusMessage('progress', scenarioReplayState.scenario, scenarioReplayState.nextIndex, scenarioReplayState.evidence.length),
+                    'ok'
+                );
+                syncReplayControls();
+                scheduleScenarioReplay();
+            }, delayMs);
+
+            scenarioReplayTimers.push(timerId);
+        }
+
+        function setStatusLine(id, text, state = "") {
+            const element = document.getElementById(id);
+            if (!element) {
+                return;
+            }
+            element.textContent = text;
+            element.classList.remove("ok", "warn", "error");
+            if (state) {
+                element.classList.add(state);
+            }
+        }
+
+        function setAuthState(text, state = "") {
+            setStatusLine("auth-status", text, state);
+        }
+
+        function updateAuthControls() {
+            const loginBtn = document.getElementById("oidc-login-btn");
+            const logoutBtn = document.getElementById("logout-btn");
+            const businessFilter = document.getElementById("business-filter");
+            const hasSession = Boolean(accessToken);
+            const oidcAvailable = Boolean(authCfg?.oidc_enabled && authCfg?.authorize_url);
+            const authMode = authCfg?.auth_mode || "legacy";
+
+            if (loginBtn) {
+                loginBtn.disabled = authMode === "legacy" || !oidcAvailable || hasSession;
+            }
+            if (logoutBtn) {
+                logoutBtn.disabled = !hasSession;
+            }
+            if (businessFilter) {
+                businessFilter.disabled = authMode === "oidc" && !hasSession;
+            }
+        }
+
+        function clearWebsocketReconnect() {
+            if (websocketReconnectTimer) {
+                clearTimeout(websocketReconnectTimer);
+                websocketReconnectTimer = null;
+            }
+        }
+
+        function resetRealtimeState(message = "Telemetry pipeline: waiting for data...", state = "") {
+            clearWebsocketReconnect();
+            websocketReconnectDelayMs = 3000;
+            telemetryLastEventId = null;
+            telemetryLastAdvanceAt = 0;
+            if (feed) {
+                feed.onopen = null;
+                feed.onmessage = null;
+                feed.onclose = null;
+                feed.onerror = null;
+                feed.close();
+                feed = null;
+            }
+            setStatusLine("telemetry-status", message, state);
+        }
+
+        function clearSessionForAuthFailure(message = "Session expired. Log in again.") {
+            accessToken = "";
+            sessionStorage.removeItem("shadow.access_token");
+            sessionStorage.removeItem("shadow.pkce.verifier");
+            sessionStorage.removeItem("shadow.pkce.state");
+            resetRealtimeState("Telemetry pipeline: login required", "warn");
+            setAuthState(message, "warn");
+            updateAuthControls();
+        }
+
+        function handleProtectedAuthFailure(message = "Authentication required.") {
+            if ((authCfg?.auth_mode || "legacy") === "oidc") {
+                clearSessionForAuthFailure(message);
+                return;
+            }
+            setAuthState(message, "warn");
+            updateAuthControls();
+        }
+
+        function summarizeTelemetryHealth(ws = {}, total = 0) {
+            const lastId = ws.ws_telemetry_last_event_id ?? "-";
+            const frames = ws.ws_telemetry_frames_sent ?? 0;
+            const errors = ws.ws_telemetry_errors ?? 0;
+            const nowMs = Date.now();
+
+            if (lastId !== "-" && String(lastId) !== String(telemetryLastEventId)) {
+                telemetryLastEventId = lastId;
+                telemetryLastAdvanceAt = nowMs;
+            }
+
+            const idleSeconds = telemetryLastAdvanceAt ? Math.floor((nowMs - telemetryLastAdvanceAt) / 1000) : null;
+            const freshness = idleSeconds === null
+                ? "unknown"
+                : (idleSeconds <= TELEMETRY_STALE_SECONDS ? "live" : `stale(${idleSeconds}s)`);
+
+            let level = "ok";
+            if (errors > 0) {
+                level = "error";
+            } else if (frames === 0 || (idleSeconds !== null && idleSeconds > TELEMETRY_STALE_SECONDS)) {
+                level = "warn";
+            }
+
+            return { level, freshness, idleSeconds, lastId, frames, errors, total };
+        }
+
+        function scheduleTelemetryReconnect(reason = "Telemetry disconnected, retrying...") {
+            if (!accessToken) {
+                return;
+            }
+            clearWebsocketReconnect();
+            setAuthState(reason, "warn");
+            websocketReconnectTimer = setTimeout(() => {
+                websocketReconnectTimer = null;
+                connectWebsocket();
+            }, websocketReconnectDelayMs);
+            websocketReconnectDelayMs = Math.min(websocketReconnectDelayMs * 2, 15000);
+        }
+
+        function artifactUrl(name) {
+            return `/artifacts/${encodeURIComponent(name)}`;
+        }
+
+        function getRedirectUri() {
+            return `${location.origin}/`;
+        }
+
+        function bytesToBase64Url(bytes) {
+            let str = "";
+            bytes.forEach(b => str += String.fromCharCode(b));
+            return btoa(str).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+        }
+
+        async function sha256Base64Url(value) {
+            const data = new TextEncoder().encode(value);
+            const hash = await crypto.subtle.digest("SHA-256", data);
+            return bytesToBase64Url(new Uint8Array(hash));
+        }
+
+        function randomVerifier(length = 64) {
+            const bytes = new Uint8Array(length);
+            crypto.getRandomValues(bytes);
+            return bytesToBase64Url(bytes);
+        }
+
+        async function loadAuthConfig() {
+            try {
+                const response = await fetch('/auth/config');
+                authCfg = await response.json();
+            } catch {
+                authCfg = { auth_mode: "legacy", oidc_enabled: false };
+            }
+
+            const authStatus = document.getElementById("auth-status");
+            if (authCfg.auth_mode === "legacy") {
+                if (!accessToken) {
+                    accessToken = "shadow-secure-default-token-2026";
+                    sessionStorage.setItem("shadow.access_token", accessToken);
+                }
+                authStatus.textContent = "Auth mode: legacy bearer token";
+            } else if (authCfg.auth_mode === "hybrid") {
+                if (!accessToken) {
+                    accessToken = "shadow-secure-default-token-2026";
+                    sessionStorage.setItem("shadow.access_token", accessToken);
+                    authStatus.textContent = authCfg.oidc_enabled
+                        ? "Auth mode: hybrid (legacy fallback active, OIDC available)"
+                        : "Auth mode: hybrid (legacy fallback active)";
+                } else {
+                    authStatus.textContent = authCfg.oidc_enabled
+                        ? "Auth mode: hybrid (token present, OIDC available)"
+                        : "Auth mode: hybrid (token present)";
+                }
+            } else {
+                authStatus.textContent = accessToken ? "Auth mode: OIDC (token present)" : "Auth mode: OIDC (login required)";
+            }
+
+            updateAuthControls();
+        }
+
+        async function handleOidcCallback() {
+            const url = new URL(window.location.href);
+            const code = url.searchParams.get("code");
+            const returnedState = url.searchParams.get("state");
+            if (!code) {
+                return;
+            }
+
+            const verifier = sessionStorage.getItem("shadow.pkce.verifier");
+            const expectedState = sessionStorage.getItem("shadow.pkce.state");
+            const tokenUrl = (authCfg && authCfg.token_url) ? authCfg.token_url : "";
+            const clientId = (authCfg && authCfg.client_id) ? authCfg.client_id : "shadow-toolz-dashboard";
+            const redirectUri = (authCfg && authCfg.redirect_uri) ? authCfg.redirect_uri : getRedirectUri();
+            const statusEl = document.getElementById("auth-status");
+
+            if (!returnedState || !expectedState || returnedState !== expectedState) {
+                setAuthState("OIDC callback failed: state mismatch", "error");
+                updateAuthControls();
+                return;
+            }
+
+            if (!verifier || !tokenUrl) {
+                setAuthState("OIDC callback failed: missing PKCE verifier or token URL", "error");
+                updateAuthControls();
+                return;
+            }
+
+            try {
+                const form = new URLSearchParams();
+                form.set("grant_type", "authorization_code");
+                form.set("client_id", clientId);
+                form.set("code", code);
+                form.set("code_verifier", verifier);
+                form.set("redirect_uri", redirectUri);
+
+                const tokenResp = await fetch(tokenUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: form.toString(),
+                });
+                const tokenData = await tokenResp.json();
+                if (!tokenResp.ok || !tokenData.access_token) {
+                    setAuthState("OIDC token exchange failed", "error");
+                    updateAuthControls();
+                    return;
+                }
+
+                accessToken = tokenData.access_token;
+                sessionStorage.setItem("shadow.access_token", accessToken);
+                sessionStorage.removeItem("shadow.pkce.verifier");
+                sessionStorage.removeItem("shadow.pkce.state");
+                setAuthState("OIDC login complete", "ok");
+                updateAuthControls();
+
+                const cleanUrl = new URL(window.location.href);
+                cleanUrl.searchParams.delete("code");
+                cleanUrl.searchParams.delete("state");
+                history.replaceState({}, "", cleanUrl.toString());
+            } catch {
+                setAuthState("OIDC token exchange failed", "error");
+                updateAuthControls();
+            }
+        }
+
+        async function startOidcLogin() {
+            if (!authCfg || !authCfg.oidc_enabled) {
+                setAuthState("OIDC not configured", "warn");
+                return;
+            }
+
+            if (!authCfg.authorize_url) {
+                setAuthState("OIDC not configured: missing authorize URL", "warn");
+                return;
+            }
+
+            setAuthState("Redirecting to OIDC provider...", "warn");
+
+            const verifier = randomVerifier();
+            const challenge = await sha256Base64Url(verifier);
+            const state = randomVerifier(24);
+            const redirectUri = authCfg.redirect_uri || getRedirectUri();
+            const authorizeUrl = authCfg.authorize_url;
+
+            sessionStorage.setItem("shadow.pkce.verifier", verifier);
+            sessionStorage.setItem("shadow.pkce.state", state);
+
+            const params = new URLSearchParams();
+            params.set("client_id", authCfg.client_id || "shadow-toolz-dashboard");
+            params.set("response_type", "code");
+            params.set("redirect_uri", redirectUri);
+            params.set("scope", authCfg.scopes || "openid profile email");
+            params.set("code_challenge_method", "S256");
+            params.set("code_challenge", challenge);
+            params.set("state", state);
+            if (authCfg.audience) {
+                params.set("audience", authCfg.audience);
+            }
+
+            window.location.href = `${authorizeUrl}?${params.toString()}`;
+        }
+
+        function logoutSession() {
+            accessToken = "";
+            sessionStorage.removeItem("shadow.access_token");
+            sessionStorage.removeItem("shadow.pkce.verifier");
+            sessionStorage.removeItem("shadow.pkce.state");
+            resetRealtimeState("Telemetry pipeline: login required", "warn");
+            setAuthState("Logged out", "warn");
+            updateAuthControls();
+        }
+
+        function connectWebsocket() {
+            if (!accessToken) {
+                setAuthState("No token: websocket disabled", "warn");
+                setStatusLine("telemetry-status", "Telemetry pipeline: login required", "warn");
+                updateAuthControls();
+                return;
+            }
+
+            clearWebsocketReconnect();
+
+            const scheme = location.protocol === "https:" ? "wss" : "ws";
+            const url = `${scheme}://${location.host}/ws/telemetry?access_token=${encodeURIComponent(accessToken)}`;
+            feed = new WebSocket(url);
+
+            feed.onopen = function () {
+                websocketReconnectDelayMs = 3000;
+                setAuthState("Telemetry connected", "ok");
+                setStatusLine("telemetry-status", "Telemetry pipeline: socket connected, awaiting health refresh...", "ok");
+            };
+
+            feed.onmessage = function (event) {
+                let packet = null;
+                try {
+                    packet = JSON.parse(event.data);
+                } catch {
+                    return;
+                }
+                updateLiveOutput(packet);
+
+                if (packet.module === "sentinel_01") {
+                    updateSentinelUI(packet.payload || {});
+                } else if (packet.module === "arp_detector") {
+                    triggerThreatAlert(packet);
+                } else if (packet.module === "wifi_analyzer") {
+                    updateWifiUI(packet);
+                }
+            };
+
+            feed.onclose = function (event) {
+                feed = null;
+                if (!accessToken) {
+                    return;
+                }
+
+                if ([1008, 4001, 4003, 4401, 4403].includes(event.code)) {
+                    clearSessionForAuthFailure("Telemetry session expired. Log in again.");
+                    return;
+                }
+
+                setStatusLine("telemetry-status", "Telemetry pipeline: websocket offline, retry scheduled", "warn");
+                scheduleTelemetryReconnect("Telemetry disconnected, retrying...");
+            };
+
+            feed.onerror = function () {
+                setAuthState("Telemetry transport error", "warn");
+            };
+        }
+
+        // Load business targets and populate the dropdown
+        async function loadBusinessTargets() {
+            try {
+                const response = await fetch('/targets', {
+                    headers: authHeaders()
+                });
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        handleProtectedAuthFailure("Business targets require login.");
+                        setStatusLine("business-status", "Business targets unavailable until you log in.", "warn");
+                    } else {
+                        setStatusLine("business-status", `Business registry unavailable (${response.status})`, response.status >= 500 ? "error" : "warn");
+                    }
+                    return;
+                }
+                const data = await response.json();
+                const targets = data.targets || {};
+                knownTargets = targets;
+                const select = document.getElementById("business-filter");
+                select.querySelectorAll("option:not([value='all'])").forEach((option) => option.remove());
+
+                // Add target options
+                Object.keys(targets).forEach(targetName => {
+                    const option = document.createElement("option");
+                    option.value = targetName;
+                    option.textContent = targetName;
+                    select.appendChild(option);
+                });
+
+                // Restore saved filter
+                if (currentBusinessFilter !== "all" && !targets[currentBusinessFilter]) {
+                    currentBusinessFilter = "all";
+                    sessionStorage.setItem("businessFilter", currentBusinessFilter);
+                }
+                select.value = currentBusinessFilter;
+                updateBusinessStatus(targets);
+            } catch (err) {
+                console.warn("[targets] Failed to load business registry:", err);
+                setStatusLine("business-status", "Business registry unavailable", "warn");
+            }
+        }
+
+        function updateBusinessStatus(targets) {
+            const statusEl = document.getElementById("business-status");
+            const targetCount = Object.keys(targets || {}).length;
+            statusEl.textContent = `${targetCount} active business(es) • showing: ${currentBusinessFilter === "all" ? "ALL TARGETS" : currentBusinessFilter}`;
+        }
+
+        function filterByBusiness() {
+            const select = document.getElementById("business-filter");
+            currentBusinessFilter = select.value;
+            sessionStorage.setItem("businessFilter", currentBusinessFilter);
+            updateBusinessStatus(knownTargets);
+            syncDashboardUrlState();
+            clearScenarioReplayConsole();
+            consoleEl.innerHTML = ""; // Clear console on filter change
+        }
+
+        async function runDailyReportNow() {
+            const btn = document.getElementById("run-report-btn");
+            const status = document.getElementById("report-status");
+            btn.disabled = true;
+            btn.textContent = "Running...";
+            status.textContent = "Dispatching daily report cycle...";
+            try {
+                const response = await fetch('/maintenance/daily-report', {
+                    method: 'POST',
+                    headers: authHeaders()
+                });
+                const data = await response.json();
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        handleProtectedAuthFailure("Daily report requires login.");
+                    }
+                    status.textContent = `Report trigger failed: ${data.detail || response.status}`;
+                    status.className = 'status-line warn';
+                    return;
+                }
+                const stats = data.stats || {};
+                status.textContent = `Report complete: businesses=${stats.businesses_reported || 0}, emails=${stats.emails_sent || 0}, csv=${stats.csv_written || 0}, pdf=${stats.pdf_written || 0}`;
+                status.className = 'status-line ok';
+            } catch (err) {
+                status.textContent = "Report trigger failed: connection error";
+                status.className = 'status-line error';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Run Daily Report Now";
+            }
+        }
+
+        async function refreshTelemetryPipelineStatus() {
+            try {
+                const response = await fetch('/health/telemetry-pipeline', {
+                    headers: authHeaders()
+                });
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        handleProtectedAuthFailure("Telemetry pipeline requires login.");
+                        setStatusLine("telemetry-status", "Telemetry pipeline: auth required", "warn");
+                    } else {
+                        setStatusLine("telemetry-status", `Telemetry pipeline: unavailable (${response.status})`, response.status >= 500 ? "error" : "warn");
+                    }
+                    return;
+                }
+
+                const data = await response.json();
+                const ws = data.ws_telemetry || {};
+                const total = data.db_events_total ?? 0;
+                const summary = summarizeTelemetryHealth(ws, total);
+
+                setStatusLine(
+                    "telemetry-status",
+                    `Telemetry pipeline: ${summary.level.toUpperCase()} db_events=${summary.total} last_event_id=${summary.lastId} frames=${summary.frames} errors=${summary.errors} freshness=${summary.freshness}`,
+                    summary.level
+                );
+            } catch {
+                setStatusLine("telemetry-status", "Telemetry pipeline: connection error", "error");
+            }
+        }
+
+        async function runSystemCheck() {
+            const banner = document.getElementById('system-check-banner');
+            if (!banner) {
+                return;
+            }
+
+            banner.innerHTML = '<div class="glitch-text">INITIALIZING SYSTEM AUDIT...</div>';
+
+            try {
+                const token = accessToken || localStorage.getItem('token') || sessionStorage.getItem('shadow.access_token') || '';
+                const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+                const [notifyResp, telemetryResp] = await Promise.all([
+                    fetch('http://127.0.0.1:8055/health/notifications', { headers }),
+                    fetch('http://127.0.0.1:8055/health/telemetry-pipeline', { headers }),
+                ]);
+
+                if (!notifyResp.ok || !telemetryResp.ok) {
+                    if (notifyResp.status === 401 || telemetryResp.status === 401) {
+                        throw new Error('auth-required');
+                    }
+                    throw new Error('health endpoint unavailable');
+                }
+
+                const notifyStatus = await notifyResp.json();
+                const telemetryStatus = await telemetryResp.json();
+
+                const slackOk = Boolean(notifyStatus?.channels?.slack);
+                const telegramOk = Boolean(notifyStatus?.channels?.telegram);
+                const emailOk = Boolean(notifyStatus?.channels?.email);
+                const telemetrySummary = summarizeTelemetryHealth(telemetryStatus?.ws_telemetry || {}, telemetryStatus?.db_events_total ?? 0);
+                const telemetryOk = telemetrySummary.level === 'ok';
+                const telemetryLabel = telemetrySummary.level === 'warn'
+                    ? `STALE ${telemetrySummary.freshness.toUpperCase()}`
+                    : (telemetrySummary.level === 'error' ? 'DEGRADED' : 'GREEN');
+
+                banner.innerHTML = `
+                    <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                        <span class="${slackOk ? 'status-ready' : 'status-fail'}">[ SLACK: ${slackOk ? 'READY' : 'FAIL'} ]</span>
+                        <span class="${telegramOk ? 'status-ready' : 'status-fail'}">[ TELEGRAM: ${telegramOk ? 'READY' : 'FAIL'} ]</span>
+                        <span class="${emailOk ? 'status-ready' : 'status-fail'}">[ EMAIL: ${emailOk ? 'READY' : 'FAIL'} ]</span>
+                        <span class="${telemetryOk ? 'status-ready' : 'status-fail'}">[ TELEMETRY: ${telemetryLabel} ]</span>
+                        <span class="status-ready">[ THRESHOLD: 90s ]</span>
+                    </div>
+                `;
+            } catch (error) {
+                if (error?.message === 'auth-required') {
+                    banner.innerHTML = "<span class='status-fail'>AUTH REQUIRED: OIDC SESSION EXPIRED OR MISSING</span>";
+                    return;
+                }
+
+                banner.innerHTML = accessToken
+                    ? "<span class='status-fail'>CRITICAL ERROR: IAM GATEWAY UNREACHABLE</span>"
+                    : "<span class='status-fail'>AUTH REQUIRED: OIDC SESSION MISSING</span>";
+            }
+        }
+
+        function updateLiveOutput(packet) {
+            // Apply business filter
+            if (currentBusinessFilter !== "all" && packet.business !== currentBusinessFilter) {
+                return;
+            }
+
+            const line = document.createElement("div");
+            line.className = `line ${packet.severity || "info"}`;
+            // Include business in display if filtering or if not "global"
+            const displayText = currentBusinessFilter === "all" && packet.business !== "global"
+                ? `[${packet.business}] ${JSON.stringify(packet)}`
+                : JSON.stringify(packet);
+            line.textContent = displayText;
+            consoleEl.appendChild(line);
+            while (consoleEl.childElementCount > 250) {
+                consoleEl.removeChild(consoleEl.firstChild);
+            }
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+        }
+
+        function renderScenarioReplayConsole(scenario) {
+            const evidence = scenarioEvidenceBundle(scenario);
+
+            if (!evidence.length) {
+                clearScenarioReplayConsole();
+                return;
+            }
+
+            const sameScenarioActive = activeReplayScenario === scenario && scenarioReplayState.scenario === scenario;
+            if (sameScenarioActive) {
+                if (scenarioReplayState.completed) {
+                    updateReplayStatus(
+                        scenarioReplayStatusMessage('complete', scenarioReplayState.scenario, scenarioReplayState.evidence.length, scenarioReplayState.evidence.length),
+                        'ok'
+                    );
+                } else if (scenarioReplayState.paused) {
+                    updateReplayStatus(
+                        scenarioReplayStatusMessage('paused', scenarioReplayState.scenario, scenarioReplayState.nextIndex, scenarioReplayState.evidence.length),
+                        'warn'
+                    );
+                } else {
+                    updateReplayStatus(
+                        scenarioReplayStatusMessage('progress', scenarioReplayState.scenario, scenarioReplayState.nextIndex, scenarioReplayState.evidence.length),
+                        'ok'
+                    );
+                }
+                syncReplayControls();
+                return;
+            }
+
+            clearScenarioReplayConsole();
+            consoleEl.innerHTML = '';
+            activeReplayScenario = scenario;
+            scenarioReplayState = {
+                scenario,
+                evidence,
+                nextIndex: 0,
+                paused: false,
+                completed: false,
+            };
+            updateReplayStatus(scenarioReplayStatusMessage('progress', scenario, 0, evidence.length), 'ok');
+            syncReplayControls();
+            scheduleScenarioReplay(0);
+        }
+
+        function toggleScenarioReplayPause() {
+            if (!scenarioReplayState.evidence.length || scenarioReplayState.completed) {
+                syncReplayControls();
+                return;
+            }
+
+            scenarioReplayTimers.forEach((timerId) => clearTimeout(timerId));
+            scenarioReplayTimers = [];
+            scenarioReplayState.paused = !scenarioReplayState.paused;
+
+            if (scenarioReplayState.paused) {
+                updateReplayStatus(
+                    scenarioReplayStatusMessage('paused', scenarioReplayState.scenario, scenarioReplayState.nextIndex, scenarioReplayState.evidence.length),
+                    'warn'
+                );
+            } else {
+                updateReplayStatus(
+                    scenarioReplayStatusMessage('progress', scenarioReplayState.scenario, scenarioReplayState.nextIndex, scenarioReplayState.evidence.length),
+                    'ok'
+                );
+                scheduleScenarioReplay();
+            }
+            syncReplayControls();
+        }
+
+        function restartScenarioReplay() {
+            const scenario = currentScenarioFocus || currentRenderedScenario || scenarioReplayState.scenario;
+            if (!scenario) {
+                return;
+            }
+            renderScenarioReplayConsole(scenario);
+        }
+
+        function stepScenarioReplay() {
+            if (!scenarioReplayState.evidence.length || scenarioReplayState.completed) {
+                syncReplayControls();
+                return;
+            }
+
+            scenarioReplayTimers.forEach((timerId) => clearTimeout(timerId));
+            scenarioReplayTimers = [];
+            scenarioReplayState.paused = true;
+
+            const entry = scenarioReplayState.evidence[scenarioReplayState.nextIndex];
+            appendScenarioReplayEntry(entry);
+            scenarioReplayState.nextIndex += 1;
+
+            if (scenarioReplayState.nextIndex >= scenarioReplayState.evidence.length) {
+                scenarioReplayState.completed = true;
+                updateReplayStatus(
+                    scenarioReplayStatusMessage('complete', scenarioReplayState.scenario, scenarioReplayState.evidence.length, scenarioReplayState.evidence.length),
+                    'ok'
+                );
+            } else {
+                updateReplayStatus(
+                    scenarioReplayStatusMessage('paused', scenarioReplayState.scenario, scenarioReplayState.nextIndex, scenarioReplayState.evidence.length),
+                    'warn'
+                );
+            }
+            syncReplayControls();
+        }
+
+        function updateSentinelUI(data) {
+            document.getElementById("sentinel").textContent = `uptime=${data.uptime ?? "--"}% gateway=${data.gateway_status ?? "--"} nodes=${data.active_nodes ?? "--"}`;
+        }
+
+        function triggerThreatAlert(packet) {
+            document.getElementById("arp").textContent = `event=${packet.event} severity=${packet.severity}`;
+        }
+
+        function updateWifiUI(packet) {
+            const p = packet.payload || {};
+            document.getElementById("wifi").textContent = `networks=${p.network_count ?? 0} rogues=${p.rogue_count ?? 0}`;
+        }
+
+        async function refreshAudit() {
+            try {
+                const response = await fetch('/logs/audit', {
+                    headers: authHeaders()
+                });
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        handleProtectedAuthFailure("Audit feed requires login.");
+                        console.warn("[audit] Authentication failed: check SHADOW_API_TOKEN");
+                    }
+                    return;
+                }
+                const data = await response.json();
+                const lines = Array.isArray(data.logs) ? data.logs : [];
+                const activeScenario = currentScenarioFocus || currentRenderedScenario;
+                const evidenceLines = scenarioEvidenceBundle(activeScenario).map((entry) => `[scenario-replay] ${entry.line}`);
+                const mergedLines = evidenceLines.length ? [...evidenceLines, '', ...lines] : lines;
+                document.getElementById('audit').textContent = mergedLines.join('\n');
+            } catch {
+                // keep telemetry stream unaffected if audit endpoint is unreachable
+            }
+        }
+
+        function classifyLatency(minutes) {
+            if (minutes >= 15) return 'pill-critical';
+            if (minutes >= 5) return 'pill-high';
+            return 'pill-medium';
+        }
+
+        function latencyBucket(minutes) {
+            if (minutes >= 15) return 'critical';
+            if (minutes >= 5) return 'high';
+            return 'medium';
+        }
+
+        function getFilteredLatencyRows(rows, valueKey, sortId, filterId, searchId) {
+            const sortMode = document.getElementById(sortId)?.value || 'desc';
+            const filterMode = document.getElementById(filterId)?.value || 'all';
+            const searchTerm = (document.getElementById(searchId)?.value || '').trim().toLowerCase();
+            return rows
+                .map((row) => ({ ...row, numericValue: Number(row[valueKey]) }))
+                .filter((row) => (filterMode === 'all' || latencyBucket(row.numericValue) === filterMode)
+                    && (!searchTerm || row.scenario.toLowerCase().includes(searchTerm)))
+                .sort((left, right) => sortMode === 'asc'
+                    ? left.numericValue - right.numericValue
+                    : right.numericValue - left.numericValue);
+        }
+
+        function renderLatencyTable(rows, valueKey, label, sortId, filterId, searchId) {
+            if (!rows.length) {
+                return `No ${label.toLowerCase()} data available.`;
+            }
+
+            const filtered = getFilteredLatencyRows(rows, valueKey, sortId, filterId, searchId);
+
+            if (!filtered.length) {
+                return `No ${label.toLowerCase()} rows match the current filter.`;
+            }
+
+            const body = filtered.map((row) => {
+                const value = row.numericValue;
+                return `<tr><td>${row.scenario}</td><td><span class="${classifyLatency(value)}">${value.toFixed(1)} min</span></td></tr>`;
+            }).join('');
+
+            return `<table class="mini-table"><thead><tr><th>Scenario</th><th>${label}</th></tr></thead><tbody>${body}</tbody></table>`;
+        }
+
+        function renderLatencySummary(rows, valueKey, sortId, filterId, searchId, label) {
+            if (!rows.length) {
+                return `No ${label.toLowerCase()} latency loaded.`;
+            }
+
+            const filtered = getFilteredLatencyRows(rows, valueKey, sortId, filterId, searchId);
+            if (!filtered.length) {
+                return `0 visible rows | Avg ${label.toLowerCase()}: n/a`;
+            }
+
+            const average = filtered.reduce((sum, row) => sum + row.numericValue, 0) / filtered.length;
+            return `${filtered.length} visible row${filtered.length === 1 ? '' : 's'} | Avg ${label.toLowerCase()}: ${average.toFixed(1)} min`;
+        }
+
+        function latencySummaryClass(rows, valueKey, sortId, filterId, searchId) {
+            const filtered = getFilteredLatencyRows(rows, valueKey, sortId, filterId, searchId);
+            if (!filtered.length) {
+                return '';
+            }
+
+            const average = filtered.reduce((sum, row) => sum + row.numericValue, 0) / filtered.length;
+            return latencyBucket(average);
+        }
+
+        function parseCsv(text) {
+            const lines = text.trim().split(/\r?\n/).filter(Boolean);
+            if (lines.length < 2) return [];
+            const headers = lines[0].split(',');
+            return lines.slice(1).map((line) => {
+                const values = line.split(',');
+                const row = {};
+                headers.forEach((header, index) => {
+                    row[header] = values[index];
+                });
+                return row;
+            });
+        }
+
+        function syncScenarioSearches(scenario) {
+            const value = scenario || '';
+            document.getElementById('response-search').value = value;
+            document.getElementById('containment-search').value = value;
+            syncDashboardUrlState();
+        }
+
+        function applyDashboardUrlState() {
+            const controlDefaults = [
+                ['response-sort', 'rsort', 'desc'],
+                ['response-filter', 'rfilter', 'all'],
+                ['response-search', 'rsearch', ''],
+                ['containment-sort', 'csort', 'desc'],
+                ['containment-filter', 'cfilter', 'all'],
+                ['containment-search', 'csearch', ''],
+            ];
+
+            controlDefaults.forEach(([id, param, fallback]) => {
+                const element = document.getElementById(id);
+                if (!element) {
+                    return;
+                }
+                const nextValue = urlParams.get(param);
+                element.value = nextValue !== null ? nextValue : fallback;
+            });
+        }
+
+        function syncDashboardUrlState() {
+            const nextUrl = new URL(window.location.href);
+            const params = nextUrl.searchParams;
+            const values = {
+                business: currentBusinessFilter,
+                scenario: currentScenarioFocus,
+                group: currentScenarioGroup,
+                rsort: document.getElementById('response-sort')?.value || 'desc',
+                rfilter: document.getElementById('response-filter')?.value || 'all',
+                rsearch: document.getElementById('response-search')?.value || '',
+                csort: document.getElementById('containment-sort')?.value || 'desc',
+                cfilter: document.getElementById('containment-filter')?.value || 'all',
+                csearch: document.getElementById('containment-search')?.value || '',
+            };
+
+            Object.entries(values).forEach(([key, value]) => {
+                const normalized = String(value || '');
+                const isDefault = (key === 'business' && normalized === 'all')
+                    || (key === 'group' && normalized === 'all')
+                    || (key === 'rsort' && normalized === 'desc')
+                    || (key === 'rfilter' && normalized === 'all')
+                    || (key === 'csort' && normalized === 'desc')
+                    || (key === 'cfilter' && normalized === 'all')
+                    || !normalized;
+                if (isDefault) {
+                    params.delete(key);
+                } else {
+                    params.set(key, normalized);
+                }
+            });
+
+            history.replaceState({}, '', nextUrl.toString());
+            renderFilterSummary();
+        }
+
+        function syncScenarioUrl(scenario) {
+            currentScenarioFocus = scenario || '';
+            syncDashboardUrlState();
+        }
+
+        async function copyDashboardViewLink() {
+            const status = document.getElementById('export-status');
+            try {
+                await navigator.clipboard.writeText(window.location.href);
+                status.textContent = 'Current dashboard view link copied.';
+                status.className = 'status-line ok';
+            } catch {
+                status.textContent = 'Clipboard unavailable.';
+                status.className = 'status-line warn';
+            }
+        }
+
+        function toggleModule(button) {
+            const module = button.closest('.module-box');
+            if (!module) {
+                return;
+            }
+            const collapsed = module.classList.toggle('collapsed');
+            button.textContent = collapsed ? 'Expand' : 'Collapse';
+            const moduleKey = module.dataset.moduleKey;
+            if (moduleKey) {
+                sessionStorage.setItem(`moduleCollapsed:${moduleKey}`, collapsed ? '1' : '0');
+            }
+            refreshModuleIsolationState();
+        }
+
+        function restoreModuleState() {
+            document.querySelectorAll('.module-box[data-module-key]').forEach((module) => {
+                const moduleKey = module.dataset.moduleKey;
+                const toggle = module.querySelector('.module-toggle[data-role="collapse"]');
+                const collapsed = sessionStorage.getItem(`moduleCollapsed:${moduleKey}`) === '1';
+                module.classList.toggle('collapsed', collapsed);
+                if (toggle) {
+                    toggle.textContent = collapsed ? 'Expand' : 'Collapse';
+                }
+            });
+            refreshModuleIsolationState();
+        }
+
+        function refreshModuleIsolationState() {
+            const modules = Array.from(document.querySelectorAll('.module-box[data-module-key]'));
+            const expandedModules = modules.filter((module) => !module.classList.contains('collapsed'));
+            const isolatedModule = expandedModules.length === 1 && modules.length > 1 ? expandedModules[0] : null;
+
+            modules.forEach((module) => {
+                const isolateButton = module.querySelector('.module-toggle[data-role="isolate"]');
+                const isIsolated = module === isolatedModule;
+                module.classList.toggle('isolated', isIsolated);
+                if (isolateButton) {
+                    isolateButton.classList.toggle('active', isIsolated);
+                    isolateButton.textContent = isIsolated ? 'Only On' : 'Only';
+                    isolateButton.setAttribute('aria-pressed', isIsolated ? 'true' : 'false');
+                }
+            });
+        }
+
+        function setAllModulesCollapsed(collapsed) {
+            document.querySelectorAll('.module-box[data-module-key]').forEach((module) => {
+                const toggle = module.querySelector('.module-toggle[data-role="collapse"]');
+                const moduleKey = module.dataset.moduleKey;
+                module.classList.toggle('collapsed', collapsed);
+                if (toggle) {
+                    toggle.textContent = collapsed ? 'Expand' : 'Collapse';
+                }
+                if (moduleKey) {
+                    sessionStorage.setItem(`moduleCollapsed:${moduleKey}`, collapsed ? '1' : '0');
+                }
+            });
+            refreshModuleIsolationState();
+
+            const status = document.getElementById('export-status');
+            status.textContent = collapsed ? 'All modules collapsed.' : 'All modules expanded.';
+            status.className = 'status-line ok';
+        }
+
+        function collapseOtherModules(button) {
+            const activeModule = button.closest('.module-box[data-module-key]');
+            if (!activeModule) {
+                return;
+            }
+
+            document.querySelectorAll('.module-box[data-module-key]').forEach((module) => {
+                const toggle = module.querySelector('.module-toggle[data-role="collapse"]');
+                const moduleKey = module.dataset.moduleKey;
+                const shouldCollapse = module !== activeModule;
+                module.classList.toggle('collapsed', shouldCollapse);
+                if (toggle) {
+                    toggle.textContent = shouldCollapse ? 'Expand' : 'Collapse';
+                }
+                if (moduleKey) {
+                    sessionStorage.setItem(`moduleCollapsed:${moduleKey}`, shouldCollapse ? '1' : '0');
+                }
+            });
+            refreshModuleIsolationState();
+
+            const moduleTitle = activeModule.querySelector('.module-title')?.textContent || 'module';
+            const status = document.getElementById('export-status');
+            status.textContent = `${moduleTitle} expanded. Other modules collapsed.`;
+            status.className = 'status-line ok';
+        }
+
+        function renderFilterSummary() {
+            const activeScenario = currentScenarioFocus || currentRenderedScenario || 'none';
+            const pills = [
+                { label: 'Business', value: currentBusinessFilter },
+                { label: 'Group', value: scenarioGroupLabel(currentScenarioGroup) },
+                { label: 'Scenario', value: activeScenario },
+                {
+                    label: 'Response',
+                    value: `${document.getElementById('response-filter')?.value || 'all'} / ${document.getElementById('response-sort')?.value || 'desc'}`
+                },
+                {
+                    label: 'Containment',
+                    value: `${document.getElementById('containment-filter')?.value || 'all'} / ${document.getElementById('containment-sort')?.value || 'desc'}`
+                }
+            ];
+            const searches = [
+                document.getElementById('response-search')?.value?.trim(),
+                document.getElementById('containment-search')?.value?.trim()
+            ].filter(Boolean);
+            if (searches.length) {
+                pills.push({ label: 'Search', value: searches.join(' | ') });
+            }
+
+            document.getElementById('filter-summary').innerHTML = pills.map((pill) => `
+                <div class="filter-pill"><strong>${pill.label}</strong> ${pill.value}</div>
+            `).join('');
+        }
+
+        function resetDashboardView() {
+            currentBusinessFilter = 'all';
+            currentScenarioFocus = '';
+            currentScenarioGroup = 'all';
+            currentRenderedScenario = '';
+            terminalAutoFocusEligible = true;
+            clearScenarioReplayConsole();
+            sessionStorage.removeItem('businessFilter');
+            sessionStorage.removeItem('scenarioFocus');
+            sessionStorage.removeItem('scenarioGroup');
+
+            const businessFilter = document.getElementById('business-filter');
+            if (businessFilter) {
+                businessFilter.value = 'all';
+            }
+            document.getElementById('response-sort').value = 'desc';
+            document.getElementById('response-filter').value = 'all';
+            document.getElementById('response-search').value = '';
+            document.getElementById('containment-sort').value = 'desc';
+            document.getElementById('containment-filter').value = 'all';
+            document.getElementById('containment-search').value = '';
+
+            document.querySelectorAll('.module-box[data-module-key]').forEach((module) => {
+                const moduleKey = module.dataset.moduleKey;
+                module.classList.remove('collapsed');
+                module.querySelector('.module-toggle[data-role="collapse"]').textContent = 'Collapse';
+                sessionStorage.removeItem(`moduleCollapsed:${moduleKey}`);
+            });
+            refreshModuleIsolationState();
+
+            updateBusinessStatus(knownTargets);
+            syncDashboardUrlState();
+            refreshScenarioAnalyticsPanels();
+            renderFocusBadge('', '');
+
+            const status = document.getElementById('export-status');
+            status.textContent = 'Dashboard view reset.';
+            status.className = 'status-line ok';
+        }
+
+        function handleGlobalShortcuts(event) {
+            if (event.defaultPrevented || event.repeat) {
+                return;
+            }
+
+            const target = event.target;
+            const isTyping = target instanceof HTMLElement
+                && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable);
+            if (isTyping) {
+                return;
+            }
+
+            if (event.altKey && event.key.toLowerCase() === 'r') {
+                event.preventDefault();
+                resetDashboardView();
+                return;
+            }
+
+            if (event.altKey && event.key.toLowerCase() === 'l') {
+                event.preventDefault();
+                copyDashboardViewLink();
+                return;
+            }
+
+            if (event.altKey && event.key.toLowerCase() === 'c') {
+                event.preventDefault();
+                setAllModulesCollapsed(true);
+                return;
+            }
+
+            if (event.altKey && event.key.toLowerCase() === 'e') {
+                event.preventDefault();
+                setAllModulesCollapsed(false);
+            }
+        }
+
+        function scenarioNumberFromName(scenario) {
+            const match = (scenario || '').match(/SCENARIO_?(\d+)/);
+            return match ? match[1] : '';
+        }
+
+        function terminalScenarioEntry(analytics) {
+            const ranked = Object.entries(analytics || {}).sort((left, right) => {
+                const leftNumber = Number(scenarioNumberFromName(left[0])) || 0;
+                const rightNumber = Number(scenarioNumberFromName(right[0])) || 0;
+                const leftSignals = (left[1].signals || []).length;
+                const rightSignals = (right[1].signals || []).length;
+                const leftActions = (left[1].actions || []).length;
+                const rightActions = (right[1].actions || []).length;
+                return rightNumber - leftNumber || rightSignals - leftSignals || rightActions - leftActions || left[0].localeCompare(right[0]);
+            });
+            return ranked[0] || ["", null];
+        }
+
+        function setScenarioFocus(scenario) {
+            currentScenarioFocus = currentScenarioFocus === scenario ? '' : scenario;
+            terminalAutoFocusEligible = false;
+            sessionStorage.setItem('scenarioFocus', currentScenarioFocus);
+            syncScenarioUrl(currentScenarioFocus);
+            syncScenarioSearches(currentScenarioFocus);
+            refreshScenarioAnalyticsPanels();
+        }
+
+        function clearScenarioFocus() {
+            currentScenarioFocus = '';
+            terminalAutoFocusEligible = false;
+            sessionStorage.removeItem('scenarioFocus');
+            syncScenarioUrl('');
+            syncScenarioSearches('');
+            clearScenarioReplayConsole();
+            refreshScenarioAnalyticsPanels();
+        }
+
+        function renderScenarioEvidence(scenario) {
+            const evidence = scenarioEvidenceBundle(scenario);
+            if (!evidence.length) {
+                return '';
+            }
+
+            const lines = evidence.map((entry) => `
+                <div class="evidence-line ${entry.state || ''}">${entry.line}</div>
+            `).join('');
+
+            return `
+                <div class="evidence-bundle">
+                    <div class="evidence-title">Raw Evidence Replay</div>
+                    ${lines}
+                </div>
+            `;
+        }
+
+        function preferredTerminalScenario(analytics) {
+            return terminalScenarioEntry(analytics)[0] || '';
+        }
+
+        function scenarioGroupFor(scenario) {
+            const number = Number(scenarioNumberFromName(scenario));
+            if (number >= 1 && number <= 4) return 'core-intrusion';
+            if (number >= 5 && number <= 8) return 'identity-insider';
+            if (number >= 9 && number <= 10) return 'service-disruption';
+            if (number >= 11 && number <= 16) return 'cloud-supply-chain';
+            if (number === 17) return 'hardware-trust';
+            return 'other';
+        }
+
+        function scenarioGroupLabel(group) {
+            const labels = {
+                all: 'All',
+                'core-intrusion': 'Core Intrusion',
+                'identity-insider': 'Identity / Insider',
+                'service-disruption': 'Service Disruption',
+                'cloud-supply-chain': 'Cloud / Supply Chain',
+                'hardware-trust': 'Hardware Trust',
+                other: 'Other'
+            };
+            return labels[group] || group;
+        }
+
+        function setScenarioGroup(group) {
+            currentScenarioGroup = group || 'all';
+            sessionStorage.setItem('scenarioGroup', currentScenarioGroup);
+            syncDashboardUrlState();
+            refreshScenarioAnalyticsPanels();
+        }
+
+        async function copyScenarioDeepLink() {
+            const scenario = currentScenarioFocus || currentRenderedScenario;
+            if (!scenario) {
+                return;
+            }
+
+            const url = new URL(window.location.href);
+            url.searchParams.set('scenario', scenario);
+            const status = document.getElementById('copy-status');
+            try {
+                await navigator.clipboard.writeText(url.toString());
+                status.textContent = 'Deep link copied.';
+            } catch {
+                status.textContent = 'Clipboard unavailable.';
+            }
+        }
+
+        async function copyScenarioSummary() {
+            const scenario = currentScenarioFocus || currentRenderedScenario;
+            const detail = document.getElementById('scenario-detail');
+            if (!scenario || !detail) {
+                return;
+            }
+
+            const risk = detail.querySelector('.pill-critical, .pill-high, .pill-medium')?.textContent?.trim() || 'Unknown';
+            const paragraphs = Array.from(detail.querySelectorAll('p')).map((node) => node.textContent.trim()).filter(Boolean);
+            const tiles = Array.from(detail.querySelectorAll('.metric-tile')).map((node) => {
+                const label = node.querySelector('.metric-tile-label')?.textContent?.trim() || 'Metric';
+                const value = node.querySelector('.metric-tile-value')?.textContent?.trim() || 'n/a';
+                return `${label}: ${value}`;
+            });
+            const summary = [
+                `Scenario: ${scenario}`,
+                `Risk: ${risk}`,
+                ...paragraphs,
+                ...tiles,
+                `Deep Link: ${new URL(`?scenario=${encodeURIComponent(scenario)}`, window.location.href).toString()}`
+            ].join('\n');
+
+            const status = document.getElementById('copy-status');
+            try {
+                await navigator.clipboard.writeText(summary);
+                status.textContent = 'Scenario summary copied.';
+            } catch {
+                status.textContent = 'Clipboard unavailable.';
+            }
+        }
+
+        function exportDashboardState() {
+            const activeScenario = currentScenarioFocus || currentRenderedScenario || '';
+            const snapshot = {
+                exported_at: new Date().toISOString(),
+                business_filter: currentBusinessFilter,
+                scenario_group: currentScenarioGroup,
+                focused_scenario: activeScenario,
+                response_sort: document.getElementById('response-sort')?.value || 'desc',
+                response_filter: document.getElementById('response-filter')?.value || 'all',
+                response_search: document.getElementById('response-search')?.value || '',
+                containment_sort: document.getElementById('containment-sort')?.value || 'desc',
+                containment_filter: document.getElementById('containment-filter')?.value || 'all',
+                containment_search: document.getElementById('containment-search')?.value || '',
+                kpis: latestKpis,
+                scenario_metrics: activeScenario ? scenarioMetrics(activeScenario) : null,
+                scenario_analytics: activeScenario ? latestScenarioAnalytics?.[activeScenario] || null : null,
+            };
+
+            const blob = new Blob([JSON.stringify(snapshot, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            const scenarioSuffix = activeScenario ? `_${activeScenario.toLowerCase()}` : '_global';
+            link.href = url;
+            link.download = `dashboard_state${scenarioSuffix}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+
+            const status = document.getElementById('export-status');
+            status.textContent = `Exported ${activeScenario || 'global'} dashboard snapshot.`;
+            status.className = 'status-line ok';
+        }
+
+        function exportLatencyCsv(kind) {
+            const isResponse = kind === 'response';
+            const rows = isResponse ? latestResponseRows : latestContainmentRows;
+            const valueKey = isResponse ? 'response_latency_minutes' : 'containment_latency_minutes';
+            const label = isResponse ? 'response' : 'containment';
+            const filtered = getFilteredLatencyRows(
+                rows,
+                valueKey,
+                isResponse ? 'response-sort' : 'containment-sort',
+                isResponse ? 'response-filter' : 'containment-filter',
+                isResponse ? 'response-search' : 'containment-search'
+            );
+            const status = document.getElementById('export-status');
+
+            if (!filtered.length) {
+                status.textContent = `No filtered ${label} latency rows to export.`;
+                status.className = 'status-line warn';
+                return;
+            }
+
+            const csv = [
+                `scenario,${valueKey}`,
+                ...filtered.map((row) => `${JSON.stringify(row.scenario)},${row.numericValue.toFixed(1)}`)
+            ].join('\n');
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `filtered_${label}_latency.csv`;
+            link.click();
+            URL.revokeObjectURL(url);
+            status.textContent = `Exported filtered ${label} latency CSV.`;
+            status.className = 'status-line ok';
+        }
+
+        async function copyLatencyCsv(kind) {
+            const isResponse = kind === 'response';
+            const rows = isResponse ? latestResponseRows : latestContainmentRows;
+            const valueKey = isResponse ? 'response_latency_minutes' : 'containment_latency_minutes';
+            const label = isResponse ? 'response' : 'containment';
+            const filtered = getFilteredLatencyRows(
+                rows,
+                valueKey,
+                isResponse ? 'response-sort' : 'containment-sort',
+                isResponse ? 'response-filter' : 'containment-filter',
+                isResponse ? 'response-search' : 'containment-search'
+            );
+            const status = document.getElementById('export-status');
+
+            if (!filtered.length) {
+                status.textContent = `No filtered ${label} latency rows to copy.`;
+                status.className = 'status-line warn';
+                return;
+            }
+
+            const csv = [
+                `scenario,${valueKey}`,
+                ...filtered.map((row) => `${JSON.stringify(row.scenario)},${row.numericValue.toFixed(1)}`)
+            ].join('\n');
+
+            try {
+                await navigator.clipboard.writeText(csv);
+                status.textContent = `Copied filtered ${label} latency CSV.`;
+                status.className = 'status-line ok';
+            } catch {
+                status.textContent = 'Clipboard unavailable.';
+                status.className = 'status-line warn';
+            }
+        }
+
+        function exportDashboardHtmlSnapshot() {
+            const activeScenario = currentScenarioFocus || currentRenderedScenario || 'Global';
+            const status = document.getElementById('export-status');
+            const kpiMarkup = (document.getElementById('kpi-ribbon')?.innerHTML || 'Unavailable')
+                .replace(/<div class="sparkline-tooltip"><\/div>/g, '');
+            const terminalBannerMarkup = document.getElementById('terminal-scenario-banner')?.innerHTML || 'Unavailable';
+            const scenarioDetailMarkup = (document.getElementById('scenario-detail')?.innerHTML || 'Unavailable')
+                .replace(/<button[^>]*>[\s\S]*?<\/button>/g, '')
+                .replace(/<div id="copy-status" class="copy-status"><\/div>/g, '');
+            const snapshotHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Snapshot - ${activeScenario}</title>
+    <style>
+        body { margin: 0; padding: 24px; background: #0d1117; color: #c9d1d9; font-family: "JetBrains Mono", monospace; }
+        h1, h2 { color: #58a6ff; }
+        .meta { color: #8b949e; margin-bottom: 18px; font-size: 12px; }
+        .section { margin-bottom: 18px; padding: 14px; border: 1px solid #30363d; border-radius: 10px; background: #161b22; }
+        .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+        .mini-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        .mini-table th, .mini-table td { border-bottom: 1px solid #30363d; padding: 6px; text-align: left; }
+        .pill-critical, .pill-high, .pill-medium { display: inline-block; border-radius: 999px; padding: 2px 8px; font-size: 10px; }
+        .pill-critical { color: #fff; background: rgba(249, 38, 114, 0.85); }
+        .pill-high { color: #111; background: rgba(255, 166, 87, 0.9); }
+        .pill-medium { color: #111; background: rgba(126, 231, 135, 0.9); }
+        .kpi-ribbon { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+        .kpi-card { background: linear-gradient(180deg, rgba(16, 26, 52, 0.95), rgba(11, 18, 36, 0.95)); border: 1px solid #30363d; border-radius: 10px; padding: 12px; }
+        .kpi-link { color: inherit; text-decoration: none; }
+        .kpi-label { color: #8b949e; font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; }
+        .kpi-value { color: #c9d1d9; font-size: 1.3rem; margin-top: 6px; }
+        .kpi-subtext { color: #58a6ff; font-size: 10px; margin-top: 4px; }
+        .kpi-chart svg { width: 100%; height: 26px; display: block; }
+        .metric-strip { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+        .metric-tile { border: 1px solid #30363d; border-radius: 8px; padding: 8px; background: rgba(11, 18, 36, 0.7); }
+        .metric-tile-label { color: #8b949e; font-size: 9px; text-transform: uppercase; letter-spacing: 0.7px; }
+        .metric-tile-value { color: #c9d1d9; font-size: 1rem; margin-top: 5px; }
+        .timeline-item { border-left: 2px solid #ffa657; padding-left: 8px; color: #8b949e; margin-bottom: 8px; }
+        .timeline-item strong { color: #c9d1d9; }
+        .terminal-banner { margin-bottom: 18px; padding: 14px; border: 1px solid rgba(249, 38, 114, 0.7); border-radius: 12px; background: linear-gradient(135deg, rgba(63, 11, 28, 0.94), rgba(23, 11, 20, 0.94)); }
+        .terminal-banner-header { display: flex; justify-content: space-between; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .terminal-banner-title { color: #ffd6d2; font-size: 0.95rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+        .terminal-banner-label { display: inline-flex; align-items: center; padding: 5px 10px; border-radius: 999px; border: 1px solid rgba(255, 123, 114, 0.5); color: #ffd6d2; font-size: 10px; background: rgba(255, 123, 114, 0.14); }
+        .terminal-banner-scenario { margin-top: 8px; color: #fff5f4; font-size: 1rem; }
+        .terminal-banner-copy { margin-top: 8px; color: #f2c7cb; font-size: 11px; line-height: 1.6; }
+        .terminal-banner-metrics { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .terminal-banner-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px; border: 1px solid rgba(255, 214, 210, 0.16); background: rgba(255, 255, 255, 0.06); color: #fff5f4; font-size: 10px; }
+        .terminal-banner-pill strong { color: #ffd6d2; }
+        .terminal-banner-callout { margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255, 214, 210, 0.12); color: #fff5f4; font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase; }
+        @page { size: auto; margin: 0.5in; }
+        @media print {
+            body { background: #fff; color: #111; padding: 0; }
+            h1, h2, .kpi-subtext { color: #0b5bd3; }
+            .meta { color: #444; }
+            .section, .kpi-card, .metric-tile { background: #fff !important; color: #111; border-color: #cfcfcf; box-shadow: none; break-inside: avoid; }
+            .terminal-banner { background: #fff !important; color: #111; border-color: #d77d87; break-inside: avoid; }
+            .terminal-banner-title, .terminal-banner-scenario, .terminal-banner-callout { color: #7c1029; }
+            .terminal-banner-copy, .terminal-banner-label, .terminal-banner-pill { color: #333; }
+            .kpi-label, .metric-tile-label, .timeline-item { color: #555; }
+            .mini-table th, .mini-table td { border-bottom-color: #d8d8d8; }
+            .pill-critical, .pill-high, .pill-medium { border: 1px solid #999; }
+            .kpi-ribbon, .grid, .metric-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            a { color: inherit; text-decoration: none; }
+        }
+        @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <h1>Shadow Toolz Dashboard Snapshot</h1>
+    <div class="meta">Exported ${new Date().toISOString()} | Business: ${currentBusinessFilter} | Group: ${scenarioGroupLabel(currentScenarioGroup)} | Focus: ${activeScenario}</div>
+    <div class="section">
+        <h2>KPI Ribbon</h2>
+        ${kpiMarkup}
+    </div>
+    <div class="section">
+        <h2>Terminal Incident Card</h2>
+        <div class="terminal-banner">${terminalBannerMarkup}</div>
+    </div>
+    <div class="grid">
+        <div class="section">
+            <h2>Scenario Detail</h2>
+            ${scenarioDetailMarkup}
+        </div>
+        <div class="section">
+            <h2>Focused Timeline</h2>
+            ${document.getElementById('scenario13-timeline')?.innerHTML || 'Unavailable'}
+        </div>
+    </div>
+    <div class="grid">
+        <div class="section">
+            <h2>Response Latency</h2>
+            ${document.getElementById('response-latency')?.innerHTML || 'Unavailable'}
+        </div>
+        <div class="section">
+            <h2>Containment Latency</h2>
+            ${document.getElementById('containment-latency')?.innerHTML || 'Unavailable'}
+        </div>
+    </div>
+</body>
+</html>`;
+
+            const blob = new Blob([snapshotHtml], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            const slug = String(activeScenario).toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '') || 'global';
+            link.href = url;
+            link.download = `dashboard_snapshot_${slug}.html`;
+            link.click();
+            URL.revokeObjectURL(url);
+            status.textContent = `Exported ${activeScenario} HTML snapshot.`;
+            status.className = 'status-line ok';
+        }
+
+        function handleChipKeydown(event, scenario) {
+            const chips = Array.from(document.querySelectorAll('.scenario-chip'));
+            const currentIndex = chips.indexOf(event.currentTarget);
+            if (currentIndex === -1) return;
+
+            if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+                event.preventDefault();
+                chips[(currentIndex + 1) % chips.length]?.focus();
+                return;
+            }
+
+            if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+                event.preventDefault();
+                chips[(currentIndex - 1 + chips.length) % chips.length]?.focus();
+                return;
+            }
+
+            if (event.key === 'Home') {
+                event.preventDefault();
+                chips[0]?.focus();
+                return;
+            }
+
+            if (event.key === 'End') {
+                event.preventDefault();
+                chips[chips.length - 1]?.focus();
+                return;
+            }
+
+            if (event.key === 'Escape') {
+                event.preventDefault();
+                clearScenarioFocus();
+                return;
+            }
+
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                setScenarioFocus(scenario);
+            }
+        }
+
+        function scenarioMetrics(scenario) {
+            if (!latestKpis || !scenario) {
+                return null;
+            }
+
+            const dwell = latestKpis.dwell_time_minutes?.[scenario];
+            const response = latestKpis.estimated_response_latency_minutes?.[scenario];
+            const containment = latestKpis.estimated_containment_latency_minutes?.[scenario];
+            return { dwell, response, containment };
+        }
+
+        function formatMetricValue(value) {
+            if (value === null || value === undefined || value === '') {
+                return 'n/a';
+            }
+            const numeric = Number(value);
+            return Number.isFinite(numeric) ? `${numeric.toFixed(1)}m` : String(value);
+        }
+
+        function buildSparkline(points, color) {
+            const series = points.filter((point) => Number.isFinite(point?.value));
+            if (!series.length) {
+                return '';
+            }
+
+            const width = 120;
+            const height = 26;
+            const values = series.map((point) => point.value);
+            const min = Math.min(...values);
+            const max = Math.max(...values);
+            const range = max - min || 1;
+            const polylinePoints = series.map((point, index) => {
+                const x = series.length === 1 ? width / 2 : (index * width) / (series.length - 1);
+                const y = height - (((point.value - min) / range) * (height - 4) + 2);
+                return { ...point, x, y };
+            });
+            const pointAttr = polylinePoints.map((point) => `${point.x.toFixed(1)},${point.y.toFixed(1)}`).join(' ');
+            const circles = polylinePoints.map((point) => `
+                <circle
+                    cx="${point.x.toFixed(1)}"
+                    cy="${point.y.toFixed(1)}"
+                    r="2.4"
+                    fill="${color}"
+                    data-label="${point.label}"
+                    data-value="${point.value.toFixed(1)}m"
+                    tabindex="0"
+                >
+                    <title>${point.label}: ${point.value.toFixed(1)}m</title>
+                </circle>
+            `).join('');
+
+            return `
+                <div class="kpi-chart" aria-hidden="true">
+                    <div class="sparkline-tooltip"></div>
+                    <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
+                        <polyline fill="none" stroke="${color}" stroke-width="2" points="${pointAttr}" />
+                        ${circles}
+                    </svg>
+                </div>
+            `;
+        }
+
+        function showSparklineTooltip(circle, clientX = null) {
+            const chart = circle.closest('.kpi-chart');
+            const tooltip = chart?.querySelector('.sparkline-tooltip');
+            if (!chart || !tooltip) {
+                return;
+            }
+
+            const chartBounds = chart.getBoundingClientRect();
+            const rawX = Number(circle.getAttribute('cx')) || 0;
+            const viewBox = circle.ownerSVGElement?.viewBox?.baseVal;
+            const viewBoxWidth = viewBox?.width || 120;
+            const chartWidth = chart.clientWidth || 120;
+            const fallbackLeft = (rawX / viewBoxWidth) * chartWidth;
+            const left = clientX === null
+                ? fallbackLeft
+                : Math.max(16, Math.min(chartWidth - 16, clientX - chartBounds.left));
+
+            tooltip.textContent = `${circle.dataset.label || 'Point'}: ${circle.dataset.value || 'n/a'}`;
+            tooltip.style.left = `${left}px`;
+            tooltip.classList.add('visible');
+        }
+
+        function hideSparklineTooltip(circle) {
+            const tooltip = circle.closest('.kpi-chart')?.querySelector('.sparkline-tooltip');
+            tooltip?.classList.remove('visible');
+        }
+
+        function riskBucket(risk) {
+            const normalized = (risk || '').toLowerCase();
+            if (normalized === 'critical') return 'critical';
+            if (normalized === 'high') return 'high';
+            return 'medium';
+        }
+
+        function renderFocusBadge(scenario, risk) {
+            const badge = document.getElementById('focus-badge');
+            if (!scenario) {
+                badge.className = 'focus-badge';
+                badge.textContent = 'Focused Scenario: none';
+                return;
+            }
+
+            const bucket = riskBucket(risk);
+            badge.className = `focus-badge active ${bucket}`;
+            badge.textContent = `Focused Scenario: ${scenario} (${risk || 'Unknown'})`;
+        }
+
+        function renderScenarioDetail(scenario, payload) {
+            if (!scenario || !payload) {
+                currentRenderedScenario = '';
+                renderFocusBadge('', '');
+                document.getElementById('timeline-title').className = 'module-title';
+                return 'Choose a scenario to sync the latency views and inspect signals.';
+            }
+
+            currentRenderedScenario = scenario;
+
+            const risk = (payload.risk_levels || [])[0] || 'Unknown';
+            const classification = (payload.classifications || [])[0] || 'Unclassified';
+            const signals = (payload.signals || []).slice(0, 4).join(', ') || 'n/a';
+            const actions = (payload.actions || []).slice(0, 4).join(', ') || 'n/a';
+            const pillClass = risk === 'Critical' ? 'pill-critical' : (risk === 'High' ? 'pill-high' : 'pill-medium');
+            const metrics = scenarioMetrics(scenario);
+            const bucket = riskBucket(risk);
+            const evidenceMarkup = renderScenarioEvidence(scenario);
+
+            renderFocusBadge(scenario, risk);
+            document.getElementById('timeline-title').className = `module-title ${bucket}`;
+            renderFilterSummary();
+
+            return `
+                <div class="detail-header">
+                    <h4>${scenario}</h4>
+                    <div class="detail-actions">
+                        <button type="button" id="scenario-replay-pause-btn" class="detail-clear secondary" onclick="toggleScenarioReplayPause()">Pause</button>
+                        <button type="button" id="scenario-replay-step-btn" class="detail-clear secondary" onclick="stepScenarioReplay()">Step</button>
+                        <button type="button" id="scenario-replay-restart-btn" class="detail-clear secondary" onclick="restartScenarioReplay()">Restart</button>
+                        <button type="button" class="detail-clear secondary" onclick="copyScenarioSummary()">Copy Summary</button>
+                        <button type="button" class="detail-clear secondary" onclick="copyScenarioDeepLink()">Copy Deep Link</button>
+                        <button type="button" class="detail-clear" onclick="clearScenarioFocus()">Clear Focus</button>
+                    </div>
+                </div>
+                <div><span class="${pillClass}">${risk}</span></div>
+                <p>${classification}</p>
+                <p><strong>Signals:</strong> ${signals}</p>
+                <p><strong>Actions:</strong> ${actions}</p>
+                <div class="metric-strip">
+                    <div class="metric-tile ${bucket}">
+                        <div class="metric-tile-label">Dwell</div>
+                        <div class="metric-tile-value">${formatMetricValue(metrics?.dwell)}</div>
+                    </div>
+                    <div class="metric-tile ${bucket}">
+                        <div class="metric-tile-label">Response</div>
+                        <div class="metric-tile-value">${formatMetricValue(metrics?.response)}</div>
+                    </div>
+                    <div class="metric-tile ${bucket}">
+                        <div class="metric-tile-label">Containment</div>
+                        <div class="metric-tile-value">${formatMetricValue(metrics?.containment)}</div>
+                    </div>
+                </div>
+                <div class="focus-note">Latency tables and timeline are synchronized to this focus.</div>
+                ${evidenceMarkup}
+                <div id="scenario-replay-status" class="copy-status"></div>
+                <div id="copy-status" class="copy-status"></div>
+            `;
+        }
+
+        function renderKpiRibbon(kpis) {
+            const responsePoints = Object.entries(kpis.estimated_response_latency_minutes || {}).map(([label, value]) => ({ label, value: Number(value) }));
+            const containmentPoints = Object.entries(kpis.estimated_containment_latency_minutes || {}).map(([label, value]) => ({ label, value: Number(value) }));
+            const dwellPoints = Object.entries(kpis.dwell_time_minutes || {}).map(([label, value]) => ({ label, value: Number(value) }));
+            const deltaPoints = responsePoints.map((point, index) => ({
+                label: point.label,
+                value: Number((containmentPoints[index]?.value || 0) - point.value)
+            }));
+            const cards = [
+                {
+                    label: 'Coverage',
+                    value: `${kpis.scenario_count ?? '--'}`,
+                    subtext: `${kpis.critical_scenarios ?? '--'} critical scenarios`,
+                    href: '/artifacts/mission_control_report.html#severity-scorecard',
+                    sparkline: buildSparkline(dwellPoints, '#7ee787')
+                },
+                {
+                    label: 'Avg Response',
+                    value: `${Number(kpis.average_estimated_response_latency_minutes ?? 0).toFixed(2)}m`,
+                    subtext: 'Timeline-derived response estimate',
+                    href: '/artifacts/mission_control_report.html#chain-kpis',
+                    sparkline: buildSparkline(responsePoints, '#58a6ff')
+                },
+                {
+                    label: 'Avg Containment',
+                    value: `${Number(kpis.average_estimated_containment_latency_minutes ?? 0).toFixed(2)}m`,
+                    subtext: 'Containment pressure across chain',
+                    href: '/artifacts/mission_control_report.html#chain-kpis',
+                    sparkline: buildSparkline(containmentPoints, '#ff7b72')
+                },
+                {
+                    label: 'Signal Density',
+                    value: `${kpis.highest_signal_density?.signals ?? '--'}`,
+                    subtext: kpis.highest_signal_density?.scenario || 'No density leader',
+                    href: '/artifacts/mission_control_report.html#drill-down-report',
+                    sparkline: buildSparkline(deltaPoints, '#ffa657')
+                }
+            ];
+
+            return cards.map((card) => `
+                <a class="kpi-link" href="${card.href}" target="_blank" rel="noopener noreferrer">
+                    <div class="kpi-card">
+                        <div class="kpi-label">${card.label}</div>
+                        <div class="kpi-value">${card.value}</div>
+                        <div class="kpi-subtext">${card.subtext}</div>
+                        ${card.sparkline}
+                    </div>
+                </a>
+            `).join('');
+        }
+
+        function renderTerminalScenarioBanner(analytics, kpis) {
+            const banner = document.getElementById('terminal-scenario-banner');
+            if (!banner) {
+                return;
+            }
+
+            const fallbackScenario = kpis?.highest_signal_density?.scenario || '';
+            const scenario = preferredTerminalScenario(analytics) || fallbackScenario;
+            const payload = scenario ? analytics?.[scenario] : null;
+
+            if (!scenario || !payload) {
+                banner.className = 'terminal-banner pending';
+                banner.innerHTML = `
+                    <div class="terminal-banner-header">
+                        <div class="terminal-banner-title">Terminal Incident Banner</div>
+                        <div class="terminal-banner-label">Awaiting analytics</div>
+                    </div>
+                    <div class="terminal-banner-copy">Loading the highest-pressure scenario and war-room posture from the reporting artifacts.</div>
+                `;
+                return;
+            }
+
+            const classification = (payload.classifications || [])[0] || 'Terminal catastrophic incident';
+            const risk = (payload.risk_levels || [])[0] || 'Unknown';
+            const signalCount = (payload.signals || []).length;
+            const actionCount = (payload.actions || []).length;
+            const response = kpis?.estimated_response_latency_minutes?.[scenario];
+            const containment = kpis?.estimated_containment_latency_minutes?.[scenario];
+
+            banner.className = 'terminal-banner';
+            banner.innerHTML = `
+                <div class="terminal-banner-header">
+                    <div class="terminal-banner-title">MSSP War-Room Priority</div>
+                    <div class="terminal-banner-label">SEV-1 ${risk.toUpperCase()} EVENT</div>
+                </div>
+                <div class="terminal-banner-scenario">${scenario}</div>
+                <div class="terminal-banner-copy">${classification}. Run this as an active terminal incident: incident command online, customer comms controlled, forensic preservation enforced, and recovery paths validated across identity, cloud, and data control planes.</div>
+                <div class="terminal-banner-metrics">
+                    <div class="terminal-banner-pill"><strong>Signals</strong> ${signalCount}</div>
+                    <div class="terminal-banner-pill"><strong>Actions</strong> ${actionCount}</div>
+                    <div class="terminal-banner-pill"><strong>Response</strong> ${formatMetricValue(response)}</div>
+                    <div class="terminal-banner-pill"><strong>Containment</strong> ${formatMetricValue(containment)}</div>
+                </div>
+                <div class="terminal-banner-callout">Priority posture: containment first, preserve evidence, stop spread, validate recovery integrity.</div>
+            `;
+        }
+
+        async function refreshScenarioAnalyticsPanels() {
+            try {
+                let activeScenario = currentScenarioFocus || '';
+                let analytics = null;
+                const analyticsResp = await fetch(artifactUrl('cross_scenario_analytics.json'));
+                if (analyticsResp.ok) {
+                    analytics = await analyticsResp.json();
+                    latestScenarioAnalytics = analytics;
+                    const [terminalScenario, terminalPayload] = terminalScenarioEntry(analytics);
+                    const terminalScenarioNumber = scenarioNumberFromName(terminalScenario);
+                    const autoFocusScenario = terminalAutoFocusEligible ? preferredTerminalScenario(analytics) : '';
+                    if (autoFocusScenario) {
+                        currentScenarioFocus = autoFocusScenario;
+                        currentScenarioGroup = scenarioGroupFor(autoFocusScenario);
+                        sessionStorage.setItem('scenarioFocus', currentScenarioFocus);
+                        sessionStorage.setItem('scenarioGroup', currentScenarioGroup);
+                        syncScenarioUrl(currentScenarioFocus);
+                        syncScenarioSearches(currentScenarioFocus);
+                        terminalAutoFocusEligible = false;
+                    }
+                    const prioritizedScenarios = Object.entries(analytics)
+                        .sort((left, right) => {
+                            const leftRisk = ((left[1].risk_levels || [])[0] || '').toLowerCase();
+                            const rightRisk = ((right[1].risk_levels || [])[0] || '').toLowerCase();
+                            const riskOrder = { critical: 0, high: 1, medium: 2, low: 3 };
+                            const leftSignals = (left[1].signals || []).length;
+                            const rightSignals = (right[1].signals || []).length;
+                            return (riskOrder[leftRisk] ?? 9) - (riskOrder[rightRisk] ?? 9)
+                                || rightSignals - leftSignals
+                                || left[0].localeCompare(right[0]);
+                        });
+
+                    if (currentScenarioFocus) {
+                        currentScenarioGroup = scenarioGroupFor(currentScenarioFocus);
+                        sessionStorage.setItem('scenarioGroup', currentScenarioGroup);
+                    }
+
+                    const groupOrder = ['all', 'core-intrusion', 'identity-insider', 'service-disruption', 'cloud-supply-chain', 'hardware-trust', 'other'];
+                    const availableGroups = new Set(prioritizedScenarios.map(([scenario]) => scenarioGroupFor(scenario)));
+                    const visibleGroups = groupOrder.filter((group) => group === 'all' || availableGroups.has(group));
+                    const groupCounts = prioritizedScenarios.reduce((counts, [scenario]) => {
+                        const group = scenarioGroupFor(scenario);
+                        counts[group] = (counts[group] || 0) + 1;
+                        return counts;
+                    }, { all: prioritizedScenarios.length });
+                    if (currentScenarioGroup !== 'all' && !availableGroups.has(currentScenarioGroup)) {
+                        currentScenarioGroup = 'all';
+                        sessionStorage.setItem('scenarioGroup', currentScenarioGroup);
+                    }
+
+                    document.getElementById('scenario-tabs').innerHTML = visibleGroups.map((group) => `
+                        <button type="button" class="scenario-tab ${currentScenarioGroup === group ? 'active' : ''}" onclick="setScenarioGroup('${group}')">${scenarioGroupLabel(group)}<span class="scenario-tab-count">${groupCounts[group] || 0}</span></button>
+                    `).join('');
+
+                    const visibleScenarios = prioritizedScenarios
+                        .filter(([scenario]) => currentScenarioGroup === 'all' || scenarioGroupFor(scenario) === currentScenarioGroup)
+                        .slice(0, 8);
+
+                    const chipMarkup = visibleScenarios.map(([scenario]) => `
+                        <button type="button" class="scenario-chip ${currentScenarioFocus === scenario ? 'active' : ''}" onclick="setScenarioFocus('${scenario}')" onkeydown="handleChipKeydown(event, '${scenario}')">${scenario}</button>
+                    `);
+                    document.getElementById('scenario-chipbar').innerHTML = chipMarkup.length
+                        ? chipMarkup.join('')
+                        : 'No scenario analytics available.';
+
+                    if (currentScenarioFocus && !analytics[currentScenarioFocus]) {
+                        currentScenarioFocus = '';
+                        sessionStorage.removeItem('scenarioFocus');
+                        syncScenarioUrl('');
+                        syncScenarioSearches('');
+                    }
+
+                    const detailScenario = currentScenarioFocus || visibleScenarios[0]?.[0] || prioritizedScenarios[0]?.[0] || '';
+                    activeScenario = detailScenario;
+                    if (!currentScenarioFocus && detailScenario) {
+                        syncScenarioUrl('');
+                    }
+                    document.getElementById('scenario-detail').innerHTML = renderScenarioDetail(detailScenario, analytics[detailScenario]);
+                    renderScenarioReplayConsole(detailScenario);
+
+                    const terminalScenarioData = Object.entries(analytics)
+                        .filter(([scenario]) => terminalScenarioNumber && scenarioNumberFromName(scenario) === terminalScenarioNumber)
+                        .map(([scenario, payload]) => {
+                            const risk = (payload.risk_levels || [])[0] || 'Unknown';
+                            const signals = (payload.signals || []).slice(0, 3).join(', ');
+                            const actions = (payload.actions || []).slice(0, 2).join(', ');
+                            const classification = (payload.classifications || [])[0] || 'Unclassified';
+                            const signalCount = (payload.signals || []).length;
+                            const actionCount = (payload.actions || []).length;
+                            const riskClass = risk === 'Critical' ? 'pill-critical' : (risk === 'High' ? 'pill-high' : 'pill-medium');
+                            return `
+                                <div class="scenario-card">
+                                    <h4>${scenario}</h4>
+                                    <div><span class="${riskClass}">${risk}</span></div>
+                                    <p>${classification}</p>
+                                    <p><strong>Top Signals:</strong> ${signals || 'n/a'}</p>
+                                    <p><strong>Recommended Actions:</strong> ${actions || 'n/a'}</p>
+                                    <div class="scenario-metric"><span>Signals</span><span>${signalCount}</span></div>
+                                    <div class="scenario-metric"><span>Actions</span><span>${actionCount}</span></div>
+                                </div>
+                            `;
+                        });
+                    document.getElementById('scenario13').innerHTML = terminalScenarioData.length
+                        ? `${terminalScenarioData.join('')}<div class="war-room-note"><strong>War-Room Trigger:</strong> Treat ${terminalScenario} as the terminal catastrophic event in the training universe. ${(terminalPayload?.classifications || [])[0] || 'This scenario'} drives immediate containment, coordinated forensics, business continuity activation, and full environment compromise assessment.</div>`
+                        : 'No terminal-scenario analytics available.';
+                }
+
+                const kpiResp = await fetch(artifactUrl('chain_kpis.json'));
+                if (kpiResp.ok) {
+                    latestKpis = await kpiResp.json();
+                    document.getElementById('kpi-ribbon').innerHTML = renderKpiRibbon(latestKpis);
+                    renderTerminalScenarioBanner(analytics, latestKpis);
+                    const detailScenario = activeScenario || currentScenarioFocus || '';
+                    if (detailScenario && analytics) {
+                        if (analytics[detailScenario]) {
+                            document.getElementById('scenario-detail').innerHTML = renderScenarioDetail(detailScenario, analytics[detailScenario]);
+                        }
+                    }
+                }
+
+                const timelineResp = await fetch(artifactUrl('multi_scenario_chain_timeline.md'));
+                if (timelineResp.ok) {
+                    const timelineText = await timelineResp.text();
+                    const timelineScenario = activeScenario || '';
+                    const timelineScenarioNumber = scenarioNumberFromName(timelineScenario);
+                    document.getElementById('timeline-title').textContent = timelineScenario
+                        ? `${timelineScenario} War-Room Timeline`
+                        : 'Focused War-Room Timeline';
+                    if (!timelineScenario) {
+                        document.getElementById('timeline-title').className = 'module-title';
+                    }
+                    const timelineItems = timelineText
+                        .split(/\r?\n/)
+                        .filter((line) => line.startsWith('|'))
+                        .map((line) => line.split('|').map((part) => part.trim()).filter(Boolean))
+                        .filter((parts) => parts.length >= 6 && /^\d+$/.test(parts[1]))
+                        .filter((parts) => !timelineScenarioNumber || parts[1] === timelineScenarioNumber)
+                        .map((parts) => ({ time: parts[0], event: parts[2], identity: parts[3], response: parts[5] }))
+                        .map((item) => `<div class="timeline-item"><strong>${item.time}</strong> ${item.event}<br><span>${item.identity}</span><br><span>${item.response}</span></div>`);
+                    document.getElementById('scenario13-timeline').innerHTML = timelineItems.length
+                        ? timelineItems.join('')
+                        : (timelineScenario ? `No chain entries available for ${timelineScenario}.` : 'No focused scenario selected.');
+                }
+
+                const [responseResp, containmentResp] = await Promise.all([
+                    fetch(artifactUrl('chain_response_latency.csv')),
+                    fetch(artifactUrl('chain_containment_latency.csv')),
+                ]);
+
+                if (responseResp.ok) {
+                    const responseRows = parseCsv(await responseResp.text());
+                    latestResponseRows = responseRows;
+                    const responseSummary = document.getElementById('response-latency-summary');
+                    responseSummary.textContent = renderLatencySummary(responseRows, 'response_latency_minutes', 'response-sort', 'response-filter', 'response-search', 'Response');
+                    responseSummary.className = `latency-summary ${latencySummaryClass(responseRows, 'response_latency_minutes', 'response-sort', 'response-filter', 'response-search')}`.trim();
+                    document.getElementById('response-latency').innerHTML = renderLatencyTable(responseRows, 'response_latency_minutes', 'Response', 'response-sort', 'response-filter', 'response-search');
+                }
+
+                if (containmentResp.ok) {
+                    const containmentRows = parseCsv(await containmentResp.text());
+                    latestContainmentRows = containmentRows;
+                    const containmentSummary = document.getElementById('containment-latency-summary');
+                    containmentSummary.textContent = renderLatencySummary(containmentRows, 'containment_latency_minutes', 'containment-sort', 'containment-filter', 'containment-search', 'Containment');
+                    containmentSummary.className = `latency-summary ${latencySummaryClass(containmentRows, 'containment_latency_minutes', 'containment-sort', 'containment-filter', 'containment-search')}`.trim();
+                    document.getElementById('containment-latency').innerHTML = renderLatencyTable(containmentRows, 'containment_latency_minutes', 'Containment', 'containment-sort', 'containment-filter', 'containment-search');
+                }
+            } catch {
+                latestScenarioAnalytics = null;
+                latestResponseRows = [];
+                latestContainmentRows = [];
+                renderTerminalScenarioBanner(null, null);
+                document.getElementById('scenario13').textContent = 'Scenario analytics unavailable.';
+                document.getElementById('response-latency-summary').textContent = 'Latency summary unavailable.';
+                document.getElementById('response-latency-summary').className = 'latency-summary';
+                document.getElementById('containment-latency-summary').textContent = 'Latency summary unavailable.';
+                document.getElementById('containment-latency-summary').className = 'latency-summary';
+                document.getElementById('kpi-ribbon').innerHTML = '<div class="kpi-card"><div class="kpi-label">KPIs</div><div class="kpi-value">unavailable</div><div class="kpi-subtext">Reporting artifacts could not be loaded</div></div>';
+            }
+        }
+
+        async function bootstrap() {
+            await loadAuthConfig();
+            await handleOidcCallback();
+            applyDashboardUrlState();
+            await loadBusinessTargets();
+            await refreshAudit();
+            await refreshScenarioAnalyticsPanels();
+            await refreshTelemetryPipelineStatus();
+            await runSystemCheck();
+            connectWebsocket();
+            restoreModuleState();
+            renderFilterSummary();
+            ['response-sort', 'response-filter', 'containment-sort', 'containment-filter'].forEach((id) => {
+                document.getElementById(id)?.addEventListener('change', syncDashboardUrlState);
+            });
+            ['response-search', 'containment-search'].forEach((id) => {
+                document.getElementById(id)?.addEventListener('input', syncDashboardUrlState);
+            });
+            document.addEventListener('keydown', handleGlobalShortcuts);
+            setInterval(refreshAudit, 2500);
+            setInterval(refreshScenarioAnalyticsPanels, 10000);
+            setInterval(refreshTelemetryPipelineStatus, 5000);
+            setInterval(runSystemCheck, 10000);
+        }
+
+        function attachKpiRibbonInteractions() {
+            const ribbon = document.getElementById('kpi-ribbon');
+            if (!ribbon) {
+                return;
+            }
+
+            ribbon.addEventListener('pointerover', (event) => {
+                const circle = event.target.closest('.kpi-chart circle');
+                if (!circle) {
+                    return;
+                }
+                showSparklineTooltip(circle, event.clientX);
+            });
+            ribbon.addEventListener('pointermove', (event) => {
+                const circle = event.target.closest('.kpi-chart circle');
+                if (!circle) {
+                    return;
+                }
+                showSparklineTooltip(circle, event.clientX);
+            });
+            ribbon.addEventListener('pointerout', (event) => {
+                const circle = event.target.closest('.kpi-chart circle');
+                if (!circle) {
+                    return;
+                }
+                hideSparklineTooltip(circle);
+            });
+            ribbon.addEventListener('focusin', (event) => {
+                const circle = event.target.closest('.kpi-chart circle');
+                if (!circle) {
+                    return;
+                }
+                showSparklineTooltip(circle);
+            });
+            ribbon.addEventListener('focusout', (event) => {
+                const circle = event.target.closest('.kpi-chart circle');
+                if (!circle) {
+                    return;
+                }
+                hideSparklineTooltip(circle);
+            });
+        }
+
+        function initializeDashboard() {
+            bootstrap();
+            attachKpiRibbonInteractions();
+            window.onload = runSystemCheck;
+        }
+
+        window.__shadowDashboardTestHooks = {
+            setAccessToken(value) {
+                accessToken = value || "";
+                if (accessToken) {
+                    sessionStorage.setItem("shadow.access_token", accessToken);
+                } else {
+                    sessionStorage.removeItem("shadow.access_token");
+                }
+                updateAuthControls();
+            },
+            getAccessToken() {
+                return accessToken;
+            },
+            setAuthConfig(value) {
+                authCfg = value || null;
+                updateAuthControls();
+            },
+            getAuthConfig() {
+                return authCfg;
+            },
+            setTelemetryAdvance(timestamp, lastId = telemetryLastEventId) {
+                telemetryLastAdvanceAt = timestamp || 0;
+                telemetryLastEventId = lastId ?? telemetryLastEventId;
+            },
+            getTelemetryState() {
+                return {
+                    lastEventId: telemetryLastEventId,
+                    lastAdvanceAt: telemetryLastAdvanceAt,
+                    reconnectDelayMs: websocketReconnectDelayMs,
+                };
+            },
+            updateAuthControls,
+            clearSessionForAuthFailure,
+            handleProtectedAuthFailure,
+            summarizeTelemetryHealth,
+            refreshTelemetryPipelineStatus,
+            loadBusinessTargets,
+            runSystemCheck,
+            resetRealtimeState,
+            renderScenarioReplayConsole,
+            toggleScenarioReplayPause,
+            restartScenarioReplay,
+            stepScenarioReplay,
+            getReplayState() {
+                return {
+                    scenario: scenarioReplayState.scenario,
+                    nextIndex: scenarioReplayState.nextIndex,
+                    paused: scenarioReplayState.paused,
+                    completed: scenarioReplayState.completed,
+                    evidenceLength: scenarioReplayState.evidence.length,
+                };
+            },
+            getReplayStatusText() {
+                return document.getElementById('scenario-replay-status')?.textContent || '';
+            },
+        };
+
+        if (!window.__SHADOW_DASHBOARD_TEST__) {
+            initializeDashboard();
+        }
+    </script>
+</body>
+
+</html>

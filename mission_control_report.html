@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mission Control Unified Report</title>
+<style>
+body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:#09111f;color:#e6eefb;line-height:1.55;}
+.page{max-width:1180px;margin:0 auto;padding:24px;}
+.section-nav{
+position:sticky;
+top:0;
+z-index:20;
+background:rgba(9,17,31,.92);
+-webkit-backdrop-filter:blur(8px);
+backdrop-filter:blur(8px);
+border-bottom:1px solid #243356;
+padding:12px 24px;
+}
+.section-nav-title{font-size:.8rem;color:#9fe870;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+.section-nav-links{display:flex;gap:12px;flex-wrap:wrap;}
+.section-nav-links a{font-size:.85rem;padding:4px 8px;border:1px solid #243356;border-radius:999px;background:#101a34;}
+.section-nav-links a.active{border-color:#9fe870;color:#9fe870;box-shadow:0 0 0 1px rgba(159,232,112,.2);}
+h1,h2,h3{margin:0 0 12px;line-height:1.25;}
+h1{color:#9fe870;font-size:2rem;}
+h2{color:#7cc7ff;font-size:1.35rem;margin-top:24px;}
+h3{color:#f5c56c;font-size:1.05rem;margin-top:18px;}
+p,li{font-size:1rem;margin:8px 0;}
+ul{margin:8px 0 12px 20px;padding:0;}
+hr{border:none;border-top:1px solid #243356;margin:20px 0;}
+pre{white-space:pre-wrap;background:#0b1224;border:1px solid #22304f;padding:12px;border-radius:10px;overflow:auto;}
+.page > h1:first-child,.page > h2,.page > h3,.page > p,.page > ul,.page > hr,.page > .table-wrap{background:#101a34;border:1px solid #243356;border-radius:16px;padding:18px 22px;box-shadow:0 10px 30px rgba(0,0,0,.22);}
+.page > h2,.page > h3{padding-bottom:14px;}
+.page > p + p,.page > ul + p,.page > .table-wrap + p{margin-top:18px;}
+.table-wrap{overflow:auto;}
+table{width:100%;border-collapse:collapse;font-size:.95rem;}
+th,td{padding:10px 12px;border-bottom:1px solid #243356;text-align:left;vertical-align:top;}
+th{color:#8dd7ff;background:#0b1224;position:sticky;top:0;}
+tr:nth-child(even) td{background:rgba(11,18,36,.45);}
+a{color:#8dd7ff;text-decoration:none;}
+a:hover{text-decoration:underline;}
+.scenario-link{font-weight:600;}
+.dashboard-backlink{margin-left:10px;font-size:.75rem;font-weight:400;color:#9fe870;}
+strong{color:#ffffff;}
+em{color:#b6c8e6;}
+@media (max-width: 760px){.page{padding:14px;}th,td{padding:8px 9px;font-size:.88rem;}}
+</style>
+</head>
+<body>
+<nav class="section-nav" aria-label="Report sections">
+<div class="section-nav-title">Sections</div>
+<div class="section-nav-links">
+<a href="#severity-scorecard">Severity Scorecard</a>
+<a href="#executive-summary">Executive Summary</a>
+<a href="#terminal-incident">Terminal Incident</a>
+<a href="#scenario-overview">Scenario Overview</a>
+<a href="#key-signals-and-actions-by-scenario">Key Signals and Actions by Scenario</a>
+<a href="#drill-down-report">Drill-Down Report</a>
+<a href="#scenario-prioritization">Scenario Prioritization</a>
+<a href="#drill-down-highlights">Drill-Down Highlights</a>
+<a href="#chain-timeline">Chain Timeline</a>
+<a href="#incident-attack-graph">Incident Attack Graph</a>
+<a href="#graph-summary">Graph Summary</a>
+<a href="#node-types">Node Types</a>
+<a href="#relationship-types">Relationship Types</a>
+<a href="#scenario-to-graph-mapping">Scenario-to-Graph Mapping</a>
+<a href="#conceptual-flow">Conceptual Flow</a>
+<a href="#mission-control-usage-notes">Mission Control Usage Notes</a>
+<a href="#red-team-deliverable-package">Red Team Deliverable Package</a>
+<a href="#campaign-modes">Campaign Modes</a>
+<a href="#8-red-team-deliverable-package">8) Red Team Deliverable Package</a>
+<a href="#safety-controls">Safety Controls</a>
+<a href="#campaign-launcher-manifest">Campaign Launcher Manifest</a>
+<a href="#constraints">Constraints</a>
+<a href="#profiles">Profiles</a>
+<a href="#example-launch-intents">Example Launch Intents</a>
+<a href="#chain-kpis">Chain KPIs</a>
+<a href="#estimated-response-latency-by-scenario-minutes">Estimated Response Latency by Scenario (Minutes)</a>
+<a href="#dwell-time-by-scenario-minutes">Dwell Time by Scenario (Minutes)</a>
+<a href="#estimated-containment-latency-by-scenario-minutes">Estimated Containment Latency by Scenario (Minutes)</a>
+</div>
+</nav>
+<div class="page">
+<h1 id="mission-control-unified-report-2026-04-14">Mission Control Unified Report — 2026-04-14</h1>
+<p>This report combines executive narrative, prioritized drill-down, chain timeline, and KPI metrics.</p>
+<h2 id="severity-scorecard">Severity Scorecard</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Scenario</th><th>Severity</th><th>Scorebar</th><th>Signals</th><th>Containment Latency</th></tr></thead>
+<tbody>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_13_ZERO_DAY_EXPLOIT">SCENARIO_13_ZERO_DAY_EXPLOIT</a></td><td>Critical</td><td>[####]</td><td>6</td><td>8.25</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_11_K8S_SIDECAR_BREAKOUT">SCENARIO_11_K8S_SIDECAR_BREAKOUT</a></td><td>Critical</td><td>[####]</td><td>6</td><td>8.0</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_14_HYBRID_CLOUD_RANSOMWARE">SCENARIO_14_HYBRID_CLOUD_RANSOMWARE</a></td><td>Critical</td><td>[####]</td><td>7</td><td>6.29</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE">SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE</a></td><td>Critical</td><td>[####]</td><td>6</td><td>6.0</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_16_OIDC_SIGNING_KEY_THEFT">SCENARIO_16_OIDC_SIGNING_KEY_THEFT</a></td><td>Critical</td><td>[####]</td><td>6</td><td>6.0</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE">SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE</a></td><td>Critical</td><td>[####]</td><td>6</td><td>6.0</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_12_SUPPLY_CHAIN_POISONING">SCENARIO_12_SUPPLY_CHAIN_POISONING</a></td><td>Critical</td><td>[####]</td><td>6</td><td>5.0</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_10_SERVICE_PRINCIPAL_HIJACK">SCENARIO_10_SERVICE_PRINCIPAL_HIJACK</a></td><td>Critical</td><td>[####]</td><td>6</td><td>5.0</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_6_VENDOR_COMPROMISE">SCENARIO_6_VENDOR_COMPROMISE</a></td><td>Critical</td><td>[####]</td><td>5</td><td>5.0</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_9_LATERAL_MOVEMENT_OAUTH">SCENARIO_9_LATERAL_MOVEMENT_OAUTH</a></td><td>Critical</td><td>[####]</td><td>5</td><td>2.0</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL">SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL</a></td><td>Critical</td><td>[####]</td><td>5</td><td>2.0</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_7_INSIDER_MISUSE">SCENARIO_7_INSIDER_MISUSE</a></td><td>Critical</td><td>[####]</td><td>5</td><td>2.0</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_4_BEC_ATTEMPT">SCENARIO_4_BEC_ATTEMPT</a></td><td>Critical</td><td>[####]</td><td>5</td><td>2.0</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_3_UNAUTHORIZED_ACCESS">SCENARIO_3_UNAUTHORIZED_ACCESS</a></td><td>High</td><td>[### ]</td><td>4</td><td>5.0</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_5_OAUTH_ABUSE">SCENARIO_5_OAUTH_ABUSE</a></td><td>High</td><td>[### ]</td><td>4</td><td>2.0</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_2_MALWARE_ATTACHMENT">SCENARIO_2_MALWARE_ATTACHMENT</a></td><td>High</td><td>[### ]</td><td>4</td><td>2.0</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_1_SPAM_BURST">SCENARIO_1_SPAM_BURST</a></td><td>Medium</td><td>[##  ]</td><td>4</td><td>2.0</td></tr>
+</tbody></table></div>
+<h2 id="executive-summary">Executive Summary</h2>
+<h1 id="soc-executive-summary-2026-04-14">SOC Executive Summary — 2026-04-14</h1>
+<h2 id="terminal-incident">Terminal Incident</h2>
+<p>SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE is the worst-day-of-the-year event in this SOC training universe: a hardware root-of-trust compromise - tpm/secure enclave extraction requiring immediate containment, executive escalation, forensic preservation, and continuity actions across the full environment.</p>
+<ul>
+<li>Risk posture: Critical</li>
+<li>Detection pressure: 6 primary signals</li>
+<li>Required response tracks: 6 coordinated action(s)</li>
+</ul>
+<h2 id="scenario-overview">Scenario Overview</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Scenario</th><th>Incidents</th><th>Max Severity</th><th>Classification</th></tr></thead>
+<tbody>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_1_SPAM_BURST">SCENARIO_1_SPAM_BURST</a></td><td>4</td><td>Medium</td><td>Spam burst / relay probing</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_2_MALWARE_ATTACHMENT">SCENARIO_2_MALWARE_ATTACHMENT</a></td><td>4</td><td>High</td><td>Malware attachment attempt</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_3_UNAUTHORIZED_ACCESS">SCENARIO_3_UNAUTHORIZED_ACCESS</a></td><td>4</td><td>High</td><td>Unauthorized access / credential compromise</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_4_BEC_ATTEMPT">SCENARIO_4_BEC_ATTEMPT</a></td><td>5</td><td>Critical</td><td>Business Email Compromise (BEC) - Active Account Takeover</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_5_OAUTH_ABUSE">SCENARIO_5_OAUTH_ABUSE</a></td><td>4</td><td>High</td><td>OAuth Consent Abuse</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_6_VENDOR_COMPROMISE">SCENARIO_6_VENDOR_COMPROMISE</a></td><td>5</td><td>Critical</td><td>Vendor Email Compromise</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_7_INSIDER_MISUSE">SCENARIO_7_INSIDER_MISUSE</a></td><td>5</td><td>Critical</td><td>Insider Misuse - Privilege Creep and Data Exfiltration</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL">SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL</a></td><td>5</td><td>Critical</td><td>Token Replay and Impossible Travel</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_9_LATERAL_MOVEMENT_OAUTH">SCENARIO_9_LATERAL_MOVEMENT_OAUTH</a></td><td>5</td><td>Critical</td><td>Lateral Movement via Compromised OAuth App</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_10_SERVICE_PRINCIPAL_HIJACK">SCENARIO_10_SERVICE_PRINCIPAL_HIJACK</a></td><td>6</td><td>Critical</td><td>Cloud Workload Compromise - Service Principal Hijack</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_11_K8S_SIDECAR_BREAKOUT">SCENARIO_11_K8S_SIDECAR_BREAKOUT</a></td><td>6</td><td>Critical</td><td>Kubernetes Container Breakout and Node Compromise</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_12_SUPPLY_CHAIN_POISONING">SCENARIO_12_SUPPLY_CHAIN_POISONING</a></td><td>6</td><td>Critical</td><td>Supply-Chain Compromise - CI/CD Pipeline Poisoning</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_13_ZERO_DAY_EXPLOIT">SCENARIO_13_ZERO_DAY_EXPLOIT</a></td><td>6</td><td>Critical</td><td>Zero-Day Exploitation and Runtime Compromise</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_14_HYBRID_CLOUD_RANSOMWARE">SCENARIO_14_HYBRID_CLOUD_RANSOMWARE</a></td><td>7</td><td>Critical</td><td>Hybrid-Cloud Ransomware Detonation</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE">SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE</a></td><td>6</td><td>Critical</td><td>Cross-Tenant Cloud Takeover - Federation Abuse</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_16_OIDC_SIGNING_KEY_THEFT">SCENARIO_16_OIDC_SIGNING_KEY_THEFT</a></td><td>6</td><td>Critical</td><td>Global Identity Provider Compromise - OIDC Signing Key Theft</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE">SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE</a></td><td>6</td><td>Critical</td><td>Hardware Root-of-Trust Compromise - TPM/Secure Enclave Extraction</td></tr>
+</tbody></table></div>
+<h2 id="key-signals-and-actions-by-scenario">Key Signals and Actions by Scenario</h2>
+<h3 id="scenario-1-spam-burst">SCENARIO_1_SPAM_BURST <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_1_SPAM_BURST">Open in Dashboard</a></h3>
+<p><strong>Signals:</strong> Authentication failures, Bot-like reconnect behavior, High-frequency inbound attempts, Relay access denied <strong>Actions:</strong> Block source IP, Increase rate-limit thresholds, Monitor for repeat attempts, Verify no internal accounts were compromised</p>
+<h3 id="scenario-2-malware-attachment">SCENARIO_2_MALWARE_ATTACHMENT <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_2_MALWARE_ATTACHMENT">Open in Dashboard</a></h3>
+<p><strong>Signals:</strong> Known test signature, Malware signature match, Quarantine event, Suspicious sender identity <strong>Actions:</strong> Check whether similar messages bypassed filters, Confirm quarantine, Notify security team, Validate AV signatures are up to date</p>
+<h3 id="scenario-3-unauthorized-access">SCENARIO_3_UNAUTHORIZED_ACCESS <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_3_UNAUTHORIZED_ACCESS">Open in Dashboard</a></h3>
+<p><strong>Signals:</strong> Credential stuffing pattern, Multiple failed logins from rotating IPs, Sudden login success, Suspicious session start <strong>Actions:</strong> Block suspicious IPs, Disable account, Enforce MFA, Force password reset, Investigate credential theft vector, Terminate active session</p>
+<h3 id="scenario-4-bec-attempt">SCENARIO_4_BEC_ATTEMPT <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_4_BEC_ATTEMPT">Open in Dashboard</a></h3>
+<p><strong>Signals:</strong> Financial urgency keywords, New device fingerprint, Reply-to changed to external domain, Successful login from unusual IP, Suspicious mailbox rules <strong>Actions:</strong> Block suspicious IP, Disable executive account, Inspect mailbox rules, Notify finance team, Review sent items for fraud, Revoke OAuth tokens, Terminate active sessions</p>
+<h3 id="scenario-5-oauth-abuse">SCENARIO_5_OAUTH_ABUSE <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_5_OAUTH_ABUSE">Open in Dashboard</a></h3>
+<p><strong>Signals:</strong> Foreign IP token use, High-risk scopes, Mailbox forwarding rule, Unverified OAuth app <strong>Actions:</strong> Delete mailbox rules, Notify leadership, Remove malicious app, Reset credentials, Revoke OAuth tokens, Tenant-wide app audit</p>
+<h3 id="scenario-6-vendor-compromise">SCENARIO_6_VENDOR_COMPROMISE <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_6_VENDOR_COMPROMISE">Open in Dashboard</a></h3>
+<p><strong>Signals:</strong> AP team engagement, Changed banking details, Unusual vendor login region, Urgency language, Vendor mailbox forwarding rule <strong>Actions:</strong> Block vendor temporarily, Contact vendor security, Notify finance leadership, Quarantine email, Review AP replies, Stop payment</p>
+<h3 id="scenario-7-insider-misuse">SCENARIO_7_INSIDER_MISUSE <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_7_INSIDER_MISUSE">Open in Dashboard</a></h3>
+<p><strong>Signals:</strong> Access to sensitive finance files, High UEBA anomaly score, Large upload to personal cloud, Unauthorized role change, ZIP file creation <strong>Actions:</strong> Analyze ZIP contents, Block outbound uploads, Disable user account, Notify HR and security leadership, Revert unauthorized privileges, Review role change logs</p>
+<h3 id="scenario-8-token-replay-impossible-travel">SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL">Open in Dashboard</a></h3>
+<p><strong>Signals:</strong> Device fingerprint mismatch, Impossible travel, Same token used from two locations, Sensitive repo access, Token replay warning <strong>Actions:</strong> Block suspicious IP, Force MFA re-enrollment, Invalidate token, Review repo downloads, Revoke all sessions, Rotate accessed secrets</p>
+<h3 id="scenario-9-lateral-movement-oauth">SCENARIO_9_LATERAL_MOVEMENT_OAUTH <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_9_LATERAL_MOVEMENT_OAUTH">Open in Dashboard</a></h3>
+<p><strong>Signals:</strong> App impersonating multiple users, Large repo and mailbox exports, Long-lived refresh token, Single attacker IP, Unauthorized permission escalation <strong>Actions:</strong> Audit app permission history, Block attacker IP, Disable OAuth app, Investigate initial compromise, Revoke app tokens, Rotate accessed secrets</p>
+<h3 id="scenario-10-service-principal-hijack">SCENARIO_10_SERVICE_PRINCIPAL_HIJACK <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_10_SERVICE_PRINCIPAL_HIJACK">Open in Dashboard</a></h3>
+<p><strong>Signals:</strong> Foreign IP service principal login, Large blob downloads, Long-lived secret creation, Old leaked secret, Unauthorized role assignment attempt, VM manipulation <strong>Actions:</strong> Audit IAM role changes, Block attacker IP, Disable service principal, Revoke secrets and tokens, Rotate all workload secrets, Stop malicious VM</p>
+<h3 id="scenario-11-k8s-sidecar-breakout">SCENARIO_11_K8S_SIDECAR_BREAKOUT <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_11_K8S_SIDECAR_BREAKOUT">Open in Dashboard</a></h3>
+<p><strong>Signals:</strong> Cloud API secret access, Host filesystem mount attempt, Kubelet client cert access, SYS_ADMIN capability escalation, Sidecar integrity violation, Unauthorized exec into container <strong>Actions:</strong> Audit cloud API calls, Isolate and drain node, Quarantine compromised pod, Rebuild node from clean image, Revoke node IAM credentials, Rotate kubelet certificates</p>
+<h3 id="scenario-12-supply-chain-poisoning">SCENARIO_12_SUPPLY_CHAIN_POISONING <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_12_SUPPLY_CHAIN_POISONING">Open in Dashboard</a></h3>
+<p><strong>Signals:</strong> Artifact hash mismatch, Malicious build step, Outbound callback to attacker, Secret harvesting behavior, Unauthorized commit to pipeline template, Unknown GPG signature <strong>Actions:</strong> Audit pipeline history, Block attacker IP, Halt deployments, Rebuild CI/CD environment, Revoke automation-bot credentials, Roll back artifacts</p>
+<h3 id="scenario-13-zero-day-exploit">SCENARIO_13_ZERO_DAY_EXPLOIT <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_13_ZERO_DAY_EXPLOIT">Open in Dashboard</a></h3>
+<p><strong>Signals:</strong> Large outbound data transfer, Privilege escalation attempt, SSH lateral movement, Unauthorized cron job, Unexpected process spawn, Unexpected serialized payload <strong>Actions:</strong> Block attacker IP, Capture forensic artifacts, Disable vulnerable endpoint, Isolate compromised pod, Patch vulnerable service, Rotate secrets</p>
+<h3 id="scenario-14-hybrid-cloud-ransomware">SCENARIO_14_HYBRID_CLOUD_RANSOMWARE <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_14_HYBRID_CLOUD_RANSOMWARE">Open in Dashboard</a></h3>
+<p><strong>Signals:</strong> Golden ticket activity, Kubernetes data destruction, Mass file encryption, Object storage rewrite, Outbound C2 beacon, Ransom note deployment, Untrusted binary execution <strong>Actions:</strong> Block attacker IP, Capture forensic artifacts, Disable compromised accounts, Isolate affected systems, Restore from offline backups, Rotate credentials</p>
+<h3 id="scenario-15-cross-tenant-federation-abuse">SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE">Open in Dashboard</a></h3>
+<p><strong>Signals:</strong> Creation of rogue service principal, Cross-tenant secret access, Federated identity assuming privileged role, Large outbound exfiltration, Suspicious federation token issuance, Unauthorized federation trust creation <strong>Actions:</strong> Audit role assumptions, Block attacker IP, Disable compromised identities, Disable federation trust, Rebuild federation trust securely, Revoke federation tokens</p>
+<h3 id="scenario-16-oidc-signing-key-theft">SCENARIO_16_OIDC_SIGNING_KEY_THEFT <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_16_OIDC_SIGNING_KEY_THEFT">Open in Dashboard</a></h3>
+<p><strong>Signals:</strong> Forged tokens with abnormal lifetimes, Large outbound exfiltration, Privilege escalation via forged tokens, Rogue signing key creation, Suspicious IdP admin login, Unauthorized signing key export <strong>Actions:</strong> Audit token issuance, Block attacker IP, Disable IdP admin accounts, Invalidate all tokens, Rebuild IdP from clean state, Rotate OIDC signing keys</p>
+<h3 id="scenario-17-hardware-root-of-trust-compromise">SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE">Open in Dashboard</a></h3>
+<p><strong>Signals:</strong> Enclave debug session, Forged attestation, Large outbound exfiltration, Raw key export, Unauthorized TPM access, VM clone using stolen key <strong>Actions:</strong> Audit VM clone operations, Block attacker IP, Isolate compromised node, Rebuild node from clean hardware, Revoke attestation trust, Rotate TPM/enclave keys</p>
+<hr>
+<p><em>Generated automatically by SOC analytics pipeline.</em></p>
+<h2 id="drill-down-report">Drill-Down Report</h2>
+<h1 id="soc-drill-down-report-2026-04-14">SOC Drill-Down Report — 2026-04-14</h1>
+<h2 id="scenario-prioritization">Scenario Prioritization</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Scenario</th><th>Risk</th><th>Signals</th><th>Actions</th><th>Classification</th></tr></thead>
+<tbody>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_14_HYBRID_CLOUD_RANSOMWARE">SCENARIO_14_HYBRID_CLOUD_RANSOMWARE</a></td><td>Critical</td><td>7</td><td>6</td><td>Hybrid-Cloud Ransomware Detonation</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE">SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE</a></td><td>Critical</td><td>6</td><td>6</td><td>Hardware Root-of-Trust Compromise - TPM/Secure Enclave Extraction</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_16_OIDC_SIGNING_KEY_THEFT">SCENARIO_16_OIDC_SIGNING_KEY_THEFT</a></td><td>Critical</td><td>6</td><td>6</td><td>Global Identity Provider Compromise - OIDC Signing Key Theft</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE">SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE</a></td><td>Critical</td><td>6</td><td>6</td><td>Cross-Tenant Cloud Takeover - Federation Abuse</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_13_ZERO_DAY_EXPLOIT">SCENARIO_13_ZERO_DAY_EXPLOIT</a></td><td>Critical</td><td>6</td><td>6</td><td>Zero-Day Exploitation and Runtime Compromise</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_12_SUPPLY_CHAIN_POISONING">SCENARIO_12_SUPPLY_CHAIN_POISONING</a></td><td>Critical</td><td>6</td><td>6</td><td>Supply-Chain Compromise - CI/CD Pipeline Poisoning</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_11_K8S_SIDECAR_BREAKOUT">SCENARIO_11_K8S_SIDECAR_BREAKOUT</a></td><td>Critical</td><td>6</td><td>6</td><td>Kubernetes Container Breakout and Node Compromise</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_10_SERVICE_PRINCIPAL_HIJACK">SCENARIO_10_SERVICE_PRINCIPAL_HIJACK</a></td><td>Critical</td><td>6</td><td>6</td><td>Cloud Workload Compromise - Service Principal Hijack</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_4_BEC_ATTEMPT">SCENARIO_4_BEC_ATTEMPT</a></td><td>Critical</td><td>5</td><td>7</td><td>Business Email Compromise (BEC) - Active Account Takeover</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_9_LATERAL_MOVEMENT_OAUTH">SCENARIO_9_LATERAL_MOVEMENT_OAUTH</a></td><td>Critical</td><td>5</td><td>6</td><td>Lateral Movement via Compromised OAuth App</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL">SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL</a></td><td>Critical</td><td>5</td><td>6</td><td>Token Replay and Impossible Travel</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_7_INSIDER_MISUSE">SCENARIO_7_INSIDER_MISUSE</a></td><td>Critical</td><td>5</td><td>6</td><td>Insider Misuse - Privilege Creep and Data Exfiltration</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_6_VENDOR_COMPROMISE">SCENARIO_6_VENDOR_COMPROMISE</a></td><td>Critical</td><td>5</td><td>6</td><td>Vendor Email Compromise</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_5_OAUTH_ABUSE">SCENARIO_5_OAUTH_ABUSE</a></td><td>High</td><td>4</td><td>6</td><td>OAuth Consent Abuse</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_3_UNAUTHORIZED_ACCESS">SCENARIO_3_UNAUTHORIZED_ACCESS</a></td><td>High</td><td>4</td><td>6</td><td>Unauthorized access / credential compromise</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_2_MALWARE_ATTACHMENT">SCENARIO_2_MALWARE_ATTACHMENT</a></td><td>High</td><td>4</td><td>4</td><td>Malware attachment attempt</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_1_SPAM_BURST">SCENARIO_1_SPAM_BURST</a></td><td>Medium</td><td>4</td><td>4</td><td>Spam burst / relay probing</td></tr>
+</tbody></table></div>
+<h2 id="drill-down-highlights">Drill-Down Highlights</h2>
+<h3 id="scenario-14-hybrid-cloud-ransomware-2">SCENARIO_14_HYBRID_CLOUD_RANSOMWARE <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_14_HYBRID_CLOUD_RANSOMWARE">Open in Dashboard</a></h3>
+<ul>
+<li>Top signals: Golden ticket activity; Kubernetes data destruction; Mass file encryption</li>
+<li>Top actions: Block attacker IP; Capture forensic artifacts; Disable compromised accounts</li>
+</ul>
+<h3 id="scenario-17-hardware-root-of-trust-compromise-2">SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE">Open in Dashboard</a></h3>
+<ul>
+<li>Top signals: Enclave debug session; Forged attestation; Large outbound exfiltration</li>
+<li>Top actions: Audit VM clone operations; Block attacker IP; Isolate compromised node</li>
+</ul>
+<h3 id="scenario-16-oidc-signing-key-theft-2">SCENARIO_16_OIDC_SIGNING_KEY_THEFT <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_16_OIDC_SIGNING_KEY_THEFT">Open in Dashboard</a></h3>
+<ul>
+<li>Top signals: Forged tokens with abnormal lifetimes; Large outbound exfiltration; Privilege escalation via forged tokens</li>
+<li>Top actions: Audit token issuance; Block attacker IP; Disable IdP admin accounts</li>
+</ul>
+<h3 id="scenario-15-cross-tenant-federation-abuse-2">SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE">Open in Dashboard</a></h3>
+<ul>
+<li>Top signals: Creation of rogue service principal; Cross-tenant secret access; Federated identity assuming privileged role</li>
+<li>Top actions: Audit role assumptions; Block attacker IP; Disable compromised identities</li>
+</ul>
+<h3 id="scenario-13-zero-day-exploit-2">SCENARIO_13_ZERO_DAY_EXPLOIT <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_13_ZERO_DAY_EXPLOIT">Open in Dashboard</a></h3>
+<ul>
+<li>Top signals: Large outbound data transfer; Privilege escalation attempt; SSH lateral movement</li>
+<li>Top actions: Block attacker IP; Capture forensic artifacts; Disable vulnerable endpoint</li>
+</ul>
+<h3 id="scenario-12-supply-chain-poisoning-2">SCENARIO_12_SUPPLY_CHAIN_POISONING <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_12_SUPPLY_CHAIN_POISONING">Open in Dashboard</a></h3>
+<ul>
+<li>Top signals: Artifact hash mismatch; Malicious build step; Outbound callback to attacker</li>
+<li>Top actions: Audit pipeline history; Block attacker IP; Halt deployments</li>
+</ul>
+<h3 id="scenario-11-k8s-sidecar-breakout-2">SCENARIO_11_K8S_SIDECAR_BREAKOUT <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_11_K8S_SIDECAR_BREAKOUT">Open in Dashboard</a></h3>
+<ul>
+<li>Top signals: Cloud API secret access; Host filesystem mount attempt; Kubelet client cert access</li>
+<li>Top actions: Audit cloud API calls; Isolate and drain node; Quarantine compromised pod</li>
+</ul>
+<h3 id="scenario-10-service-principal-hijack-2">SCENARIO_10_SERVICE_PRINCIPAL_HIJACK <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_10_SERVICE_PRINCIPAL_HIJACK">Open in Dashboard</a></h3>
+<ul>
+<li>Top signals: Foreign IP service principal login; Large blob downloads; Long-lived secret creation</li>
+<li>Top actions: Audit IAM role changes; Block attacker IP; Disable service principal</li>
+</ul>
+<h3 id="scenario-4-bec-attempt-2">SCENARIO_4_BEC_ATTEMPT <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_4_BEC_ATTEMPT">Open in Dashboard</a></h3>
+<ul>
+<li>Top signals: Financial urgency keywords; New device fingerprint; Reply-to changed to external domain</li>
+<li>Top actions: Block suspicious IP; Disable executive account; Inspect mailbox rules</li>
+</ul>
+<h3 id="scenario-9-lateral-movement-oauth-2">SCENARIO_9_LATERAL_MOVEMENT_OAUTH <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_9_LATERAL_MOVEMENT_OAUTH">Open in Dashboard</a></h3>
+<ul>
+<li>Top signals: App impersonating multiple users; Large repo and mailbox exports; Long-lived refresh token</li>
+<li>Top actions: Audit app permission history; Block attacker IP; Disable OAuth app</li>
+</ul>
+<h3 id="scenario-8-token-replay-impossible-travel-2">SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL">Open in Dashboard</a></h3>
+<ul>
+<li>Top signals: Device fingerprint mismatch; Impossible travel; Same token used from two locations</li>
+<li>Top actions: Block suspicious IP; Force MFA re-enrollment; Invalidate token</li>
+</ul>
+<h3 id="scenario-7-insider-misuse-2">SCENARIO_7_INSIDER_MISUSE <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_7_INSIDER_MISUSE">Open in Dashboard</a></h3>
+<ul>
+<li>Top signals: Access to sensitive finance files; High UEBA anomaly score; Large upload to personal cloud</li>
+<li>Top actions: Analyze ZIP contents; Block outbound uploads; Disable user account</li>
+</ul>
+<h3 id="scenario-6-vendor-compromise-2">SCENARIO_6_VENDOR_COMPROMISE <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_6_VENDOR_COMPROMISE">Open in Dashboard</a></h3>
+<ul>
+<li>Top signals: AP team engagement; Changed banking details; Unusual vendor login region</li>
+<li>Top actions: Block vendor temporarily; Contact vendor security; Notify finance leadership</li>
+</ul>
+<h3 id="scenario-5-oauth-abuse-2">SCENARIO_5_OAUTH_ABUSE <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_5_OAUTH_ABUSE">Open in Dashboard</a></h3>
+<ul>
+<li>Top signals: Foreign IP token use; High-risk scopes; Mailbox forwarding rule</li>
+<li>Top actions: Delete mailbox rules; Notify leadership; Remove malicious app</li>
+</ul>
+<h3 id="scenario-3-unauthorized-access-2">SCENARIO_3_UNAUTHORIZED_ACCESS <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_3_UNAUTHORIZED_ACCESS">Open in Dashboard</a></h3>
+<ul>
+<li>Top signals: Credential stuffing pattern; Multiple failed logins from rotating IPs; Sudden login success</li>
+<li>Top actions: Block suspicious IPs; Disable account; Enforce MFA</li>
+</ul>
+<h3 id="scenario-2-malware-attachment-2">SCENARIO_2_MALWARE_ATTACHMENT <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_2_MALWARE_ATTACHMENT">Open in Dashboard</a></h3>
+<ul>
+<li>Top signals: Known test signature; Malware signature match; Quarantine event</li>
+<li>Top actions: Check whether similar messages bypassed filters; Confirm quarantine; Notify security team</li>
+</ul>
+<h3 id="scenario-1-spam-burst-2">SCENARIO_1_SPAM_BURST <a class="dashboard-backlink" href="dashboard/index.html?scenario=SCENARIO_1_SPAM_BURST">Open in Dashboard</a></h3>
+<ul>
+<li>Top signals: Authentication failures; Bot-like reconnect behavior; High-frequency inbound attempts</li>
+<li>Top actions: Block source IP; Increase rate-limit thresholds; Monitor for repeat attempts</li>
+</ul>
+<h2 id="chain-timeline">Chain Timeline</h2>
+<h1 id="multi-scenario-attack-chain-timeline">Multi-Scenario Attack Chain Timeline</h1>
+<div class="table-wrap"><table>
+<thead><tr><th>Time</th><th>Scenario</th><th>Key Event</th><th>User/Identity</th><th>Detection</th><th>Response</th></tr></thead>
+<tbody>
+<tr><td>03:12</td><td>1</td><td>Spam burst against monitored tenant</td><td>mail-relay-01</td><td>Detected</td><td>Alert triggered, sender blocklist updated</td></tr>
+<tr><td>03:45</td><td>2</td><td>Malware attachment detonated in inbox workflow</td><td>finance.user@example.com</td><td>Detected</td><td>Alert triggered, attachment quarantine initiated</td></tr>
+<tr><td>04:15</td><td>3</td><td>Unauthorized access from stolen credentials</td><td>workstation-admin</td><td>Detected</td><td>Account disabled, session revoked</td></tr>
+<tr><td>06:02</td><td>4</td><td>Business email compromise workflow abuse</td><td>ceo-mailbox@example.com</td><td>Detected</td><td>Mailbox rules disabled, alert triggered</td></tr>
+<tr><td>07:22</td><td>5</td><td>OAuth abuse through rogue consent grant</td><td>app-registration-ops</td><td>Detected</td><td>OAuth grant deleted, consent review initiated</td></tr>
+<tr><td>10:12</td><td>6</td><td>Vendor compromise creates downstream fraud path</td><td>vendor-automation-user</td><td>Detected</td><td>Vendor access disabled, rollback initiated</td></tr>
+<tr><td>13:22</td><td>7</td><td>Insider misuse expands privileged access and staging</td><td>privileged.analyst@example.com</td><td>Detected</td><td>Privileged session disabled, exfil alert triggered</td></tr>
+<tr><td>15:03</td><td>8</td><td>Token replay and impossible travel session hijack</td><td>dev_lead@example.com</td><td>Detected</td><td>Token blacklisted, account locked</td></tr>
+<tr><td>16:12</td><td>9</td><td>Lateral movement via shadow OAuth application</td><td>dev_lead@example.com</td><td>Detected</td><td>OAuth grant deleted, malicious app disabled</td></tr>
+<tr><td>17:22</td><td>10</td><td>Service principal hijack of production workload</td><td>sp-prod-backup-manager</td><td>Detected</td><td>Service Principal disabled, secrets rotated</td></tr>
+<tr><td>18:12</td><td>11</td><td>K8s sidecar breakout reaches node boundary</td><td>sp-prod-backup-manager</td><td>Detected</td><td>Pod deleted, node cordoned, policy enforced</td></tr>
+<tr><td>19:12</td><td>12</td><td>Supply-chain poisoning causes artifact drift</td><td>automation-bot (impersonated)</td><td>Detected</td><td>Pipeline halted, rollback initiated</td></tr>
+<tr><td>20:12</td><td>13</td><td>Serialized exploit payload targets public profile API</td><td>profile-api</td><td>Behavioral anomaly</td><td>Endpoint disabled, alert triggered</td></tr>
+<tr><td>20:13</td><td>13</td><td>Unexpected python process spawn and NET_ADMIN request</td><td>profile-api</td><td>Runtime anomaly</td><td>Pod isolated, secrets rotated</td></tr>
+<tr><td>20:14</td><td>13</td><td>SSH lateral movement and 48 MB exfiltration to attacker IP</td><td>profile-api</td><td>UEBA escalation</td><td>Attacker IP blocked, secrets rotated</td></tr>
+<tr><td>20:15</td><td>13</td><td>Cron persistence created after full runtime compromise</td><td>profile-api</td><td>UEBA critical</td><td>Forensics started, clean rebuild initiated</td></tr>
+<tr><td>21:12</td><td>14</td><td>Untrusted encryptor launches on on-prem file server</td><td>fileserver-02</td><td>EDR anomaly</td><td>Host isolated, ransomware response initiated</td></tr>
+<tr><td>21:12</td><td>14</td><td>Golden ticket used by backup service account for hybrid pivot</td><td>svc-backup</td><td>Identity anomaly</td><td>Service account disabled, Kerberos review started</td></tr>
+<tr><td>21:13</td><td>14</td><td>Cloud VM mass encryption and sustained CPU saturation detected</td><td>prod-app-01</td><td>Compute anomaly</td><td>VM quarantined, backup jobs halted</td></tr>
+<tr><td>21:13</td><td>14</td><td>Kubernetes workload deletes application data and overwrites root filesystem</td><td>payments-api</td><td>Runtime anomaly</td><td>Node quarantined, workload contained</td></tr>
+<tr><td>21:14</td><td>14</td><td>Object storage rewritten to locked extensions at catastrophic volume</td><td>customer-records</td><td>Storage anomaly</td><td>Bucket access blocked, snapshot review initiated</td></tr>
+<tr><td>21:14</td><td>14</td><td>Ransom note written to system banner on compromised host</td><td>hybrid-runtime</td><td>Behavioral anomaly</td><td>IR war room activated</td></tr>
+<tr><td>21:15</td><td>14</td><td>Outbound status beacon confirms detonation success</td><td>hybrid-estate</td><td>C2 detection</td><td>Attacker IP blocked, executive escalation initiated</td></tr>
+<tr><td>22:12</td><td>15</td><td>Federated token issued from compromised Tenant A using unknown device fingerprint</td><td>contractor_jane@tenantA.com</td><td>Federation anomaly</td><td>Federation trust review initiated, token issuance triaged</td></tr>
+<tr><td>22:12</td><td>15</td><td>Federated identity assumes Tenant B global admin role outside normal policy</td><td>contractor_jane@tenantA.com</td><td>IAM anomaly</td><td>Cross-tenant role assumption blocked, privileged session revoked</td></tr>
+<tr><td>22:13</td><td>15</td><td>Rogue service principal created and restricted secrets container accessed</td><td>shadow-app</td><td>Cloud control-plane anomaly</td><td>Service principal disabled, secret rotation initiated</td></tr>
+<tr><td>22:14</td><td>15</td><td>Rogue federation trust created and 6.2 GB outbound transfer confirms exfiltration</td><td>tenantB federation plane</td><td>UEBA critical</td><td>Federation trust disabled, attacker IP blocked, emergency rotation started</td></tr>
+<tr><td>23:12</td><td>16</td><td>IdP admin login from attacker IP bypasses MFA through abused trusted-device path</td><td>idp-admin</td><td>Identity anomaly</td><td>Admin session isolated, emergency IdP incident declared</td></tr>
+<tr><td>23:12</td><td>16</td><td>OIDC signing key exported from keystore without approved change control</td><td>oidc-signing-key-01</td><td>Keystore anomaly</td><td>Key rotation initiated, token trust review started</td></tr>
+<tr><td>23:13</td><td>16</td><td>Forged 48-hour token validates and assumes GlobalAdmin without interactive MFA</td><td>ceo@example.com</td><td>Token policy anomaly</td><td>Global token invalidation initiated, privileged sessions revoked</td></tr>
+<tr><td>23:14</td><td>16</td><td>Multi-service impersonation and rogue signing key creation establish persistence</td><td>idp trust plane</td><td>Identity collapse</td><td>Rogue key removed, IdP rebuild started</td></tr>
+<tr><td>23:15</td><td>16</td><td>12.4 GB outbound transfer confirms global identity-enabled exfiltration</td><td>global identity fabric</td><td>UEBA critical</td><td>Attacker IP blocked, leadership and compliance escalation activated</td></tr>
+<tr><td>00:12</td><td>17</td><td>Non-allowlisted process reads TPM PCR state and opens enclave debug session on node-7</td><td>node-7</td><td>Hardware anomaly</td><td>Node isolated, hardware incident declared</td></tr>
+<tr><td>00:13</td><td>17</td><td>Raw export of vm-disk-key confirms TPM or enclave key extraction</td><td>node-7 TPM</td><td>Trust-anchor anomaly</td><td>Key rotation and attestation revocation initiated</td></tr>
+<tr><td>00:13</td><td>17</td><td>Healthy attestation report conflicts with boot log and PCR history</td><td>node-7 attestation</td><td>Attestation anomaly</td><td>Remote attestation trust revoked</td></tr>
+<tr><td>00:14</td><td>17</td><td>Shadow VM clone created from prod-db-01 using stolen disk key and forged trust</td><td>shadow-db</td><td>Workload identity bypass</td><td>Clone quarantined, workload identity blocked</td></tr>
+<tr><td>00:15</td><td>17</td><td>9.4 GB outbound transfer confirms exfiltration from cloned trusted workload</td><td>shadow-db</td><td>UEBA critical</td><td>Attacker IP blocked, hardware rebuild workflow started</td></tr>
+</tbody></table></div>
+<h2 id="incident-attack-graph">Incident Attack Graph</h2>
+<h1 id="incident-attack-graph-2026-04-14">Incident Attack Graph — 2026-04-14</h1>
+<p>This artifact defines the unified attack-surface ontology for all Mission Control scenarios and links every scenario into a single graph-based incident model.</p>
+<h2 id="graph-summary">Graph Summary</h2>
+<ul>
+<li>Scenario coverage: 17</li>
+<li>Node count: 57</li>
+<li>Edge count: 78</li>
+<li>Terminal scenario: SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE</li>
+</ul>
+<h2 id="node-types">Node Types</h2>
+<ul>
+<li>Scenario</li>
+<li>User</li>
+<li>Mailbox</li>
+<li>Session</li>
+<li>Identity Provider</li>
+<li>Federation Trust</li>
+<li>OAuth App</li>
+<li>Service Principal</li>
+<li>Device / Node</li>
+<li>Container / Pod</li>
+<li>VM / Workload</li>
+<li>Pipeline / Artifact</li>
+<li>Storage Bucket / Blob</li>
+<li>Network Endpoint</li>
+<li>TPM / Secure Enclave</li>
+<li>Hardware Attestation</li>
+<li>Attacker Infrastructure</li>
+<li>Event / Log Entry</li>
+</ul>
+<h2 id="relationship-types">Relationship Types</h2>
+<ul>
+<li>compromised_by</li>
+<li>issues_token_to</li>
+<li>assumes_role_in</li>
+<li>executes_on</li>
+<li>exfiltrates_to</li>
+<li>modifies</li>
+<li>creates_persistence_in</li>
+<li>moves_laterally_to</li>
+<li>forges_attestation_for</li>
+<li>extracts_key_from</li>
+<li>deploys_artifact_to</li>
+<li>encrypts</li>
+<li>spoofs_identity_of</li>
+<li>abused_by</li>
+<li>replayed_by</li>
+<li>signing_key_stolen_by</li>
+<li>targets</li>
+<li>observed_in</li>
+<li>validated_by</li>
+</ul>
+<h2 id="scenario-to-graph-mapping">Scenario-to-Graph Mapping</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Scenario</th><th>Layer</th><th>Risk</th><th>Primary Entities</th><th>Core Relationships</th></tr></thead>
+<tbody>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_1_SPAM_BURST">SCENARIO_1_SPAM_BURST</a></td><td>email-edge</td><td>Medium</td><td>mail-relay-01</td><td>compromised_by (mail-relay-01 -&gt; attacker-185.199.220.14)</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_2_MALWARE_ATTACHMENT">SCENARIO_2_MALWARE_ATTACHMENT</a></td><td>email-edge</td><td>High</td><td>finance.user@example.com, finance.user@example.com</td><td>compromised_by (finance.user@example.com -&gt; attacker-185.199.220.14)</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_3_UNAUTHORIZED_ACCESS">SCENARIO_3_UNAUTHORIZED_ACCESS</a></td><td>identity</td><td>High</td><td>workstation-admin</td><td>compromised_by (workstation-admin -&gt; attacker-185.199.220.14)</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_4_BEC_ATTEMPT">SCENARIO_4_BEC_ATTEMPT</a></td><td>identity</td><td>Critical</td><td>ceo-mailbox@example.com, ceo-mailbox@example.com</td><td>modifies (ceo-mailbox@example.com -&gt; attacker-185.199.220.14); compromised_by (ceo-mailbox@example.com -&gt; attacker-185.199.220.14)</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_5_OAUTH_ABUSE">SCENARIO_5_OAUTH_ABUSE</a></td><td>identity</td><td>High</td><td>rogue-consent-app, tenant-identity-plane</td><td>compromised_by (rogue-consent-app -&gt; attacker-185.199.220.14); issues_token_to (tenant-identity-plane -&gt; rogue-consent-app)</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_6_VENDOR_COMPROMISE">SCENARIO_6_VENDOR_COMPROMISE</a></td><td>supply-chain</td><td>Critical</td><td>vendor-automation-user, vendor-integration-gateway</td><td>compromised_by (vendor-automation-user -&gt; attacker-185.199.220.14); targets (vendor-integration-gateway -&gt; attacker-185.199.220.14)</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_7_INSIDER_MISUSE">SCENARIO_7_INSIDER_MISUSE</a></td><td>cloud</td><td>Critical</td><td>privileged.analyst@example.com, staging-bucket</td><td>exfiltrates_to (privileged.analyst@example.com -&gt; staging-bucket); compromised_by (privileged.analyst@example.com -&gt; attacker-185.199.220.14)</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL">SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL</a></td><td>identity</td><td>Critical</td><td>dev-lead-primary, dev_lead@example.com</td><td>replayed_by (dev-lead-primary -&gt; attacker-185.199.220.14); spoofs_identity_of (dev-lead-primary -&gt; dev_lead@example.com)</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_9_LATERAL_MOVEMENT_OAUTH">SCENARIO_9_LATERAL_MOVEMENT_OAUTH</a></td><td>cloud</td><td>Critical</td><td>analyticssync, finance_lead@example.com, hr_manager@example.com</td><td>moves_laterally_to (analyticssync -&gt; finance_lead@example.com); moves_laterally_to (analyticssync -&gt; hr_manager@example.com); compromised_by (analyticssync -&gt; attacker-185.199.220.14)</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_10_SERVICE_PRINCIPAL_HIJACK">SCENARIO_10_SERVICE_PRINCIPAL_HIJACK</a></td><td>cloud</td><td>Critical</td><td>sp-prod-backup-manager, production-backup-plane</td><td>compromised_by (sp-prod-backup-manager -&gt; attacker-185.199.220.14); executes_on (sp-prod-backup-manager -&gt; production-backup-plane)</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_11_K8S_SIDECAR_BREAKOUT">SCENARIO_11_K8S_SIDECAR_BREAKOUT</a></td><td>container</td><td>Critical</td><td>payments-sidecar, k8s-node-01</td><td>moves_laterally_to (payments-sidecar -&gt; k8s-node-01); compromised_by (payments-sidecar -&gt; attacker-185.199.220.14)</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_12_SUPPLY_CHAIN_POISONING">SCENARIO_12_SUPPLY_CHAIN_POISONING</a></td><td>supply-chain</td><td>Critical</td><td>release-pipeline, malicious-build</td><td>deploys_artifact_to (malicious-build -&gt; release-pipeline); compromised_by (release-pipeline -&gt; attacker-185.199.220.14)</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_13_ZERO_DAY_EXPLOIT">SCENARIO_13_ZERO_DAY_EXPLOIT</a></td><td>runtime</td><td>Critical</td><td>profile-api, db-admin-01</td><td>compromised_by (profile-api -&gt; attacker-185.199.220.14); moves_laterally_to (profile-api -&gt; db-admin-01); creates_persistence_in (profile-api -&gt; db-admin-01)</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_14_HYBRID_CLOUD_RANSOMWARE">SCENARIO_14_HYBRID_CLOUD_RANSOMWARE</a></td><td>ransomware</td><td>Critical</td><td>fileserver-02, prod-app-01, customer-records</td><td>encrypts (fileserver-02 -&gt; attacker-185.199.220.14); encrypts (prod-app-01 -&gt; attacker-185.199.220.14); encrypts (customer-records -&gt; attacker-185.199.220.14)</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE">SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE</a></td><td>identity-federation</td><td>Critical</td><td>tenant-a-to-tenant-b, contractor_jane@tenantA.com, shadow-app</td><td>abused_by (tenant-a-to-tenant-b -&gt; attacker-185.199.220.14); assumes_role_in (contractor_jane@tenantA.com -&gt; tenant-a-to-tenant-b); creates_persistence_in (shadow-app -&gt; tenant-a-to-tenant-b)</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_16_OIDC_SIGNING_KEY_THEFT">SCENARIO_16_OIDC_SIGNING_KEY_THEFT</a></td><td>identity-core</td><td>Critical</td><td>idp.example.com, ceo@example.com, finance_lead@example.com</td><td>signing_key_stolen_by (idp.example.com -&gt; attacker-185.199.220.14); issues_token_to (idp.example.com -&gt; ceo@example.com); moves_laterally_to (ceo@example.com -&gt; finance_lead@example.com)</td></tr>
+<tr><td><a class="scenario-link" href="dashboard/index.html?scenario=SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE">SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE</a></td><td>hardware-trust</td><td>Critical</td><td>node-7, node-7, node-7, prod-db-01, shadow-db</td><td>extracts_key_from (node-7 -&gt; attacker-185.199.220.14); forges_attestation_for (node-7 -&gt; shadow-db); spoofs_identity_of (shadow-db -&gt; prod-db-01)</td></tr>
+</tbody></table></div>
+<h2 id="conceptual-flow">Conceptual Flow</h2>
+<ul>
+<li>Attacker infrastructure compromises user, app, workload, pipeline, identity, and hardware surfaces across the full 17-scenario universe.</li>
+<li>Identity abuse escalates from credentials to OAuth, federation, and finally OIDC signing-key theft.</li>
+<li>Cloud and workload abuse expands through service principals, Kubernetes breakout, runtime compromise, ransomware, and hardware trust collapse.</li>
+<li>Hardware compromise in Scenario 17 invalidates the trust assumptions that software and cloud controls depend on.</li>
+<li>Mission Control should treat the graph as a single ontology whose terminal path ends at total identity, cloud, and hardware dominance.</li>
+</ul>
+<h2 id="mission-control-usage-notes">Mission Control Usage Notes</h2>
+<ul>
+<li>Machine-readable graph: `incident_attack_graph.json`</li>
+<li>Human-readable graph map: `incident_attack_graph.md`</li>
+<li>Use scenario nodes as drill-down anchors and shared entity nodes as correlation pivots in visualizations.</li>
+<li>Use relationship frequency and criticality to rank likely blast-radius paths across identity, cloud, runtime, supply chain, and hardware trust layers.</li>
+</ul>
+<h2 id="red-team-deliverable-package">Red Team Deliverable Package</h2>
+<h1 id="red-team-deliverable-package-2026-04-14">Red Team Deliverable Package — 2026-04-14</h1>
+<p>This package defines campaign operating modes and formal red-team deliverables for Mission Control exercises.</p>
+<h2 id="campaign-modes">Campaign Modes</h2>
+<h3 id="one-scenario-at-a-time">One Scenario at a Time</h3>
+<ul>
+<li>Mode: `one-scenario-at-a-time`</li>
+<li>Description: Run one scenario at a time for focused detection and response drills.</li>
+<li>Currently available scenarios: 17</li>
+</ul>
+<h3 id="multi-scenario-chains">Multi-Scenario Chains</h3>
+<ul>
+<li>Description: Run pre-defined chained campaigns for correlation and escalation analysis.</li>
+<li>Numeric shorthand example: 3 -&gt; 5 -&gt; 9 -&gt; 14</li>
+<li>Example chain: SCENARIO_3_UNAUTHORIZED_ACCESS -&gt; SCENARIO_5_OAUTH_ABUSE -&gt; SCENARIO_9_LATERAL_MOVEMENT_OAUTH -&gt; SCENARIO_14_HYBRID_CLOUD_RANSOMWARE</li>
+<li>Recommended chains:</li>
+<li>SCENARIO_3_UNAUTHORIZED_ACCESS -&gt; SCENARIO_5_OAUTH_ABUSE -&gt; SCENARIO_9_LATERAL_MOVEMENT_OAUTH -&gt; SCENARIO_14_HYBRID_CLOUD_RANSOMWARE</li>
+<li>SCENARIO_5_OAUTH_ABUSE -&gt; SCENARIO_10_SERVICE_PRINCIPAL_HIJACK -&gt; SCENARIO_12_SUPPLY_CHAIN_POISONING -&gt; SCENARIO_16_OIDC_SIGNING_KEY_THEFT</li>
+<li>SCENARIO_11_K8S_SIDECAR_BREAKOUT -&gt; SCENARIO_13_ZERO_DAY_EXPLOIT -&gt; SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE</li>
+</ul>
+<h3 id="full-spectrum-campaign">Full-Spectrum Campaign</h3>
+<ul>
+<li>Description: Run Scenario 1 through Scenario 20 in sequence as a simulated, synthetic, safe campaign.</li>
+<li>Numeric shorthand sequence: Scenario 1 -&gt; 20 (simulated, synthetic, safe)</li>
+<li>Sequence policy: Scenario 1 -&gt; Scenario 20 (simulated, synthetic, safe)</li>
+<li>Current sequence status:</li>
+<li>01. SCENARIO_1_SPAM_BURST [available]</li>
+<li>02. SCENARIO_2_MALWARE_ATTACHMENT [available]</li>
+<li>03. SCENARIO_3_UNAUTHORIZED_ACCESS [available]</li>
+<li>04. SCENARIO_4_BEC_ATTEMPT [available]</li>
+<li>05. SCENARIO_5_OAUTH_ABUSE [available]</li>
+<li>06. SCENARIO_6_VENDOR_COMPROMISE [available]</li>
+<li>07. SCENARIO_7_INSIDER_MISUSE [available]</li>
+<li>08. SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL [available]</li>
+<li>09. SCENARIO_9_LATERAL_MOVEMENT_OAUTH [available]</li>
+<li>10. SCENARIO_10_SERVICE_PRINCIPAL_HIJACK [available]</li>
+<li>11. SCENARIO_11_K8S_SIDECAR_BREAKOUT [available]</li>
+<li>12. SCENARIO_12_SUPPLY_CHAIN_POISONING [available]</li>
+<li>13. SCENARIO_13_ZERO_DAY_EXPLOIT [available]</li>
+<li>14. SCENARIO_14_HYBRID_CLOUD_RANSOMWARE [available]</li>
+<li>15. SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE [available]</li>
+<li>16. SCENARIO_16_OIDC_SIGNING_KEY_THEFT [available]</li>
+<li>17. SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE [available]</li>
+<li>18. SCENARIO_18_SYNTHETIC_PLACEHOLDER [synthetic_placeholder]</li>
+<li>19. SCENARIO_19_SYNTHETIC_PLACEHOLDER [synthetic_placeholder]</li>
+<li>20. SCENARIO_20_SYNTHETIC_PLACEHOLDER [synthetic_placeholder]</li>
+</ul>
+<h2 id="8-red-team-deliverable-package">8) Red Team Deliverable Package</h2>
+<ul>
+<li>Package name: Red Team Deliverable Package</li>
+<li>Deliverables:</li>
+<li>Campaign scope and objectives</li>
+<li>Scenario inject matrix</li>
+<li>Unified incident attack graph</li>
+<li>Detection and response checkpoints</li>
+<li>Executive communication brief</li>
+<li>Blue-team scoring workbook</li>
+<li>After-action review template</li>
+<li>Safety, legal, and control constraints</li>
+</ul>
+<h2 id="safety-controls">Safety Controls</h2>
+<ul>
+<li>No live malware deployment</li>
+<li>No unauthorized external network targeting</li>
+<li>No destructive commands against production systems</li>
+<li>Synthetic payloads and controlled telemetry only</li>
+</ul>
+<h2 id="campaign-launcher-manifest">Campaign Launcher Manifest</h2>
+<h1 id="campaign-launcher-manifest-2026-04-14">Campaign Launcher Manifest — 2026-04-14</h1>
+<p>Machine-runnable launcher profiles for Mission Control campaigns.</p>
+<h2 id="constraints">Constraints</h2>
+<ul>
+<li>safe_mode: True</li>
+<li>synthetic_only: True</li>
+<li>destructive_actions_forbidden: True</li>
+<li>authorized_scope_required: True</li>
+</ul>
+<h2 id="profiles">Profiles</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>ID</th><th>Mode</th><th>Safe</th><th>Synthetic</th><th>Sequence Length</th></tr></thead>
+<tbody>
+<tr><td>single-scenario_1_spam_burst</td><td>single_scenario</td><td>True</td><td>True</td><td>1</td></tr>
+<tr><td>single-scenario_2_malware_attachment</td><td>single_scenario</td><td>True</td><td>True</td><td>1</td></tr>
+<tr><td>single-scenario_3_unauthorized_access</td><td>single_scenario</td><td>True</td><td>True</td><td>1</td></tr>
+<tr><td>single-scenario_4_bec_attempt</td><td>single_scenario</td><td>True</td><td>True</td><td>1</td></tr>
+<tr><td>single-scenario_5_oauth_abuse</td><td>single_scenario</td><td>True</td><td>True</td><td>1</td></tr>
+<tr><td>single-scenario_6_vendor_compromise</td><td>single_scenario</td><td>True</td><td>True</td><td>1</td></tr>
+<tr><td>single-scenario_7_insider_misuse</td><td>single_scenario</td><td>True</td><td>True</td><td>1</td></tr>
+<tr><td>single-scenario_8_token_replay_impossible_travel</td><td>single_scenario</td><td>True</td><td>True</td><td>1</td></tr>
+<tr><td>single-scenario_9_lateral_movement_oauth</td><td>single_scenario</td><td>True</td><td>True</td><td>1</td></tr>
+<tr><td>single-scenario_10_service_principal_hijack</td><td>single_scenario</td><td>True</td><td>True</td><td>1</td></tr>
+<tr><td>single-scenario_11_k8s_sidecar_breakout</td><td>single_scenario</td><td>True</td><td>True</td><td>1</td></tr>
+<tr><td>single-scenario_12_supply_chain_poisoning</td><td>single_scenario</td><td>True</td><td>True</td><td>1</td></tr>
+<tr><td>single-scenario_13_zero_day_exploit</td><td>single_scenario</td><td>True</td><td>True</td><td>1</td></tr>
+<tr><td>single-scenario_14_hybrid_cloud_ransomware</td><td>single_scenario</td><td>True</td><td>True</td><td>1</td></tr>
+<tr><td>single-scenario_15_cross_tenant_federation_abuse</td><td>single_scenario</td><td>True</td><td>True</td><td>1</td></tr>
+<tr><td>single-scenario_16_oidc_signing_key_theft</td><td>single_scenario</td><td>True</td><td>True</td><td>1</td></tr>
+<tr><td>single-scenario_17_hardware_root_of_trust_compromise</td><td>single_scenario</td><td>True</td><td>True</td><td>1</td></tr>
+<tr><td>chain-01</td><td>multi_scenario_chain</td><td>True</td><td>True</td><td>4</td></tr>
+<tr><td>chain-02</td><td>multi_scenario_chain</td><td>True</td><td>True</td><td>4</td></tr>
+<tr><td>chain-03</td><td>multi_scenario_chain</td><td>True</td><td>True</td><td>3</td></tr>
+<tr><td>full-spectrum-01</td><td>full_spectrum_campaign</td><td>True</td><td>True</td><td>20</td></tr>
+</tbody></table></div>
+<h2 id="example-launch-intents">Example Launch Intents</h2>
+<ul>
+<li>Single scenario: `python -m shadow_toolkit.cli campaign --mode single --scenario SCENARIO_3_UNAUTHORIZED_ACCESS`</li>
+<li>Chain campaign: `python -m shadow_toolkit.cli campaign --mode chain --chain-id chain-01`</li>
+<li>Full spectrum: `python -m shadow_toolkit.cli campaign --mode full-spectrum --start 1 --end 20 --safety simulated-synthetic-safe`</li>
+</ul>
+<h2 id="chain-kpis">Chain KPIs</h2>
+<h1 id="chain-kpi-report-2026-04-14">Chain KPI Report — 2026-04-14</h1>
+<ul>
+<li>Scenario coverage: 17</li>
+<li>Critical scenarios: 13</li>
+<li>Avg signals/scenario: 5.29</li>
+<li>Avg actions/scenario: 5.82</li>
+<li>Highest signal density: SCENARIO_14_HYBRID_CLOUD_RANSOMWARE (7 signals)</li>
+<li>Avg dwell time (timeline-derived): 0.82 minutes</li>
+<li>Avg estimated response latency: 3.56 minutes</li>
+<li>Avg estimated containment latency: 4.38 minutes</li>
+</ul>
+<h2 id="estimated-response-latency-by-scenario-minutes">Estimated Response Latency by Scenario (Minutes)</h2>
+<ul>
+<li>SCENARIO_10_SERVICE_PRINCIPAL_HIJACK: 5.0</li>
+<li>SCENARIO_11_K8S_SIDECAR_BREAKOUT: 8.0</li>
+<li>SCENARIO_12_SUPPLY_CHAIN_POISONING: 5.0</li>
+<li>SCENARIO_13_ZERO_DAY_EXPLOIT: 5.25</li>
+<li>SCENARIO_14_HYBRID_CLOUD_RANSOMWARE: 3.29</li>
+<li>SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE: 4.0</li>
+<li>SCENARIO_16_OIDC_SIGNING_KEY_THEFT: 3.0</li>
+<li>SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE: 3.0</li>
+<li>SCENARIO_1_SPAM_BURST: 2.0</li>
+<li>SCENARIO_2_MALWARE_ATTACHMENT: 2.0</li>
+<li>SCENARIO_3_UNAUTHORIZED_ACCESS: 5.0</li>
+<li>SCENARIO_4_BEC_ATTEMPT: 2.0</li>
+<li>SCENARIO_5_OAUTH_ABUSE: 2.0</li>
+<li>SCENARIO_6_VENDOR_COMPROMISE: 5.0</li>
+<li>SCENARIO_7_INSIDER_MISUSE: 2.0</li>
+<li>SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL: 2.0</li>
+<li>SCENARIO_9_LATERAL_MOVEMENT_OAUTH: 2.0</li>
+</ul>
+<h2 id="dwell-time-by-scenario-minutes">Dwell Time by Scenario (Minutes)</h2>
+<ul>
+<li>SCENARIO_10_SERVICE_PRINCIPAL_HIJACK: 0</li>
+<li>SCENARIO_11_K8S_SIDECAR_BREAKOUT: 0</li>
+<li>SCENARIO_12_SUPPLY_CHAIN_POISONING: 0</li>
+<li>SCENARIO_13_ZERO_DAY_EXPLOIT: 3</li>
+<li>SCENARIO_14_HYBRID_CLOUD_RANSOMWARE: 3</li>
+<li>SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE: 2</li>
+<li>SCENARIO_16_OIDC_SIGNING_KEY_THEFT: 3</li>
+<li>SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE: 3</li>
+<li>SCENARIO_1_SPAM_BURST: 0</li>
+<li>SCENARIO_2_MALWARE_ATTACHMENT: 0</li>
+<li>SCENARIO_3_UNAUTHORIZED_ACCESS: 0</li>
+<li>SCENARIO_4_BEC_ATTEMPT: 0</li>
+<li>SCENARIO_5_OAUTH_ABUSE: 0</li>
+<li>SCENARIO_6_VENDOR_COMPROMISE: 0</li>
+<li>SCENARIO_7_INSIDER_MISUSE: 0</li>
+<li>SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL: 0</li>
+<li>SCENARIO_9_LATERAL_MOVEMENT_OAUTH: 0</li>
+</ul>
+<h2 id="estimated-containment-latency-by-scenario-minutes">Estimated Containment Latency by Scenario (Minutes)</h2>
+<ul>
+<li>SCENARIO_10_SERVICE_PRINCIPAL_HIJACK: 5.0</li>
+<li>SCENARIO_11_K8S_SIDECAR_BREAKOUT: 8.0</li>
+<li>SCENARIO_12_SUPPLY_CHAIN_POISONING: 5.0</li>
+<li>SCENARIO_13_ZERO_DAY_EXPLOIT: 8.25</li>
+<li>SCENARIO_14_HYBRID_CLOUD_RANSOMWARE: 6.29</li>
+<li>SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE: 6.0</li>
+<li>SCENARIO_16_OIDC_SIGNING_KEY_THEFT: 6.0</li>
+<li>SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE: 6.0</li>
+<li>SCENARIO_1_SPAM_BURST: 2.0</li>
+<li>SCENARIO_2_MALWARE_ATTACHMENT: 2.0</li>
+<li>SCENARIO_3_UNAUTHORIZED_ACCESS: 5.0</li>
+<li>SCENARIO_4_BEC_ATTEMPT: 2.0</li>
+<li>SCENARIO_5_OAUTH_ABUSE: 2.0</li>
+<li>SCENARIO_6_VENDOR_COMPROMISE: 5.0</li>
+<li>SCENARIO_7_INSIDER_MISUSE: 2.0</li>
+<li>SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL: 2.0</li>
+<li>SCENARIO_9_LATERAL_MOVEMENT_OAUTH: 2.0</li>
+</ul>
+</div>
+<script>
+const navLinks=[...document.querySelectorAll(".section-nav-links a")];
+const sections=navLinks.map((link)=>document.querySelector(link.getAttribute("href"))).filter(Boolean);
+const observer=new IntersectionObserver((entries)=>{entries.forEach((entry)=>{if(!entry.isIntersecting)return;const id=entry.target.id;navLinks.forEach((link)=>link.classList.toggle("active",link.getAttribute("href")==="#"+id));});},{rootMargin:"-35% 0px -55% 0px",threshold:[0,1]});
+sections.forEach((section)=>observer.observe(section));
+if(navLinks.length){navLinks[0].classList.add("active");}
+</script>
+</body>
+</html>

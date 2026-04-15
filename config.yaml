@@ -1,0 +1,21 @@
+telemetry:
+  port: 5555
+storage:
+  db_path: data/telemetry.db
+modules:
+  directory: ./modules
+orchestrator:
+  join_interval_seconds: 2
+dashboard:
+  enabled: true
+  host: 127.0.0.1
+  port: 8055
+
+arp_detector:
+  gateway_ip: 192.168.0.1
+  scan_interval: 5
+  alert_threshold: 3
+
+network_mapper:
+  target_network: 192.168.0.0/24
+  scan_interval: 60

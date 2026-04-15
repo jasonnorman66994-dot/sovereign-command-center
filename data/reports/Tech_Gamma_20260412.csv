@@ -1,0 +1,8 @@
+timestamp,module,event,severity,business,payload
+2026-04-12 22:38:36,port_scanner,compliance_violation,warning,Tech_Gamma,"{""business"":""Tech_Gamma"",""ip"":""172.16.1.10"",""open_unauthorized_ports"":[80,3389],""allowed_ports"":[22,443]}"
+2026-04-12 22:39:37,port_scanner,compliance_violation,warning,Tech_Gamma,"{""business"":""Tech_Gamma"",""ip"":""172.16.1.10"",""open_unauthorized_ports"":[80,3389],""allowed_ports"":[22,443]}"
+2026-04-12 22:40:25,port_scanner,compliance_violation,warning,Tech_Gamma,"{""business"":""Tech_Gamma"",""ip"":""172.16.1.10"",""open_unauthorized_ports"":[80,3389],""allowed_ports"":[22,443]}"
+2026-04-12 22:46:37,port_scanner,compliance_violation,warning,Tech_Gamma,"{""business"":""Tech_Gamma"",""ip"":""172.16.1.10"",""open_unauthorized_ports"":[80,3389],""allowed_ports"":[22,443]}"
+2026-04-12 22:50:57,port_scanner,compliance_violation,warning,Tech_Gamma,"{""business"":""Tech_Gamma"",""ip"":""172.16.1.10"",""open_unauthorized_ports"":[80,3389],""allowed_ports"":[22,443]}"
+2026-04-12 23:03:43,port_scanner,compliance_violation,warning,Tech_Gamma,"{""business"":""Tech_Gamma"",""ip"":""172.16.1.10"",""open_unauthorized_ports"":[80,3389],""allowed_ports"":[22,443]}"
+2026-04-13 03:54:17,port_scanner,compliance_violation,warning,Tech_Gamma,"{""business"":""Tech_Gamma"",""ip"":""172.16.1.10"",""open_unauthorized_ports"":[80,3389],""allowed_ports"":[22,443]}"

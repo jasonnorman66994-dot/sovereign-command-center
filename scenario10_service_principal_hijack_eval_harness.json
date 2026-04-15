@@ -1,0 +1,37 @@
+{
+  "scenario_id": "SCENARIO_10_SERVICE_PRINCIPAL_HIJACK",
+  "expected": {
+    "classification": "Cloud Workload Compromise - Service Principal Hijack",
+    "signals": [
+      "Foreign IP service principal login",
+      "Old leaked secret",
+      "Unauthorized role assignment attempt",
+      "VM manipulation",
+      "Large blob downloads",
+      "Long-lived secret creation"
+    ],
+    "actions": [
+      "Disable service principal",
+      "Revoke secrets and tokens",
+      "Block attacker IP",
+      "Stop malicious VM",
+      "Audit IAM role changes",
+      "Rotate all workload secrets"
+    ],
+    "risk_level": "Critical"
+  },
+  "rubric_weights": {
+    "threat_identification": 0.25,
+    "signal_recognition": 0.25,
+    "recommended_actions": 0.25,
+    "risk_assessment": 0.15,
+    "clarity_structure": 0.10
+  },
+  "scoring_logic": {
+    "classification_match": "exact_or_close",
+    "signal_match": "percentage_overlap",
+    "action_match": "percentage_overlap",
+    "risk_match": "exact",
+    "clarity": "llm_quality_metric"
+  }
+}

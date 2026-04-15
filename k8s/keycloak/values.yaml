@@ -1,0 +1,46 @@
+auth:
+  adminUser: admin
+  adminPassword: change-me
+
+proxy: edge
+
+postgresql:
+  enabled: true
+  auth:
+    username: keycloak
+    password: keycloak-db-pass
+    database: keycloak
+
+service:
+  type: ClusterIP
+  ports:
+    http: 80
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  hostname: keycloak.shadow.local
+  path: /
+  pathType: Prefix
+
+envVars:
+  - name: KC_PROXY_HEADERS
+    value: xforwarded
+  - name: KC_HOSTNAME_STRICT
+    value: "false"
+  - name: KC_METRICS_ENABLED
+    value: "true"
+  - name: KC_HEALTH_ENABLED
+    value: "true"
+
+extraEnvVars:
+  - name: KEYCLOAK_LOGLEVEL
+    value: INFO
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: 1000m
+    memory: 2Gi

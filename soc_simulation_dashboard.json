@@ -1,0 +1,22 @@
+# Custom Grafana Dashboard JSON (All Scenarios)
+{
+  "dashboard": {
+    "id": null,
+    "title": "SOC Simulation: All Scenarios",
+    "tags": ["SOC", "simulation", "security", "incident response"],
+    "timezone": "browser",
+    "schemaVersion": 36,
+    "version": 1,
+    "refresh": "1m",
+    "panels": [
+      { "type": "table", "title": "Spam Burst Events", "datasource": "CSV/SQL", "targets": [{ "refId": "A", "rawSql": "SELECT * FROM mail_activity WHERE subject LIKE '%spam%'" }], "gridPos": {"h":6,"w":12,"x":0,"y":0} },
+      { "type": "table", "title": "Malware Attachments", "datasource": "CSV/SQL", "targets": [{ "refId": "B", "rawSql": "SELECT * FROM mail_activity WHERE attachment LIKE '%.exe' OR attachment LIKE '%.zip'" }], "gridPos": {"h":6,"w":12,"x":12,"y":0} },
+      { "type": "table", "title": "Unauthorized Access", "datasource": "CSV/SQL", "targets": [{ "refId": "C", "rawSql": "SELECT * FROM login_events WHERE status='FAILED' OR status='SUCCESS'" }], "gridPos": {"h":6,"w":12,"x":0,"y":6} },
+      { "type": "table", "title": "BEC Attempts", "datasource": "CSV/SQL", "targets": [{ "refId": "D", "rawSql": "SELECT * FROM mailbox_rules WHERE action IN ('move_to_folder', 'delete')" }], "gridPos": {"h":6,"w":12,"x":12,"y":6} },
+      { "type": "table", "title": "OAuth Abuse", "datasource": "CSV/SQL", "targets": [{ "refId": "E", "rawSql": "SELECT * FROM oauth_consents WHERE publisher='Unverified' OR scopes LIKE '%Mail.ReadWrite%'" }], "gridPos": {"h":6,"w":12,"x":0,"y":12} },
+      { "type": "table", "title": "Vendor Compromise", "datasource": "CSV/SQL", "targets": [{ "refId": "F", "rawSql": "SELECT * FROM vendor_mailbox_telemetry WHERE indicator='mailbox_rule_forwarding'" }], "gridPos": {"h":6,"w":12,"x":12,"y":12} },
+      { "type": "table", "title": "Impossible Travel", "datasource": "CSV/SQL", "targets": [{ "refId": "G", "rawSql": "SELECT * FROM session_analyzer WHERE anomaly LIKE '%impossible travel%'" }], "gridPos": {"h":6,"w":12,"x":0,"y":18} },
+      { "type": "table", "title": "Insider Exfiltration", "datasource": "CSV/SQL", "targets": [{ "refId": "H", "rawSql": "SELECT * FROM fileserver WHERE action='UPLOAD' AND dest LIKE 'external%'" }], "gridPos": {"h":6,"w":12,"x":12,"y":18} }
+    ]
+  }
+}

@@ -1,0 +1,113 @@
+.monokai-bg {
+  min-height: 100vh;
+  margin: 0;
+  padding: 24px;
+  background: radial-gradient(circle at top right, #1f2937 0%, #0d1117 45%);
+  color: #c9d1d9;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+}
+
+.dashboard-wrapper {
+  width: 100%;
+}
+
+.monokai-grid-header {
+  background: #1a191f;
+  border-bottom: 2px solid #a6e22e;
+  color: #f8f8f2;
+  padding: 12px;
+  text-align: center;
+  letter-spacing: 2px;
+  box-shadow: 0 0 15px rgba(166, 226, 46, 0.2);
+  margin-bottom: 14px;
+}
+
+.loading-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 1px;
+}
+
+.login-overlay {
+  min-height: calc(100vh - 48px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-card {
+  width: min(520px, 90vw);
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.login-card h2 {
+  margin: 0 0 10px;
+  color: #58a6ff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 1rem;
+}
+
+.login-card button {
+  margin-top: 10px;
+  border: 1px solid #7ee787;
+  color: #7ee787;
+  background: transparent;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.muted {
+  color: #8b949e;
+  font-size: 0.85rem;
+}
+
+.hud-layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.telemetry-card {
+  background: rgba(39, 40, 34, 0.9);
+  border: 1px solid #49483e;
+  border-left: 4px solid #66d9ef;
+  padding: 15px;
+  margin: 10px;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  min-height: 130px;
+}
+
+.telemetry-card:hover {
+  border-color: #a6e22e;
+  box-shadow: 0 0 20px rgba(166, 226, 46, 0.3);
+}
+
+.telemetry-card h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  color: #58a6ff;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+}
+
+.data-stream {
+  color: #ae81ff;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+  .hud-layout {
+    grid-template-columns: 1fr;
+  }
+}

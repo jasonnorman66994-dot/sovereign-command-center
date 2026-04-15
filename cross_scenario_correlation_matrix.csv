@@ -1,0 +1,12 @@
+user,scenarios_detected
+user_201@enterprise.com,8
+user_202@enterprise.com,8
+user_204@enterprise.com,8
+user_205@enterprise.com,8
+user_207@enterprise.com,8,9
+user_208@enterprise.com,8,9
+user_212@enterprise.com,8
+user_214@enterprise.com,8,9,10
+svc_backup@enterprise.com,8
+svc_automation@enterprise.com,8
+svc_hr@enterprise.com,8

@@ -1,0 +1,37 @@
+{
+  "scenario_id": "SCENARIO_16_OIDC_SIGNING_KEY_THEFT",
+  "expected": {
+    "classification": "Global Identity Provider Compromise - OIDC Signing Key Theft",
+    "signals": [
+      "Suspicious IdP admin login",
+      "Unauthorized signing key export",
+      "Forged tokens with abnormal lifetimes",
+      "Privilege escalation via forged tokens",
+      "Rogue signing key creation",
+      "Large outbound exfiltration"
+    ],
+    "actions": [
+      "Rotate OIDC signing keys",
+      "Invalidate all tokens",
+      "Disable IdP admin accounts",
+      "Block attacker IP",
+      "Audit token issuance",
+      "Rebuild IdP from clean state"
+    ],
+    "risk_level": "Critical"
+  },
+  "rubric_weights": {
+    "threat_identification": 0.25,
+    "signal_recognition": 0.25,
+    "recommended_actions": 0.25,
+    "risk_assessment": 0.15,
+    "clarity_structure": 0.10
+  },
+  "scoring_logic": {
+    "classification_match": "exact_or_close",
+    "signal_match": "percentage_overlap",
+    "action_match": "percentage_overlap",
+    "risk_match": "exact",
+    "clarity": "llm_quality_metric"
+  }
+}

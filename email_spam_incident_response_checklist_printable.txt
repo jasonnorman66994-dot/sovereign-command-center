@@ -1,0 +1,84 @@
+Email Spam Incident Response Checklist
+======================================
+
+This checklist provides a structured, actionable guide for administrators responding to a spam outbreak.
+
+------------------------------------------------------------
+
+1. Detection
+------------
+- Monitor mail server logs for unusual spikes.
+- Review SIEM alerts for outbound anomalies.
+- Confirm alert thresholds (e.g., >500 emails/hour).
+
+Commands:
+    tail -f /var/log/maillog
+
+------------------------------------------------------------
+
+2. Investigation
+----------------
+- Identify source account or IP.
+- Review sample emails for phishing or malware.
+- Check SPF/DKIM/DMARC authentication.
+
+Commands:
+    grep "from=" /var/log/maillog | sort | uniq -c | sort -nr
+    dig +short TXT example.com
+
+------------------------------------------------------------
+
+3. Containment
+--------------
+- Disable compromised accounts.
+- Throttle outbound mail temporarily.
+- Quarantine suspicious messages.
+
+Commands:
+    sudo usermod -L compromised_user
+
+------------------------------------------------------------
+
+4. Root Cause Analysis
+----------------------
+- Check for open relay vulnerabilities.
+- Scan affected devices for malware.
+- Review authentication logs for unauthorized access.
+
+Commands:
+    telnet mail.example.com 25
+
+------------------------------------------------------------
+
+5. Remediation
+--------------
+- Reset all affected credentials.
+- Enforce multi-factor authentication (MFA).
+- Patch mail server and related systems.
+
+Commands:
+    sudo apt update && sudo apt upgrade
+
+------------------------------------------------------------
+
+6. Recovery & Monitoring
+------------------------
+- Check domain/IP reputation using MXToolbox.
+- Request delisting from major providers.
+- Implement continuous monitoring and stricter thresholds.
+
+Tools:
+    SIEM dashboards (Splunk, Sentinel)
+    Email gateways (Proofpoint, Mimecast)
+
+------------------------------------------------------------
+
+Key Takeaways
+-------------
+- Rapid detection and containment prevent escalation.
+- Authentication protocols (SPF, DKIM, DMARC) are critical.
+- Continuous monitoring ensures long-term protection.
+
+------------------------------------------------------------
+
+This checklist can be printed or integrated into your incident response documentation for quick reference during email security events.

@@ -1,0 +1,37 @@
+{
+  "scenario_id": "SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE",
+  "expected": {
+    "classification": "Cross-Tenant Cloud Takeover - Federation Abuse",
+    "signals": [
+      "Suspicious federation token issuance",
+      "Federated identity assuming privileged role",
+      "Creation of rogue service principal",
+      "Unauthorized federation trust creation",
+      "Cross-tenant secret access",
+      "Large outbound exfiltration"
+    ],
+    "actions": [
+      "Disable federation trust",
+      "Revoke federation tokens",
+      "Block attacker IP",
+      "Disable compromised identities",
+      "Audit role assumptions",
+      "Rebuild federation trust securely"
+    ],
+    "risk_level": "Critical"
+  },
+  "rubric_weights": {
+    "threat_identification": 0.25,
+    "signal_recognition": 0.25,
+    "recommended_actions": 0.25,
+    "risk_assessment": 0.15,
+    "clarity_structure": 0.10
+  },
+  "scoring_logic": {
+    "classification_match": "exact_or_close",
+    "signal_match": "percentage_overlap",
+    "action_match": "percentage_overlap",
+    "risk_match": "exact",
+    "clarity": "llm_quality_metric"
+  }
+}

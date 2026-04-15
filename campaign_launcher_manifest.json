@@ -1,0 +1,485 @@
+{
+  "generated_at": "2026-04-14T17:53:19",
+  "schema_version": "1.0.0",
+  "description": "Machine-runnable launcher manifest for single-scenario drills, chained campaigns, and full-spectrum synthetic exercises.",
+  "global_constraints": {
+    "safe_mode": true,
+    "synthetic_only": true,
+    "destructive_actions_forbidden": true,
+    "authorized_scope_required": true
+  },
+  "profiles": [
+    {
+      "id": "single-scenario_1_spam_burst",
+      "mode": "single_scenario",
+      "name": "Single Scenario: SCENARIO_1_SPAM_BURST",
+      "safe": true,
+      "synthetic": true,
+      "sequence": [
+        "SCENARIO_1_SPAM_BURST"
+      ],
+      "launch": {
+        "runner": "python",
+        "entrypoint": "shadow_toolkit.cli",
+        "arguments": [
+          "campaign",
+          "--mode",
+          "single",
+          "--scenario",
+          "SCENARIO_1_SPAM_BURST"
+        ]
+      }
+    },
+    {
+      "id": "single-scenario_2_malware_attachment",
+      "mode": "single_scenario",
+      "name": "Single Scenario: SCENARIO_2_MALWARE_ATTACHMENT",
+      "safe": true,
+      "synthetic": true,
+      "sequence": [
+        "SCENARIO_2_MALWARE_ATTACHMENT"
+      ],
+      "launch": {
+        "runner": "python",
+        "entrypoint": "shadow_toolkit.cli",
+        "arguments": [
+          "campaign",
+          "--mode",
+          "single",
+          "--scenario",
+          "SCENARIO_2_MALWARE_ATTACHMENT"
+        ]
+      }
+    },
+    {
+      "id": "single-scenario_3_unauthorized_access",
+      "mode": "single_scenario",
+      "name": "Single Scenario: SCENARIO_3_UNAUTHORIZED_ACCESS",
+      "safe": true,
+      "synthetic": true,
+      "sequence": [
+        "SCENARIO_3_UNAUTHORIZED_ACCESS"
+      ],
+      "launch": {
+        "runner": "python",
+        "entrypoint": "shadow_toolkit.cli",
+        "arguments": [
+          "campaign",
+          "--mode",
+          "single",
+          "--scenario",
+          "SCENARIO_3_UNAUTHORIZED_ACCESS"
+        ]
+      }
+    },
+    {
+      "id": "single-scenario_4_bec_attempt",
+      "mode": "single_scenario",
+      "name": "Single Scenario: SCENARIO_4_BEC_ATTEMPT",
+      "safe": true,
+      "synthetic": true,
+      "sequence": [
+        "SCENARIO_4_BEC_ATTEMPT"
+      ],
+      "launch": {
+        "runner": "python",
+        "entrypoint": "shadow_toolkit.cli",
+        "arguments": [
+          "campaign",
+          "--mode",
+          "single",
+          "--scenario",
+          "SCENARIO_4_BEC_ATTEMPT"
+        ]
+      }
+    },
+    {
+      "id": "single-scenario_5_oauth_abuse",
+      "mode": "single_scenario",
+      "name": "Single Scenario: SCENARIO_5_OAUTH_ABUSE",
+      "safe": true,
+      "synthetic": true,
+      "sequence": [
+        "SCENARIO_5_OAUTH_ABUSE"
+      ],
+      "launch": {
+        "runner": "python",
+        "entrypoint": "shadow_toolkit.cli",
+        "arguments": [
+          "campaign",
+          "--mode",
+          "single",
+          "--scenario",
+          "SCENARIO_5_OAUTH_ABUSE"
+        ]
+      }
+    },
+    {
+      "id": "single-scenario_6_vendor_compromise",
+      "mode": "single_scenario",
+      "name": "Single Scenario: SCENARIO_6_VENDOR_COMPROMISE",
+      "safe": true,
+      "synthetic": true,
+      "sequence": [
+        "SCENARIO_6_VENDOR_COMPROMISE"
+      ],
+      "launch": {
+        "runner": "python",
+        "entrypoint": "shadow_toolkit.cli",
+        "arguments": [
+          "campaign",
+          "--mode",
+          "single",
+          "--scenario",
+          "SCENARIO_6_VENDOR_COMPROMISE"
+        ]
+      }
+    },
+    {
+      "id": "single-scenario_7_insider_misuse",
+      "mode": "single_scenario",
+      "name": "Single Scenario: SCENARIO_7_INSIDER_MISUSE",
+      "safe": true,
+      "synthetic": true,
+      "sequence": [
+        "SCENARIO_7_INSIDER_MISUSE"
+      ],
+      "launch": {
+        "runner": "python",
+        "entrypoint": "shadow_toolkit.cli",
+        "arguments": [
+          "campaign",
+          "--mode",
+          "single",
+          "--scenario",
+          "SCENARIO_7_INSIDER_MISUSE"
+        ]
+      }
+    },
+    {
+      "id": "single-scenario_8_token_replay_impossible_travel",
+      "mode": "single_scenario",
+      "name": "Single Scenario: SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL",
+      "safe": true,
+      "synthetic": true,
+      "sequence": [
+        "SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL"
+      ],
+      "launch": {
+        "runner": "python",
+        "entrypoint": "shadow_toolkit.cli",
+        "arguments": [
+          "campaign",
+          "--mode",
+          "single",
+          "--scenario",
+          "SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL"
+        ]
+      }
+    },
+    {
+      "id": "single-scenario_9_lateral_movement_oauth",
+      "mode": "single_scenario",
+      "name": "Single Scenario: SCENARIO_9_LATERAL_MOVEMENT_OAUTH",
+      "safe": true,
+      "synthetic": true,
+      "sequence": [
+        "SCENARIO_9_LATERAL_MOVEMENT_OAUTH"
+      ],
+      "launch": {
+        "runner": "python",
+        "entrypoint": "shadow_toolkit.cli",
+        "arguments": [
+          "campaign",
+          "--mode",
+          "single",
+          "--scenario",
+          "SCENARIO_9_LATERAL_MOVEMENT_OAUTH"
+        ]
+      }
+    },
+    {
+      "id": "single-scenario_10_service_principal_hijack",
+      "mode": "single_scenario",
+      "name": "Single Scenario: SCENARIO_10_SERVICE_PRINCIPAL_HIJACK",
+      "safe": true,
+      "synthetic": true,
+      "sequence": [
+        "SCENARIO_10_SERVICE_PRINCIPAL_HIJACK"
+      ],
+      "launch": {
+        "runner": "python",
+        "entrypoint": "shadow_toolkit.cli",
+        "arguments": [
+          "campaign",
+          "--mode",
+          "single",
+          "--scenario",
+          "SCENARIO_10_SERVICE_PRINCIPAL_HIJACK"
+        ]
+      }
+    },
+    {
+      "id": "single-scenario_11_k8s_sidecar_breakout",
+      "mode": "single_scenario",
+      "name": "Single Scenario: SCENARIO_11_K8S_SIDECAR_BREAKOUT",
+      "safe": true,
+      "synthetic": true,
+      "sequence": [
+        "SCENARIO_11_K8S_SIDECAR_BREAKOUT"
+      ],
+      "launch": {
+        "runner": "python",
+        "entrypoint": "shadow_toolkit.cli",
+        "arguments": [
+          "campaign",
+          "--mode",
+          "single",
+          "--scenario",
+          "SCENARIO_11_K8S_SIDECAR_BREAKOUT"
+        ]
+      }
+    },
+    {
+      "id": "single-scenario_12_supply_chain_poisoning",
+      "mode": "single_scenario",
+      "name": "Single Scenario: SCENARIO_12_SUPPLY_CHAIN_POISONING",
+      "safe": true,
+      "synthetic": true,
+      "sequence": [
+        "SCENARIO_12_SUPPLY_CHAIN_POISONING"
+      ],
+      "launch": {
+        "runner": "python",
+        "entrypoint": "shadow_toolkit.cli",
+        "arguments": [
+          "campaign",
+          "--mode",
+          "single",
+          "--scenario",
+          "SCENARIO_12_SUPPLY_CHAIN_POISONING"
+        ]
+      }
+    },
+    {
+      "id": "single-scenario_13_zero_day_exploit",
+      "mode": "single_scenario",
+      "name": "Single Scenario: SCENARIO_13_ZERO_DAY_EXPLOIT",
+      "safe": true,
+      "synthetic": true,
+      "sequence": [
+        "SCENARIO_13_ZERO_DAY_EXPLOIT"
+      ],
+      "launch": {
+        "runner": "python",
+        "entrypoint": "shadow_toolkit.cli",
+        "arguments": [
+          "campaign",
+          "--mode",
+          "single",
+          "--scenario",
+          "SCENARIO_13_ZERO_DAY_EXPLOIT"
+        ]
+      }
+    },
+    {
+      "id": "single-scenario_14_hybrid_cloud_ransomware",
+      "mode": "single_scenario",
+      "name": "Single Scenario: SCENARIO_14_HYBRID_CLOUD_RANSOMWARE",
+      "safe": true,
+      "synthetic": true,
+      "sequence": [
+        "SCENARIO_14_HYBRID_CLOUD_RANSOMWARE"
+      ],
+      "launch": {
+        "runner": "python",
+        "entrypoint": "shadow_toolkit.cli",
+        "arguments": [
+          "campaign",
+          "--mode",
+          "single",
+          "--scenario",
+          "SCENARIO_14_HYBRID_CLOUD_RANSOMWARE"
+        ]
+      }
+    },
+    {
+      "id": "single-scenario_15_cross_tenant_federation_abuse",
+      "mode": "single_scenario",
+      "name": "Single Scenario: SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE",
+      "safe": true,
+      "synthetic": true,
+      "sequence": [
+        "SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE"
+      ],
+      "launch": {
+        "runner": "python",
+        "entrypoint": "shadow_toolkit.cli",
+        "arguments": [
+          "campaign",
+          "--mode",
+          "single",
+          "--scenario",
+          "SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE"
+        ]
+      }
+    },
+    {
+      "id": "single-scenario_16_oidc_signing_key_theft",
+      "mode": "single_scenario",
+      "name": "Single Scenario: SCENARIO_16_OIDC_SIGNING_KEY_THEFT",
+      "safe": true,
+      "synthetic": true,
+      "sequence": [
+        "SCENARIO_16_OIDC_SIGNING_KEY_THEFT"
+      ],
+      "launch": {
+        "runner": "python",
+        "entrypoint": "shadow_toolkit.cli",
+        "arguments": [
+          "campaign",
+          "--mode",
+          "single",
+          "--scenario",
+          "SCENARIO_16_OIDC_SIGNING_KEY_THEFT"
+        ]
+      }
+    },
+    {
+      "id": "single-scenario_17_hardware_root_of_trust_compromise",
+      "mode": "single_scenario",
+      "name": "Single Scenario: SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE",
+      "safe": true,
+      "synthetic": true,
+      "sequence": [
+        "SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE"
+      ],
+      "launch": {
+        "runner": "python",
+        "entrypoint": "shadow_toolkit.cli",
+        "arguments": [
+          "campaign",
+          "--mode",
+          "single",
+          "--scenario",
+          "SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE"
+        ]
+      }
+    },
+    {
+      "id": "chain-01",
+      "mode": "multi_scenario_chain",
+      "name": "Chain Campaign 01",
+      "safe": true,
+      "synthetic": true,
+      "sequence": [
+        "SCENARIO_3_UNAUTHORIZED_ACCESS",
+        "SCENARIO_5_OAUTH_ABUSE",
+        "SCENARIO_9_LATERAL_MOVEMENT_OAUTH",
+        "SCENARIO_14_HYBRID_CLOUD_RANSOMWARE"
+      ],
+      "launch": {
+        "runner": "python",
+        "entrypoint": "shadow_toolkit.cli",
+        "arguments": [
+          "campaign",
+          "--mode",
+          "chain",
+          "--chain-id",
+          "chain-01"
+        ]
+      }
+    },
+    {
+      "id": "chain-02",
+      "mode": "multi_scenario_chain",
+      "name": "Chain Campaign 02",
+      "safe": true,
+      "synthetic": true,
+      "sequence": [
+        "SCENARIO_5_OAUTH_ABUSE",
+        "SCENARIO_10_SERVICE_PRINCIPAL_HIJACK",
+        "SCENARIO_12_SUPPLY_CHAIN_POISONING",
+        "SCENARIO_16_OIDC_SIGNING_KEY_THEFT"
+      ],
+      "launch": {
+        "runner": "python",
+        "entrypoint": "shadow_toolkit.cli",
+        "arguments": [
+          "campaign",
+          "--mode",
+          "chain",
+          "--chain-id",
+          "chain-02"
+        ]
+      }
+    },
+    {
+      "id": "chain-03",
+      "mode": "multi_scenario_chain",
+      "name": "Chain Campaign 03",
+      "safe": true,
+      "synthetic": true,
+      "sequence": [
+        "SCENARIO_11_K8S_SIDECAR_BREAKOUT",
+        "SCENARIO_13_ZERO_DAY_EXPLOIT",
+        "SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE"
+      ],
+      "launch": {
+        "runner": "python",
+        "entrypoint": "shadow_toolkit.cli",
+        "arguments": [
+          "campaign",
+          "--mode",
+          "chain",
+          "--chain-id",
+          "chain-03"
+        ]
+      }
+    },
+    {
+      "id": "full-spectrum-01",
+      "mode": "full_spectrum_campaign",
+      "name": "Full Spectrum Campaign (Scenario 1 -> 20)",
+      "safe": true,
+      "synthetic": true,
+      "sequence": [
+        "SCENARIO_1_SPAM_BURST",
+        "SCENARIO_2_MALWARE_ATTACHMENT",
+        "SCENARIO_3_UNAUTHORIZED_ACCESS",
+        "SCENARIO_4_BEC_ATTEMPT",
+        "SCENARIO_5_OAUTH_ABUSE",
+        "SCENARIO_6_VENDOR_COMPROMISE",
+        "SCENARIO_7_INSIDER_MISUSE",
+        "SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL",
+        "SCENARIO_9_LATERAL_MOVEMENT_OAUTH",
+        "SCENARIO_10_SERVICE_PRINCIPAL_HIJACK",
+        "SCENARIO_11_K8S_SIDECAR_BREAKOUT",
+        "SCENARIO_12_SUPPLY_CHAIN_POISONING",
+        "SCENARIO_13_ZERO_DAY_EXPLOIT",
+        "SCENARIO_14_HYBRID_CLOUD_RANSOMWARE",
+        "SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE",
+        "SCENARIO_16_OIDC_SIGNING_KEY_THEFT",
+        "SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE",
+        "SCENARIO_18_SYNTHETIC_PLACEHOLDER",
+        "SCENARIO_19_SYNTHETIC_PLACEHOLDER",
+        "SCENARIO_20_SYNTHETIC_PLACEHOLDER"
+      ],
+      "launch": {
+        "runner": "python",
+        "entrypoint": "shadow_toolkit.cli",
+        "arguments": [
+          "campaign",
+          "--mode",
+          "full-spectrum",
+          "--start",
+          "1",
+          "--end",
+          "20",
+          "--safety",
+          "simulated-synthetic-safe"
+        ]
+      }
+    }
+  ]
+}

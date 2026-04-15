@@ -1,0 +1,35 @@
+{
+  "scenario_id": "SCENARIO_3_UNAUTHORIZED_ACCESS",
+  "expected": {
+    "classification": "Unauthorized access / credential compromise",
+    "signals": [
+      "Multiple failed logins from rotating IPs",
+      "Sudden login success",
+      "Suspicious session start",
+      "Credential stuffing pattern"
+    ],
+    "actions": [
+      "Disable account",
+      "Terminate active session",
+      "Force password reset",
+      "Enforce MFA",
+      "Block suspicious IPs",
+      "Investigate credential theft vector"
+    ],
+    "risk_level": "High"
+  },
+  "rubric_weights": {
+    "threat_identification": 0.3,
+    "signal_recognition": 0.25,
+    "recommended_actions": 0.25,
+    "risk_assessment": 0.1,
+    "clarity_structure": 0.1
+  },
+  "scoring_logic": {
+    "classification_match": "exact_or_close",
+    "signal_match": "percentage_overlap",
+    "action_match": "percentage_overlap",
+    "risk_match": "exact_or_close",
+    "clarity": "llm_quality_metric"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "scenario_id": "SCENARIO_4_BEC_ATTEMPT",
+  "expected": {
+    "classification": "Business Email Compromise (BEC) - Active Account Takeover",
+    "signals": [
+      "Successful login from unusual IP",
+      "New device fingerprint",
+      "Reply-to changed to external domain",
+      "Financial urgency keywords",
+      "Suspicious mailbox rules"
+    ],
+    "actions": [
+      "Disable executive account",
+      "Revoke OAuth tokens",
+      "Terminate active sessions",
+      "Block suspicious IP",
+      "Review sent items for fraud",
+      "Inspect mailbox rules",
+      "Notify finance team"
+    ],
+    "risk_level": "Critical"
+  },
+  "rubric_weights": {
+    "threat_identification": 0.25,
+    "signal_recognition": 0.25,
+    "recommended_actions": 0.25,
+    "risk_assessment": 0.15,
+    "clarity_structure": 0.1
+  },
+  "scoring_logic": {
+    "classification_match": "exact_or_close",
+    "signal_match": "percentage_overlap",
+    "action_match": "percentage_overlap",
+    "risk_match": "exact_or_close",
+    "clarity": "llm_quality_metric"
+  }
+}

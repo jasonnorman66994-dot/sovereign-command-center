@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mission Control SOC Brief</title>
+<style>
+body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:#0b1020;color:#ecf3ff;}
+.deck{display:flex;flex-direction:column;gap:24px;padding:24px;}
+.slide{background:linear-gradient(180deg,#101a34,#0d1327);border:1px solid #243356;border-radius:18px;padding:28px;box-shadow:0 10px 30px rgba(0,0,0,.25);}
+h1{margin:0 0 16px;font-size:2rem;color:#9fe870;}
+h2{margin:0 0 14px;font-size:1.4rem;color:#7cc7ff;}
+p,li{font-size:1rem;line-height:1.5;margin:8px 0;}
+ul{margin:8px 0 0 20px;}
+.table{white-space:pre-wrap;background:#0a0f1d;border:1px solid #1f2b47;padding:10px;border-radius:10px;overflow:auto;}
+.spacer{height:8px;}
+</style>
+</head>
+<body>
+<div class="deck">
+<section class="slide">
+<p>---</p>
+<p>marp: true</p>
+<p>theme: default</p>
+<p>paginate: true</p>
+<p>title: Mission Control SOC Brief</p>
+</section>
+<section class="slide">
+<h1>Mission Control SOC Brief</h1>
+<div class="spacer"></div>
+<p>Generated 2026-04-14</p>
+</section>
+<section class="slide">
+<h2>Executive Posture</h2>
+<div class="spacer"></div>
+<ul>
+<li>Scenario coverage: 17</li>
+<li>Critical scenarios: 13</li>
+<li>Avg response latency: 3.56 minutes</li>
+<li>Avg containment latency: 4.38 minutes</li>
+<li>Highest signal density: SCENARIO_14_HYBRID_CLOUD_RANSOMWARE</li>
+</ul>
+</section>
+<section class="slide">
+<h2>Terminal Incident</h2>
+<div class="spacer"></div>
+<ul>
+<li>Worst-day-of-the-year trigger: SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE</li>
+<li>Classification: Hardware Root-of-Trust Compromise - TPM/Secure Enclave Extraction</li>
+<li>Detection pressure: 6 primary signals</li>
+<li>Response load: 6 coordinated actions</li>
+<li>Operating mode: war-room coordination, continuity activation, forensic preservation, and full-scope compromise assessment</li>
+</ul>
+</section>
+<section class="slide">
+<h2>Critical Scenario Priority</h2>
+<div class="spacer"></div>
+<pre class="table">| Scenario | Risk | Signals | Actions |</pre>
+<pre class="table">|---|---|---:|---:|</pre>
+<pre class="table">| SCENARIO_14_HYBRID_CLOUD_RANSOMWARE | Critical | 7 | 6 |</pre>
+<pre class="table">| SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE | Critical | 6 | 6 |</pre>
+<pre class="table">| SCENARIO_16_OIDC_SIGNING_KEY_THEFT | Critical | 6 | 6 |</pre>
+<pre class="table">| SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE | Critical | 6 | 6 |</pre>
+<pre class="table">| SCENARIO_13_ZERO_DAY_EXPLOIT | Critical | 6 | 6 |</pre>
+<pre class="table">| SCENARIO_12_SUPPLY_CHAIN_POISONING | Critical | 6 | 6 |</pre>
+<pre class="table">| SCENARIO_11_K8S_SIDECAR_BREAKOUT | Critical | 6 | 6 |</pre>
+<pre class="table">| SCENARIO_10_SERVICE_PRINCIPAL_HIJACK | Critical | 6 | 6 |</pre>
+</section>
+<section class="slide">
+<h2>Chain Timeline</h2>
+<div class="spacer"></div>
+<h1>Multi-Scenario Attack Chain Timeline</h1>
+<div class="spacer"></div>
+<pre class="table">| Time  | Scenario | Key Event | User/Identity | Detection | Response |</pre>
+<pre class="table">|-------|----------|-----------|---------------|-----------|----------|</pre>
+<pre class="table">| 03:12 | 1        | Spam burst against monitored tenant | mail-relay-01 | Detected | Alert triggered, sender blocklist updated |</pre>
+<pre class="table">| 03:45 | 2        | Malware attachment detonated in inbox workflow | finance.user@example.com | Detected | Alert triggered, attachment quarantine initiated |</pre>
+<pre class="table">| 04:15 | 3        | Unauthorized access from stolen credentials | workstation-admin | Detected | Account disabled, session revoked |</pre>
+<pre class="table">| 06:02 | 4        | Business email compromise workflow abuse | ceo-mailbox@example.com | Detected | Mailbox rules disabled, alert triggered |</pre>
+<pre class="table">| 07:22 | 5        | OAuth abuse through rogue consent grant | app-registration-ops | Detected | OAuth grant deleted, consent review initiated |</pre>
+<pre class="table">| 10:12 | 6        | Vendor compromise creates downstream fraud path | vendor-automation-user | Detected | Vendor access disabled, rollback initiated |</pre>
+<pre class="table">| 13:22 | 7        | Insider misuse expands privileged access and staging | privileged.analyst@example.com | Detected | Privileged session disabled, exfil alert triggered |</pre>
+<pre class="table">| 15:03 | 8        | Token replay and impossible travel session hijack | dev_lead@example.com | Detected | Token blacklisted, account locked |</pre>
+<pre class="table">| 16:12 | 9        | Lateral movement via shadow OAuth application | dev_lead@example.com | Detected | OAuth grant deleted, malicious app disabled |</pre>
+<pre class="table">| 17:22 | 10       | Service principal hijack of production workload | sp-prod-backup-manager | Detected | Service Principal disabled, secrets rotated |</pre>
+<pre class="table">| 18:12 | 11       | K8s sidecar breakout reaches node boundary | sp-prod-backup-manager | Detected | Pod deleted, node cordoned, policy enforced |</pre>
+<pre class="table">| 19:12 | 12       | Supply-chain poisoning causes artifact drift | automation-bot (impersonated) | Detected | Pipeline halted, rollback initiated |</pre>
+<pre class="table">| 20:12 | 13       | Serialized exploit payload targets public profile API | profile-api | Behavioral anomaly | Endpoint disabled, alert triggered |</pre>
+<pre class="table">| 20:13 | 13       | Unexpected python process spawn and NET_ADMIN request | profile-api | Runtime anomaly | Pod isolated, secrets rotated |</pre>
+<pre class="table">| 20:14 | 13       | SSH lateral movement and 48 MB exfiltration to attacker IP | profile-api | UEBA escalation | Attacker IP blocked, secrets rotated |</pre>
+<pre class="table">| 20:15 | 13       | Cron persistence created after full runtime compromise | profile-api | UEBA critical | Forensics started, clean rebuild initiated |</pre>
+<pre class="table">| 21:12 | 14       | Untrusted encryptor launches on on-prem file server | fileserver-02 | EDR anomaly | Host isolated, ransomware response initiated |</pre>
+<pre class="table">| 21:12 | 14       | Golden ticket used by backup service account for hybrid pivot | svc-backup | Identity anomaly | Service account disabled, Kerberos review started |</pre>
+<pre class="table">| 21:13 | 14       | Cloud VM mass encryption and sustained CPU saturation detected | prod-app-01 | Compute anomaly | VM quarantined, backup jobs halted |</pre>
+<pre class="table">| 21:13 | 14       | Kubernetes workload deletes application data and overwrites root filesystem | payments-api | Runtime anomaly | Node quarantined, workload contained |</pre>
+<pre class="table">| 21:14 | 14       | Object storage rewritten to locked extensions at catastrophic volume | customer-records | Storage anomaly | Bucket access blocked, snapshot review initiated |</pre>
+<pre class="table">| 21:14 | 14       | Ransom note written to system banner on compromised host | hybrid-runtime | Behavioral anomaly | IR war room activated |</pre>
+<pre class="table">| 21:15 | 14       | Outbound status beacon confirms detonation success | hybrid-estate | C2 detection | Attacker IP blocked, executive escalation initiated |</pre>
+<pre class="table">| 22:12 | 15       | Federated token issued from compromised Tenant A using unknown device fingerprint | contractor_jane@tenantA.com | Federation anomaly | Federation trust review initiated, token issuance triaged |</pre>
+<pre class="table">| 22:12 | 15       | Federated identity assumes Tenant B global admin role outside normal policy | contractor_jane@tenantA.com | IAM anomaly | Cross-tenant role assumption blocked, privileged session revoked |</pre>
+<pre class="table">| 22:13 | 15       | Rogue service principal created and restricted secrets container accessed | shadow-app | Cloud control-plane anomaly | Service principal disabled, secret rotation initiated |</pre>
+<pre class="table">| 22:14 | 15       | Rogue federation trust created and 6.2 GB outbound transfer confirms exfiltration | tenantB federation plane | UEBA critical | Federation trust disabled, attacker IP blocked, emergency rotation started |</pre>
+<pre class="table">| 23:12 | 16       | IdP admin login from attacker IP bypasses MFA through abused trusted-device path | idp-admin | Identity anomaly | Admin session isolated, emergency IdP incident declared |</pre>
+<pre class="table">| 23:12 | 16       | OIDC signing key exported from keystore without approved change control | oidc-signing-key-01 | Keystore anomaly | Key rotation initiated, token trust review started |</pre>
+<pre class="table">| 23:13 | 16       | Forged 48-hour token validates and assumes GlobalAdmin without interactive MFA | ceo@example.com | Token policy anomaly | Global token invalidation initiated, privileged sessions revoked |</pre>
+<pre class="table">| 23:14 | 16       | Multi-service impersonation and rogue signing key creation establish persistence | idp trust plane | Identity collapse | Rogue key removed, IdP rebuild started |</pre>
+<pre class="table">| 23:15 | 16       | 12.4 GB outbound transfer confirms global identity-enabled exfiltration | global identity fabric | UEBA critical | Attacker IP blocked, leadership and compliance escalation activated |</pre>
+<pre class="table">| 00:12 | 17       | Non-allowlisted process reads TPM PCR state and opens enclave debug session on node-7 | node-7 | Hardware anomaly | Node isolated, hardware incident declared |</pre>
+<pre class="table">| 00:13 | 17       | Raw export of vm-disk-key confirms TPM or enclave key extraction | node-7 TPM | Trust-anchor anomaly | Key rotation and attestation revocation initiated |</pre>
+<pre class="table">| 00:13 | 17       | Healthy attestation report conflicts with boot log and PCR history | node-7 attestation | Attestation anomaly | Remote attestation trust revoked |</pre>
+<pre class="table">| 00:14 | 17       | Shadow VM clone created from prod-db-01 using stolen disk key and forged trust | shadow-db | Workload identity bypass | Clone quarantined, workload identity blocked |</pre>
+<pre class="table">| 00:15 | 17       | 9.4 GB outbound transfer confirms exfiltration from cloned trusted workload | shadow-db | UEBA critical | Attacker IP blocked, hardware rebuild workflow started |</pre>
+</section>
+<section class="slide">
+<h2>Incident Graph Backbone</h2>
+<div class="spacer"></div>
+<ul>
+<li>Graph nodes: 57</li>
+<li>Graph edges: 78</li>
+<li>Terminal graph path: SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE</li>
+<li>Ontology node types: 18</li>
+<li>Ontology relationship types: 19</li>
+<li>Use shared entities like users, OAuth apps, service principals, identity providers, nodes, workloads, and TPMs as correlation pivots.</li>
+</ul>
+</section>
+<section class="slide">
+<h2>Campaign Modes and Package 8</h2>
+<div class="spacer"></div>
+<ul>
+<li>One scenario at a time: focused drill execution by scenario and control objective</li>
+<li>Multi-scenario chains: run correlated escalation paths (e.g., 3 -&gt; 5 -&gt; 9 -&gt; 14)</li>
+<li>Full-spectrum campaign: Scenario 1 -&gt; 20 in sequence (simulated, synthetic, safe)</li>
+<li>Package 8 deliverables: 8 documented artifacts</li>
+<li>Launcher profiles: 21 machine-runnable entries</li>
+</ul>
+</section>
+<section class="slide">
+<h2>Latency Highlights</h2>
+<div class="spacer"></div>
+<ul>
+<li>SCENARIO_13_ZERO_DAY_EXPLOIT: containment latency 8.25 min</li>
+<li>SCENARIO_11_K8S_SIDECAR_BREAKOUT: containment latency 8.0 min</li>
+<li>SCENARIO_14_HYBRID_CLOUD_RANSOMWARE: containment latency 6.29 min</li>
+<li>SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE: containment latency 6.0 min</li>
+<li>SCENARIO_16_OIDC_SIGNING_KEY_THEFT: containment latency 6.0 min</li>
+<li>SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE: containment latency 6.0 min</li>
+<li>SCENARIO_3_UNAUTHORIZED_ACCESS: containment latency 5.0 min</li>
+<li>SCENARIO_6_VENDOR_COMPROMISE: containment latency 5.0 min</li>
+<li>SCENARIO_10_SERVICE_PRINCIPAL_HIJACK: containment latency 5.0 min</li>
+<li>SCENARIO_12_SUPPLY_CHAIN_POISONING: containment latency 5.0 min</li>
+<li>SCENARIO_1_SPAM_BURST: containment latency 2.0 min</li>
+<li>SCENARIO_2_MALWARE_ATTACHMENT: containment latency 2.0 min</li>
+<li>SCENARIO_4_BEC_ATTEMPT: containment latency 2.0 min</li>
+<li>SCENARIO_5_OAUTH_ABUSE: containment latency 2.0 min</li>
+<li>SCENARIO_7_INSIDER_MISUSE: containment latency 2.0 min</li>
+<li>SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL: containment latency 2.0 min</li>
+<li>SCENARIO_9_LATERAL_MOVEMENT_OAUTH: containment latency 2.0 min</li>
+</ul>
+</section>
+<section class="slide">
+<h2>Recommended Board-Level Actions</h2>
+<div class="spacer"></div>
+<ul>
+<li>Treat hardware root-of-trust compromise - tpm/secure enclave extraction as the terminal planning case: pre-authorize cross-domain containment, executive escalation, and emergency credential rotation before detonation</li>
+<li>Freeze high-risk CI/CD and AI-assisted release paths on integrity drift</li>
+<li>Prioritize controls that reduce containment time in cloud and cluster scenarios</li>
+<li>Treat federation trust and machine identities as first-class breach surfaces</li>
+</ul>
+</section>
+</div>
+</body>
+</html>

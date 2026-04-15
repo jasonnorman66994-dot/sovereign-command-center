@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+set -e
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+
+echo "Running quick smoke check before commit..."
+powershell -NoProfile -ExecutionPolicy Bypass -File "$REPO_ROOT/smoke_check.ps1" -Mode Quick

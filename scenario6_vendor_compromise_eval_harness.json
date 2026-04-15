@@ -1,0 +1,36 @@
+{
+  "scenario_id": "SCENARIO_6_VENDOR_COMPROMISE",
+  "expected": {
+    "classification": "Vendor Email Compromise",
+    "signals": [
+      "Vendor mailbox forwarding rule",
+      "Unusual vendor login region",
+      "Changed banking details",
+      "Urgency language",
+      "AP team engagement"
+    ],
+    "actions": [
+      "Stop payment",
+      "Quarantine email",
+      "Notify finance leadership",
+      "Contact vendor security",
+      "Block vendor temporarily",
+      "Review AP replies"
+    ],
+    "risk_level": "Critical"
+  },
+  "rubric_weights": {
+    "threat_identification": 0.25,
+    "signal_recognition": 0.25,
+    "recommended_actions": 0.25,
+    "risk_assessment": 0.15,
+    "clarity_structure": 0.10
+  },
+  "scoring_logic": {
+    "classification_match": "exact_or_close",
+    "signal_match": "percentage_overlap",
+    "action_match": "percentage_overlap",
+    "risk_match": "exact",
+    "clarity": "llm_quality_metric"
+  }
+}

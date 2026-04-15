@@ -1,0 +1,23 @@
+{
+  "scenario_id": "SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE",
+  "expected": {
+    "classification": "Hardware Root-of-Trust Compromise - TPM/Secure Enclave Extraction",
+    "signals": [
+      "Unauthorized TPM access",
+      "Enclave debug session",
+      "Raw key export",
+      "Forged attestation",
+      "VM clone using stolen key",
+      "Large outbound exfiltration"
+    ],
+    "actions": [
+      "Isolate compromised node",
+      "Revoke attestation trust",
+      "Rotate TPM/enclave keys",
+      "Block attacker IP",
+      "Audit VM clone operations",
+      "Rebuild node from clean hardware"
+    ],
+    "risk_level": "Critical"
+  }
+}

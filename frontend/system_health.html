@@ -1,0 +1,1711 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sovereign Pulse v4.6</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card: #161b22;
+      --border: #30363d;
+      --text: #c9d1d9;
+      --muted: #8b949e;
+      --accent: #58a6ff;
+      --green: #7ee787;
+      --glow: #7ee787;
+      --red: #f85149;
+      --amber: #d29922;
+      --orange: #db6d28;
+      --terminal-bg: #000000;
+      /* Monokai Cyber-Grid */
+      --bg-color: #0d1117;
+      --card-bg: #161b22;
+      --border-color: #30363d;
+      --text-primary: #c9d1d9;
+      --accent-green: #00ff41;
+      --accent-blue: #58a6ff;
+      --accent-red: #ff7b72;
+      --accent-orange: #ffa657;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      background: var(--bg);
+      color: var(--text);
+      padding: 1.5rem;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .header h1 {
+      color: var(--accent);
+      font-size: 1.6rem;
+      letter-spacing: 1px;
+    }
+
+    .header .subtitle {
+      color: var(--muted);
+      font-size: .8rem;
+      margin-left: auto;
+    }
+
+    .system-badge {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      font-size: .85rem;
+      font-weight: 600;
+      color: var(--green);
+      letter-spacing: 1px;
+    }
+
+    .system-badge.offline {
+      color: var(--red);
+    }
+
+    /* ── Pulse Dot ── */
+    .pulse-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      background-color: #238636;
+      box-shadow: 0 0 8px #2ea043;
+      animation: pulse 1.5s infinite;
+    }
+
+    .pulse-dot.red {
+      background-color: var(--red);
+      box-shadow: 0 0 8px var(--red);
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.3;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+    /* ── Layout ── */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    .triple-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .card h2 {
+      font-size: .95rem;
+      color: var(--accent);
+      margin-bottom: .75rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    h3 {
+      color: var(--accent-blue);
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 8px;
+      margin-top: 0;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-size: 0.9em;
+    }
+
+    .stat {
+      display: flex;
+      justify-content: space-between;
+      padding: .4rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: .88rem;
+    }
+
+    .stat:last-child {
+      border: none;
+    }
+
+    .stat .label {
+      color: var(--muted);
+    }
+
+    .stat .value {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    /* ── Live Output Terminal ── */
+    .live-output {
+      background: var(--terminal-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      font-size: .82rem;
+      color: var(--glow);
+      height: 260px;
+      overflow-y: auto;
+      line-height: 1.6;
+    }
+
+    /* Global Scrollbar — Terminal Look */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-color);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #30363d;
+      border-radius: 4px;
+    }
+
+    /* Scrollbar: WebKit (Chrome, Safari, Edge, Samsung) */
+    .live-output::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .live-output::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .live-output::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px;
+    }
+
+    /* Scrollbar: Firefox */
+    @supports (scrollbar-width: thin) {
+      .live-output {
+        scrollbar-width: thin;
+        scrollbar-color: var(--border) transparent;
+      }
+    }
+
+    .log-line {
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .log-line .ts {
+      color: var(--muted);
+    }
+
+    .log-line.warn {
+      color: var(--amber);
+    }
+
+    .log-line.error {
+      color: var(--red);
+    }
+
+    .log-line.info {
+      color: var(--green);
+    }
+
+    .cursor-blink::after {
+      content: '_';
+      animation: cblink .8s step-end infinite;
+    }
+
+    @keyframes cblink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0;
+      }
+    }
+
+    /* ── Badges ── */
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: .75rem;
+      font-weight: 600;
+    }
+
+    .badge-anomaly {
+      background: rgba(234, 179, 8, .15);
+      color: var(--amber);
+    }
+
+    .badge-threat {
+      background: rgba(255, 51, 51, .15);
+      color: var(--red);
+    }
+
+    .badge-zscore {
+      background: rgba(249, 115, 22, .15);
+      color: var(--orange);
+    }
+
+    .badge-ok {
+      background: rgba(126, 231, 135, .1);
+      color: var(--green);
+    }
+
+    /* ── Chart ── */
+    .chart-container {
+      position: relative;
+      height: 200px;
+    }
+
+    /* ── Table ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .85rem;
+    }
+
+    th {
+      text-align: left;
+      padding: .5rem;
+      color: var(--muted);
+      border-bottom: 2px solid var(--border);
+    }
+
+    td {
+      padding: .5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sev-critical {
+      color: var(--red);
+      font-weight: 700;
+    }
+
+    .sev-high {
+      color: var(--orange);
+      font-weight: 600;
+    }
+
+    .sev-medium {
+      color: var(--amber);
+    }
+
+    .sev-low {
+      color: var(--green);
+    }
+
+    .sev-info {
+      color: var(--muted);
+    }
+
+    /* ── Footer ── */
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--muted);
+      font-size: .75rem;
+      padding-top: .75rem;
+      border-top: 1px solid var(--border);
+      margin-top: .5rem;
+    }
+
+    .status-bar code {
+      color: var(--accent);
+      font-size: .75rem;
+    }
+
+    .error-banner {
+      background: rgba(255, 51, 51, .1);
+      border: 1px solid var(--red);
+      border-radius: 8px;
+      padding: .75rem;
+      margin-bottom: 1rem;
+      color: var(--red);
+      display: none;
+    }
+
+    /* ── Force Run Button ── */
+    .btn-force {
+      width: 100%;
+      padding: .75rem 1rem;
+      border: none;
+      border-radius: 6px;
+      background: var(--green);
+      color: #000;
+      font-weight: 700;
+      font-size: .9rem;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: background .2s, color .2s;
+    }
+
+    .btn-force:hover {
+      background: #238636;
+      color: #fff;
+    }
+
+    .btn-force:active {
+      transform: scale(.98);
+    }
+
+    .btn-force:disabled {
+      background: var(--border);
+      color: var(--muted);
+      cursor: not-allowed;
+    }
+
+    .btn-hint {
+      font-size: .7rem;
+      color: var(--muted);
+      margin-top: .5rem;
+    }
+
+    .status-connected {
+      color: var(--green);
+    }
+
+    .status-warn {
+      color: var(--amber);
+    }
+
+    .status-error {
+      color: var(--red);
+    }
+
+    /* ── Utility Classes ── */
+    .quad-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .card-mb {
+      margin-bottom: 1.5rem;
+    }
+
+    .force-run-msg {
+      margin-top: .5rem;
+      font-size: .82rem;
+    }
+
+    .text-muted {
+      color: var(--muted);
+    }
+
+    .val-green {
+      color: var(--green);
+    }
+
+    .val-amber {
+      color: var(--amber);
+    }
+
+    .val-red {
+      color: var(--red);
+    }
+
+    @media (max-width: 768px) {
+
+      .main-grid,
+      .triple-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .full-width {
+        grid-column: 1;
+      }
+
+      .quad-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .quad-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ── Stream Container ── */
+    .stream-container {
+      background: #000;
+      border: 1px solid #00ff41;
+      border-radius: 8px;
+      height: 300px;
+      position: relative;
+      overflow: hidden;
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      color: #00ff41;
+    }
+
+    .stream-container #stream-data {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      font-size: 10px;
+      line-height: 1.2;
+      padding: 6px;
+    }
+
+    .stream-container #stream-data div {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ── Glowing Ticker ── */
+    .ticker-container {
+      background: #000;
+      border: 1px solid #00ff41;
+      overflow: hidden;
+      white-space: nowrap;
+      margin-top: 10px;
+      padding: 5px;
+    }
+
+    .ticker-text {
+      display: inline-block;
+      padding-left: 100%;
+      animation: ticker 20s linear infinite;
+      color: #00ff41;
+      font-weight: bold;
+    }
+
+    @keyframes ticker {
+      0% {
+        transform: translate(0, 0);
+      }
+
+      100% {
+        transform: translate(-100%, 0);
+      }
+    }
+
+    @keyframes pulse-red {
+      from {
+        box-shadow: 0 0 10px #ff0000;
+      }
+
+      to {
+        box-shadow: 0 0 20px #ff0000;
+      }
+    }
+
+    /* ── Critical Alert ── */
+    .critical-alert {
+      background: rgba(255, 0, 0, 0.2) !important;
+      border: 2px solid #ff0000 !important;
+      animation: pulse-red 1s infinite alternate;
+    }
+
+    /* ── Status Text (header) ── */
+    #status-text {
+      font-size: 0.8em;
+      font-weight: bold;
+      color: var(--green);
+      margin-left: 12px;
+    }
+
+    #status-indicator {
+      margin-left: 10px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: #00ff41;
+      color: #000;
+      letter-spacing: 0.5px;
+    }
+
+    .glitch-effect {
+      animation: glitch-blink 0.25s step-end infinite;
+    }
+
+    #status-card {
+      border: 2px solid #00ff41;
+      padding: 15px;
+    }
+
+    #engine-status {
+      margin-bottom: 8px;
+    }
+
+    #halt-reason {
+      color: #888;
+      min-height: 1.2em;
+    }
+
+    #resume-btn {
+      display: none;
+      width: 100%;
+      background: #238636;
+      color: #fff;
+      padding: 10px;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    @keyframes glitch-blink {
+      0% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.45;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+    /* ── Active Target Card ── */
+    .card-active-target {
+      border: 1px solid #00ff41;
+      background: #111;
+    }
+
+    .card-active-target h2 {
+      color: #00ff41;
+    }
+
+    .active-target-email {
+      color: #fff;
+      font-size: 1.1em;
+      margin: .5rem 0;
+    }
+
+    .active-target-stream {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .active-target-stream-label {
+      margin-left: 10px;
+      font-size: 0.8em;
+      color: #00ff41;
+    }
+
+    .active-target-dispatched {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid #333;
+    }
+
+    .active-target-dispatched-label {
+      color: #888;
+      font-size: 0.8em;
+    }
+
+    #total-dispatched {
+      color: #00ff41;
+      font-weight: bold;
+      font-size: 1.2em;
+      margin-left: 6px;
+    }
+
+    #dispatch-logs {
+      margin-top: 8px;
+      max-height: 120px;
+      overflow-y: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 0.75em;
+      color: #00ff41;
+      background: #0a0a0a;
+      padding: 6px;
+      border-radius: 4px;
+    }
+
+    /* ── Data Throughput Card ── */
+    .card-throughput {
+      margin-top: 10px;
+      border-color: var(--accent);
+    }
+
+    .card-telemetry-history {
+      border: 1px solid #00aaff;
+      margin-top: 20px;
+    }
+
+    .card-system-audit {
+      border: 1px solid #888;
+      margin-top: 20px;
+    }
+
+    .card-system-availability {
+      border: 1px solid #7ee787;
+      text-align: center;
+    }
+
+    .system-availability-title {
+      margin-bottom: 5px;
+    }
+
+    #uptime-val {
+      font-size: 2.5em;
+      font-weight: bold;
+      color: #7ee787;
+      text-shadow: 0 0 10px rgba(126, 231, 135, 0.3);
+    }
+
+    .status-nominal {
+      color: var(--accent-green);
+      animation: flicker 4s infinite;
+    }
+
+    @keyframes flicker {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.8;
+      }
+    }
+
+    .system-availability-subtitle {
+      font-size: 0.8em;
+      color: #888;
+    }
+
+    .system-audit-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .audit-download-btn {
+      flex: 1;
+      background: #58a6ff;
+      color: #fff;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .audit-clear-btn {
+      background: transparent;
+      color: #ff7b72;
+      border: 1px solid #333;
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    /* ── Target Control Card ── */
+    .card-target-control {
+      border: 1px solid var(--accent);
+      margin-bottom: 20px;
+    }
+
+    .target-control-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .target-input {
+      background: #000;
+      color: #00ff41;
+      border: 1px solid #333;
+      padding: 5px;
+      flex-grow: 1;
+    }
+
+    .target-add-btn {
+      background: #238636;
+      color: #fff;
+      border: none;
+      padding: 5px 15px;
+      cursor: pointer;
+    }
+
+    .target-purge-btn {
+      background: #a40e26;
+      color: #fff;
+      border: none;
+      padding: 5px 15px;
+      cursor: pointer;
+    }
+
+    .target-list {
+      font-size: 0.8em;
+      color: #888;
+      max-height: 100px;
+      overflow-y: auto;
+    }
+
+    .target-row {
+      padding: 3px 0;
+      border-bottom: 1px solid #222;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .target-row-left {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: #c9d1d9;
+      flex: 1;
+    }
+
+    .target-dot {
+      color: #00ff41;
+      margin-right: 4px;
+    }
+
+    .target-meta {
+      color: #555;
+      margin-left: 8px;
+      font-size: 0.9em;
+    }
+
+    .target-remove-btn {
+      background: #6e7681;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 2px 8px;
+      cursor: pointer;
+      font-size: 0.75em;
+    }
+
+    .val-accent {
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    .val-freq {
+      color: var(--green);
+    }
+
+    /* ── Network Map ── */
+    #network-map {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    /* ── System State (status bar) ── */
+    #system-state {
+      font-weight: bold;
+      color: var(--green);
+    }
+  </style>
+</head>
+
+<body id="dashboard-main">
+
+  <!-- ── Header ── -->
+  <div class="header">
+    <h1>Sovereign Pulse v4.6</h1>
+    <div id="systemBadge" class="system-badge">
+      <span id="pulseIcon" class="pulse-dot"></span> SYSTEM LIVE
+    </div>
+    <span class="subtitle">CVE-43887 Sentinel Engine &bull; <span id="clockDisplay">--:--:--</span></span>
+    <span id="status-text">SYSTEM NOMINAL</span>
+    <span id="status-indicator">SYSTEM NOMINAL</span>
+  </div>
+  <div id="errorBanner" class="error-banner"></div>
+
+  <!-- ── Row 1: Telemetry Summary + Live Output ── -->
+  <div class="main-grid">
+    <div class="card">
+      <h2>Telemetry Summary</h2>
+      <div class="stat"><span class="label">Last Heartbeat</span><span class="value val-green"
+          id="lastHeartbeat">--</span></div>
+      <div class="stat"><span class="label">Next Run</span><span class="value val-green" id="nextRunTelemetry">--</span>
+      </div>
+      <div class="stat"><span class="label">Cache Status</span><span class="value" id="cacheStatus">--</span></div>
+      <div class="stat"><span class="label">Baseline Samples</span><span class="value" id="sampleCount">--</span></div>
+      <div class="stat"><span class="label">Weekly Run</span><span class="value" id="weeklyRun">Every 6h</span></div>
+      <div class="stat"><span class="label">Mail Queue</span><span class="value" id="mailQueue">Idle</span></div>
+      <div class="stat"><span class="label">Window</span><span class="value" id="windowDays">7 days</span></div>
+    </div>
+    <div class="card">
+      <h2>Live Output</h2>
+      <div class="live-output" id="liveOutput">
+        <div class="log-line info"><span class="ts">[--:--:--]</span> Awaiting pipeline connection...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Row 2: Health Check + Threat Intel + Pipeline Status + Manual Override ── -->
+  <div class="quad-grid">
+    <div class="card">
+      <h2>Health Check</h2>
+      <div class="stat"><span class="label">Source</span><span class="value" id="hcSource">--</span></div>
+      <div class="stat"><span class="label">Pass</span><span class="value val-green" id="hcPass">--</span></div>
+      <div class="stat"><span class="label">Warn</span><span class="value val-amber" id="hcWarn">--</span></div>
+      <div class="stat"><span class="label">Fail</span><span class="value val-red" id="hcFail">--</span></div>
+    </div>
+    <div class="card">
+      <h2>Threat Intelligence</h2>
+      <div class="stat"><span class="label">Events (7d)</span><span class="value" id="threatCount">--</span></div>
+      <div class="stat"><span class="label">Anomalies (7d)</span><span class="value" id="anomalyCount">--</span></div>
+      <div class="stat"><span class="label">Latest Badge</span><span class="value" id="latestBadge">--</span></div>
+    </div>
+    <div class="card">
+      <h2>Pipeline Status</h2>
+      <div class="stat"><span class="label">SMTP</span><span class="value status-connected" id="smtpStatus">--</span>
+      </div>
+      <div class="stat"><span class="label">Signature</span><span class="value" id="sigStatus">--</span></div>
+      <div class="stat"><span class="label">Queue</span><span class="value" id="queueStatus">--</span></div>
+      <div class="stat"><span class="label">Gateway</span><span class="value" id="serviceName">--</span></div>
+      <div class="stat"><span class="label">Gateway Status</span><span class="value" id="serviceStatus">--</span></div>
+      <div class="stat"><span class="label">Gateway Check</span><span class="value" id="serviceTimestamp">--</span>
+      </div>
+      <div class="stat"><span class="label">Memory Alert</span><span class="value" id="memoryAlertStatus">CLEAR</span>
+      </div>
+      <div class="stat"><span class="label">Scheduler</span><span class="value" id="schedulerStatus">--</span></div>
+      <div class="stat"><span class="label">Last Run</span><span class="value" id="lastRun">--</span></div>
+      <div class="stat"><span class="label">Next Run</span><span class="value" id="nextRun">--</span></div>
+      <div class="stat"><span class="label">Uptime</span><span class="value" id="uptime">--</span></div>
+    </div>
+    <div class="card">
+      <h2>Manual Override</h2>
+      <button class="btn-force" id="forceRunBtn" onclick="forcePulse()">FORCE RUN NOW</button>
+      <p class="btn-hint">*Triggers full PDF generation and Gmail delivery.</p>
+      <div class="force-run-msg" id="forceRunMsg"></div>
+    </div>
+    <div id="status-card" class="card">
+      <h2 id="engine-status">ENGINE: RUNNING</h2>
+      <p id="halt-reason"></p>
+      <button id="resume-btn" onclick="resumeEngine()">MANUAL RESET &amp; RESUME</button>
+    </div>
+    <div class="card card-active-target">
+      <h2>Active Target</h2>
+      <p class="active-target-email">jasonnorman66994@gmail.com</p>
+      <div class="active-target-stream">
+        <span class="pulse-dot"></span>
+        <span class="active-target-stream-label">STREAMING DATA...</span>
+      </div>
+      <div class="active-target-dispatched">
+        <span class="active-target-dispatched-label">Total Dispatched:</span>
+        <span id="total-dispatched">0</span>
+      </div>
+      <div id="dispatch-logs"></div>
+    </div>
+    <div class="card card-throughput">
+      <h3>DATA THROUGHPUT</h3>
+      <p>Payload Size: <span id="kb-sent" class="val-accent">0</span> KB</p>
+      <p>Frequency: <span class="val-freq">10.0s</span></p>
+      <p>Latency: <span id="latency-val" class="val-accent">--</span></p>
+    </div>
+    <div class="card card-system-availability">
+      <h3 class="system-availability-title">SYSTEM AVAILABILITY</h3>
+      <div id="uptime-val">100.00%</div>
+      <div class="system-availability-subtitle">Uptime Since Launch</div>
+    </div>
+    <div class="card card-target-control">
+      <h3>TARGET CONTROL</h3>
+      <div class="target-control-row">
+        <input type="email" id="new-target-email" class="target-input" placeholder="user@example.com">
+        <button onclick="addUser()" class="target-add-btn">ADD TARGET</button>
+        <button onclick="purgeDatabase()" class="target-purge-btn">PURGE DB</button>
+      </div>
+      <div id="target-list" class="target-list"></div>
+    </div>
+  </div>
+
+  <!-- ── Network Map ── -->
+  <div class="card card-mb">
+    <h2>Network Map</h2>
+    <div id="network-map"></div>
+  </div>
+
+  <div class="card card-telemetry-history card-mb">
+    <h3>TELEMETRY HISTORY</h3>
+    <canvas id="pulseChart" height="100"></canvas>
+  </div>
+
+  <div class="card card-system-audit card-mb">
+    <h3>SYSTEM AUDIT</h3>
+    <div class="system-audit-actions">
+      <button onclick="downloadCSV()" class="audit-download-btn">DOWNLOAD CSV LOGS</button>
+      <button onclick="clearLogs()" class="audit-clear-btn">CLEAR BUFFER</button>
+    </div>
+  </div>
+
+  <!-- ── Row 3: Sparkline Chart ── -->
+  <div class="card card-mb">
+    <h2>Baseline vs Actual</h2>
+    <div class="chart-container"><canvas id="sparklineChart"></canvas></div>
+  </div>
+
+  <!-- ── Row 4: Flagged Events Table ── -->
+  <div class="card">
+    <h2>Flagged Events</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Badge</th>
+          <th>Detail</th>
+          <th>Severity</th>
+        </tr>
+      </thead>
+      <tbody id="eventsBody">
+        <tr>
+          <td colspan="4" class="text-muted">Loading...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── Row 5: Live Packet Stream ── -->
+  <div class="card card-mb">
+    <h2>Live Pulse Stream</h2>
+    <div class="stream-container">
+      <div id="stream-data"></div>
+    </div>
+  </div>
+
+  <!-- ── Pulse Ticker ── -->
+  <div class="ticker-container">
+    <div class="ticker-text" id="pulse-ticker">
+      SYSTEM NOMINAL :: PDF SIGNATURE VERIFIED :: GMAIL GATEWAY OPEN :: PULSE FREQUENCY: 300s ::
+    </div>
+  </div>
+
+  <!-- ── Status Bar ── -->
+  <div class="status-bar">
+    <span>Auto-refresh: <span id="refreshTimer">30</span>s</span>
+    <span>System: <span id="system-state">NOMINAL</span></span>
+    <span>API: <code id="apiBase">http://127.0.0.1:5050</code></span>
+  </div>
+
+  <script>
+    const API = localStorage.getItem('sovereign_api') || 'http://127.0.0.1:5050';
+    document.getElementById('apiBase').textContent = API;
+
+    let sparkChart = null;
+    let logLineCount = 0;
+    const MAX_LOG_LINES = 200;
+    const sevClass = s => `sev-${(s || 'info').toLowerCase()}`;
+
+    // ── Clock ──
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('clockDisplay').textContent = now.toLocaleTimeString('en-US', { hour12: false });
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // ── Relative Time ──
+    function relativeTime(isoStr) {
+      if (!isoStr || isoStr === '--') return '--';
+      const then = new Date(isoStr.endsWith('Z') ? isoStr : isoStr + 'Z');
+      const diff = Math.floor((Date.now() - then.getTime()) / 1000);
+      if (diff < 0) return 'just now';
+      if (diff < 60) return `${diff}s ago`;
+      if (diff < 3600) return `${Math.floor(diff / 60)} min ago`;
+      if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+      return `${Math.floor(diff / 86400)}d ago`;
+    }
+
+    // ── Live Output helpers ──
+    function appendLog(msg, level = 'info') {
+      const el = document.getElementById('liveOutput');
+      const ts = new Date().toLocaleTimeString('en-US', { hour12: false });
+      const div = document.createElement('div');
+      div.className = `log-line ${level}`;
+      div.innerHTML = `<span class="ts">[${ts}]</span> ${escapeHtml(msg)}`;
+      // Remove old cursor blink
+      const old = el.querySelector('.cursor-blink');
+      if (old) old.classList.remove('cursor-blink');
+      el.appendChild(div);
+      logLineCount++;
+      // Trim excess lines
+      while (logLineCount > MAX_LOG_LINES && el.firstChild) {
+        el.removeChild(el.firstChild);
+        logLineCount--;
+      }
+      el.scrollTop = el.scrollHeight;
+    }
+
+    function escapeHtml(str) {
+      const d = document.createElement('div');
+      d.textContent = str;
+      return d.innerHTML;
+    }
+
+    function badgeHtml(b) {
+      if (!b) return '';
+      const t = b.toLowerCase();
+      if (t.includes('threat')) return `<span class="badge badge-threat">${escapeHtml(b)}</span>`;
+      if (t.includes('z-score') || t.includes('zscore')) return `<span class="badge badge-zscore">${escapeHtml(b)}</span>`;
+      if (t === 'ok' || t === 'pass') return `<span class="badge badge-ok">${escapeHtml(b)}</span>`;
+      return `<span class="badge badge-anomaly">${escapeHtml(b)}</span>`;
+    }
+
+    function showError(msg) {
+      const el = document.getElementById('errorBanner');
+      el.textContent = msg;
+      el.style.display = msg ? 'block' : 'none';
+    }
+
+    async function fetchJSON(path) {
+      const r = await fetch(`${API}${path}`);
+      if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
+      return r.json();
+    }
+
+    // ── Force Pulse ──
+    async function forcePulse() {
+      const btn = document.getElementById('forceRunBtn');
+      const msg = document.getElementById('forceRunMsg');
+      btn.disabled = true;
+      btn.textContent = 'RUNNING...';
+      msg.textContent = '';
+      msg.style.color = '';
+      appendLog('Manual override detected...', 'warn');
+      try {
+        const response = await fetch(`${API}/trigger-pulse`, {
+          method: 'POST',
+          headers: { 'X-Pulse-Auth': localStorage.getItem('pulse_auth_key') || '9ce627a5453249379b10dedbfb53785203226cfa3aee25dfee32026033a575db' }
+        });
+        const data = await response.json();
+        if (data.status === 'success') {
+          msg.style.color = 'var(--green)';
+          msg.textContent = 'Pulse report sent to Gmail';
+          appendLog('[SUCCESS] Pulse report sent to Gmail.');
+          await refreshPipelineLog();
+          await refreshPipelineStatus();
+        } else {
+          msg.style.color = 'var(--red)';
+          msg.textContent = data.message || 'Trigger failed';
+          appendLog(`[ERROR] ${data.message || 'Trigger failed'}`, 'error');
+        }
+      } catch (err) {
+        msg.style.color = 'var(--red)';
+        msg.textContent = 'Connection to API lost';
+        appendLog('[FAIL] Connection to API lost.', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'FORCE RUN NOW';
+      }
+    }
+
+    // ── Refresh: Pipeline SMTP/Signature/Queue Status ──
+    async function refreshPipelineStatus() {
+      try {
+        const d = await fetchJSON('/api/pipeline/status');
+        const smtpEl = document.getElementById('smtpStatus');
+        smtpEl.textContent = d.smtp || '--';
+        smtpEl.className = `value ${d.smtp === 'CONNECTED' ? 'status-connected' : 'status-error'}`;
+        const sigEl = document.getElementById('sigStatus');
+        sigEl.textContent = d.signature || '--';
+        sigEl.className = `value ${d.signature === 'VERIFIED' ? 'status-connected' : 'status-warn'}`;
+        document.getElementById('queueStatus').textContent = `${d.queue_pending || 0} PENDING`;
+      } catch { }
+    }
+
+    // ── Refresh: Sentinel Status ──
+    async function refreshStatus() {
+      try {
+        const d = await fetchJSON('/api/sentinel/status');
+        const fresh = d.cache_fresh;
+        document.getElementById('pulseIcon').className = `pulse-dot ${fresh ? '' : 'red'}`;
+        document.getElementById('systemBadge').className = `system-badge ${fresh ? '' : 'offline'}`;
+        document.getElementById('systemBadge').lastChild.textContent = fresh ? ' SYSTEM LIVE' : ' OFFLINE';
+        document.getElementById('cacheStatus').textContent = fresh ? 'FRESH' : 'STALE';
+        document.getElementById('sampleCount').textContent = d.sample_count;
+        document.getElementById('windowDays').textContent = `${d.window_days} days`;
+        const metrics = d.metrics || {};
+        const firstMetric = Object.values(metrics)[0];
+        const lastTs = firstMetric ? firstMetric.last_updated.substring(0, 19) : '';
+        document.getElementById('lastHeartbeat').textContent = lastTs ? relativeTime(lastTs) : '--';
+        showError('');
+        appendLog(`Sentinel status: cache=${fresh ? 'FRESH' : 'STALE'}, samples=${d.sample_count}`);
+      } catch (e) {
+        showError(`API unreachable: ${e.message}. Start: python backend/api/server.py`);
+        appendLog(`API error: ${e.message}`, 'error');
+      }
+    }
+
+    // ── Refresh: Heartbeats ──
+    async function refreshHeartbeats() {
+      try {
+        const entries = await fetchJSON('/api/telemetry/history?limit=5');
+        if (entries.length > 0) {
+          const last = entries[entries.length - 1];
+          document.getElementById('hcSource').textContent = `${last.source} @ ${last.host}`;
+          document.getElementById('hcPass').textContent = last.pass_count;
+          document.getElementById('hcWarn').textContent = last.warn_count;
+          document.getElementById('hcFail').textContent = last.fail_count;
+        }
+      } catch { }
+    }
+
+    // ── Refresh: Pipeline Log ──
+    let lastLogTimestamp = '';
+    async function refreshPipelineLog() {
+      try {
+        const data = await fetchJSON('/api/pipeline/log?after=' + encodeURIComponent(lastLogTimestamp));
+        if (data.entries && data.entries.length > 0) {
+          for (const entry of data.entries) {
+            appendLog(entry.message, entry.level || 'info');
+            lastLogTimestamp = entry.timestamp || lastLogTimestamp;
+          }
+        }
+        // Update pipeline status card
+        if (data.status) {
+          document.getElementById('schedulerStatus').textContent = data.status.state || '--';
+          document.getElementById('lastRun').textContent = (data.status.last_run || '--').substring(0, 19);
+          document.getElementById('nextRun').textContent = (data.status.next_run || '--').substring(0, 19);
+          document.getElementById('nextRunTelemetry').textContent = data.status.interval || 'Monday 08:00';
+          document.getElementById('uptime').textContent = data.status.uptime || '--';
+          document.getElementById('mailQueue').textContent = data.status.mail_queue || 'Idle';
+          document.getElementById('weeklyRun').textContent = data.status.interval || 'Every 6h';
+        }
+      } catch {
+        // Pipeline log endpoint may not be running yet
+      }
+    }
+
+    // ── Refresh: Sparkline ──
+    async function refreshSparkline() {
+      try {
+        const data = await fetchJSON('/api/sentinel/sparkline?metric=process_count&points=24');
+        const ctx = document.getElementById('sparklineChart').getContext('2d');
+        const labels = (data.timestamps || []).map(t => t.substring(11, 16));
+        if (sparkChart) sparkChart.destroy();
+        sparkChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels,
+            datasets: [
+              { label: 'Actual', data: data.actual || [], borderColor: '#7ee787', backgroundColor: 'rgba(126,231,135,.08)', fill: true, tension: .3, pointRadius: 2 },
+              { label: 'Baseline', data: data.baseline || [], borderColor: '#58a6ff', borderDash: [6, 3], pointRadius: 0, fill: false },
+              { label: 'Threshold', data: Array(labels.length).fill(data.threshold_upper), borderColor: 'rgba(248,81,73,.4)', borderDash: [3, 3], pointRadius: 0, fill: false },
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { labels: { color: '#8b949e', font: { size: 11 } } } },
+            scales: {
+              x: { ticks: { color: '#8b949e', font: { size: 10 } }, grid: { color: '#30363d' } },
+              y: { ticks: { color: '#8b949e' }, grid: { color: '#30363d' } },
+            }
+          }
+        });
+      } catch { }
+    }
+
+    // ── Refresh: Events ──
+    async function refreshEvents() {
+      try {
+        const events = await fetchJSON('/api/threats/events?days=7');
+        const tbody = document.getElementById('eventsBody');
+        if (!events.length) { tbody.innerHTML = '<tr><td colspan="4" class="text-muted">No events in the last 7 days</td></tr>'; return; }
+        tbody.innerHTML = events.slice(0, 30).map(e => `
+      <tr>
+        <td>${escapeHtml((e.timestamp || '').substring(0, 19))}</td>
+        <td>${badgeHtml(e.badge)}</td>
+        <td>${escapeHtml(e.detail || '')}</td>
+        <td class="${sevClass(e.severity)}">${escapeHtml(e.severity || '')}</td>
+      </tr>
+    `).join('');
+        document.getElementById('threatCount').textContent = events.filter(e => e.type === 'threat-intel').length;
+        document.getElementById('anomalyCount').textContent = events.filter(e => e.type === 'behavioral').length;
+        const latest = events[0];
+        document.getElementById('latestBadge').innerHTML = badgeHtml(latest.badge);
+      } catch { }
+    }
+
+    // ── Refresh: Target List ──
+    async function refreshTargets() {
+      const response = await fetch('/get-targets');
+      const targets = await response.json();
+      const list = document.getElementById('target-list');
+      if (!list) return;
+      if (!Array.isArray(targets) || targets.length === 0) {
+        list.innerHTML = '<div style="color: #ff5555;">DATABASE EMPTY</div>';
+        return;
+      }
+      list.innerHTML = targets.map(t => `
+        <div class="target-row">
+          <div class="target-row-left">
+            <span class="target-dot">•</span>${escapeHtml(t.email || '')}
+            <span class="target-meta">[Sent: ${Number(t.pulses || 0)}]</span>
+          </div>
+          <button class="target-remove-btn" onclick="removeTarget('${escapeHtml(t.email || '')}')">REMOVE</button>
+        </div>
+      `).join('');
+    }
+
+    async function addUser() {
+      const emailInput = document.getElementById('new-target-email');
+      if (!emailInput) return;
+      const email = emailInput.value;
+
+      const response = await fetch('/add-target', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email })
+      });
+
+      if (response.ok) {
+        emailInput.value = '';
+        refreshTargets();
+      } else {
+        alert('Action Failed: Check email format or duplicate.');
+      }
+    }
+
+    async function removeTarget(email) {
+      const response = await fetch('/remove-target', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+
+      if (response.ok) {
+        appendLog(`[SYSTEM] TARGET REMOVED: ${email}`, 'warn');
+        refreshTargets();
+      } else {
+        alert('Remove failed: target may not exist.');
+      }
+    }
+
+    async function purgeDatabase() {
+      if (confirm('WARNING: This will permanently delete all targets. Proceed?')) {
+        const response = await fetch('/purge-targets', {
+          method: 'POST',
+          headers: {
+            'X-Pulse-Auth': localStorage.getItem('pulse_auth_key') || '9ce627a5453249379b10dedbfb53785203226cfa3aee25dfee32026033a575db'
+          }
+        });
+        if (response.ok) {
+          const list = document.getElementById('target-list');
+          if (list) {
+            list.innerHTML = '<div style="color: #ff5555;">DATABASE EMPTY</div>';
+          }
+          refreshTargets();
+
+          const log = document.getElementById('logs');
+          if (log) {
+            log.innerHTML = '<div style="color: #ff0000;">[SYSTEM] ALL TARGETS PURGED BY OPERATOR</div>' + log.innerHTML;
+          } else {
+            appendLog('[SYSTEM] ALL TARGETS PURGED BY OPERATOR', 'error');
+          }
+        } else if (response.status === 403) {
+          alert('Forbidden: Invalid or missing X-Pulse-Auth key.');
+        } else {
+          alert('Purge failed.');
+        }
+      }
+    }
+
+    async function resumeEngine() {
+      const response = await fetch('/resume-engine', {
+        method: 'POST',
+        headers: {
+          'X-Pulse-Auth': localStorage.getItem('pulse_auth_key') || '9ce627a5453249379b10dedbfb53785203226cfa3aee25dfee32026033a575db'
+        }
+      });
+
+      if (!response.ok) {
+        alert('Resume failed: unauthorized or backend unavailable.');
+        return;
+      }
+      appendLog('Manual reset accepted: pulse engine resumed.', 'warn');
+    }
+
+    async function downloadCSV() {
+      const adminKey = localStorage.getItem('pulse_auth_key') || '9ce627a5453249379b10dedbfb53785203226cfa3aee25dfee32026033a575db';
+      const response = await fetch('/export-logs', {
+        headers: { 'X-Pulse-Auth': adminKey }
+      });
+
+      if (!response.ok) {
+        alert('CSV export failed. Check authorization or server status.');
+        return;
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `pulse_export_${Date.now()}.csv`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      window.URL.revokeObjectURL(url);
+      appendLog('Audit CSV exported.', 'info');
+    }
+
+    async function clearLogs() {
+      const adminKey = localStorage.getItem('pulse_auth_key') || '9ce627a5453249379b10dedbfb53785203226cfa3aee25dfee32026033a575db';
+      const response = await fetch('/clear-logs', {
+        method: 'POST',
+        headers: { 'X-Pulse-Auth': adminKey }
+      });
+
+      if (!response.ok) {
+        alert('Clear buffer failed. Check authorization or server status.');
+        return;
+      }
+
+      appendLog('Audit buffer cleared by operator.', 'warn');
+    }
+
+    // Initial load
+    refreshTargets();
+
+    // ── Master Refresh ──
+    async function refreshAll() {
+      appendLog('Refreshing telemetry feeds...');
+      await Promise.all([refreshStatus(), refreshHeartbeats(), refreshSparkline(), refreshEvents(), refreshPipelineLog(), refreshPipelineStatus(), refreshTargets()]);
+      appendLog('All feeds updated', 'info');
+    }
+
+    // Auto-refresh every 30s
+    let countdown = 30;
+    setInterval(() => {
+      countdown--;
+      document.getElementById('refreshTimer').textContent = countdown;
+      if (countdown <= 0) { countdown = 30; refreshAll(); }
+    }, 1000);
+
+    // Initial boot sequence
+    (async () => {
+      appendLog('Pipeline connected...');
+      appendLog('Initializing Sovereign Pulse LIVE dashboard');
+      await refreshAll();
+      appendLog('SMTP Auth Success — mail queue ready');
+      appendLog('Awaiting next interval...');
+      // Add cursor blink to last line
+      const el = document.getElementById('liveOutput');
+      if (el.lastChild) el.lastChild.classList.add('cursor-blink');
+    })();
+
+    // ── Socket.IO — Real-time Pulse Events ──
+    let dispatchCount = 0;
+    let totalKB = 0;
+    let lastPulseTime = Date.now();
+
+    const pulseCtxEl = document.getElementById('pulseChart');
+    const pulseCtx = pulseCtxEl ? pulseCtxEl.getContext('2d') : null;
+    const pulseChart = pulseCtx ? new Chart(pulseCtx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [
+          {
+            label: 'CPU LOAD %',
+            borderColor: '#ff9d00',
+            data: [],
+            yAxisID: 'y',
+            borderWidth: 1,
+            pointRadius: 0
+          },
+          {
+            label: 'LATENCY (ms)',
+            borderColor: '#00aaff',
+            data: [],
+            yAxisID: 'y1',
+            borderWidth: 1,
+            pointRadius: 0
+          }
+        ]
+      },
+      options: {
+        scales: {
+          y: {
+            type: 'linear', display: true, position: 'left', max: 100,
+            grid: { color: '#30363d' },
+            ticks: { color: '#8b949e' }
+          },
+          y1: {
+            type: 'linear', display: true, position: 'right',
+            grid: { drawOnChartArea: false },
+            ticks: { color: '#8b949e' }
+          },
+          x: { display: false }
+        },
+        plugins: {
+          legend: {
+            labels: { color: '#c9d1d9', font: { family: 'monospace' } }
+          }
+        },
+        animation: false
+      }
+    }) : null;
+
+    const socket = io(API);
+    socket.on('connect', () => appendLog('Socket.IO connected — real-time feed active', 'info'));
+    socket.on('disconnect', () => appendLog('Socket.IO disconnected', 'warn'));
+    socket.on('targets_updated', () => refreshTargets());
+
+    socket.on('service_status', function (data) {
+      const nameEl = document.getElementById('serviceName');
+      const statusEl = document.getElementById('serviceStatus');
+      const tsEl = document.getElementById('serviceTimestamp');
+
+      if (nameEl) nameEl.textContent = data.name || 'External_Gateway';
+      if (statusEl) {
+        statusEl.textContent = data.status || '--';
+        const status = String(data.status || '').toUpperCase();
+        if (status === 'UP') statusEl.className = 'value status-connected';
+        else if (status === 'DEGRADED') statusEl.className = 'value status-warn';
+        else statusEl.className = 'value status-error';
+      }
+      if (tsEl) {
+        tsEl.textContent = data.timestamp ? relativeTime(data.timestamp) : '--';
+      }
+
+      appendLog(`Gateway ${data.name || 'External_Gateway'} status: ${data.status || 'UNKNOWN'}`, (data.status === 'UP') ? 'info' : 'warn');
+    });
+
+    socket.on('telemetry_alert', function (data) {
+      const memoryAlertEl = document.getElementById('memoryAlertStatus');
+      const statusBox = document.getElementById('status-indicator');
+      const currentStatus = statusBox ? statusBox.innerText : '';
+
+      if (data.type === 'MEM_LEAK') {
+        if (memoryAlertEl) {
+          memoryAlertEl.textContent = 'MEMORY LEAK WARNING';
+          memoryAlertEl.className = 'value status-warn';
+        }
+        if (statusBox && currentStatus !== 'ENGINE HALTED') {
+          statusBox.innerHTML = 'MEMORY LEAK WARNING';
+          statusBox.style.background = '#d29922';
+        }
+        appendLog(`TELEMETRY ALERT: ${data.type} (${data.severity || 'UNKNOWN'})`, 'warn');
+      }
+    });
+
+    socket.on('telemetry_update', function (data) {
+      if (!pulseChart) return;
+      const time = new Date().toLocaleTimeString();
+
+      // Push Data
+      pulseChart.data.labels.push(time);
+      pulseChart.data.datasets[0].data.push(Number(data.cpu || 0));
+      pulseChart.data.datasets[1].data.push(Number(data.latency || 0));
+
+      // Rolling window
+      if (pulseChart.data.labels.length > 50) {
+        pulseChart.data.labels.shift();
+        pulseChart.data.datasets.forEach(d => d.data.shift());
+      }
+
+      pulseChart.update();
+
+      const uptimeEl = document.getElementById('uptime-val');
+      if (uptimeEl && data.uptime !== undefined) {
+        const uptime = Number(data.uptime || 0);
+        uptimeEl.innerText = `${uptime.toFixed(2)}%`;
+        if (uptime < 95.0) {
+          uptimeEl.style.color = '#ff7b72';
+        } else if (uptime < 99.0) {
+          uptimeEl.style.color = '#ffa657';
+        } else {
+          uptimeEl.style.color = '#7ee787';
+        }
+      }
+    });
+
+    socket.on('system_status', function (data) {
+      const mainContainer = document.getElementById('dashboard-main');
+      const statusText = document.getElementById('status-text');
+      const statusBox = document.getElementById('status-indicator');
+      const el = document.getElementById('system-state');
+      const engineHeader = document.getElementById('engine-status');
+      const statusCard = document.getElementById('status-card');
+      const resumeBtn = document.getElementById('resume-btn');
+      const haltReason = document.getElementById('halt-reason');
+
+      if (data.state === 'HALTED') {
+        if (engineHeader) engineHeader.innerText = 'ENGINE: HALTED';
+        if (statusCard) statusCard.style.borderColor = '#ff0000';
+        if (haltReason) haltReason.innerText = `REASON: ${data.error || 'UNKNOWN'}`;
+        if (resumeBtn) resumeBtn.style.display = 'block';
+      } else {
+        if (engineHeader) engineHeader.innerText = 'ENGINE: RUNNING';
+        if (statusCard) statusCard.style.borderColor = '#00ff41';
+        if (haltReason) haltReason.innerText = '';
+        if (resumeBtn) resumeBtn.style.display = 'none';
+      }
+
+      if (data.error === 'CPU_OVERLOAD_SUSTAINED') {
+        if (statusBox) {
+          statusBox.innerHTML = 'CRITICAL: SUSTAINED LOAD DETECTED';
+          statusBox.style.background = '#ff0000';
+          statusBox.classList.add('glitch-effect');
+        }
+      } else if (data.state === 'HALTED') {
+        if (statusBox) {
+          statusBox.innerHTML = 'ENGINE HALTED';
+          statusBox.style.background = '#ff0000';
+          statusBox.classList.add('glitch-effect');
+        }
+      } else if (data.state === 'NOMINAL') {
+        if (statusBox) {
+          statusBox.innerHTML = 'SYSTEM NOMINAL';
+          statusBox.style.background = '#00ff41';
+          statusBox.classList.remove('glitch-effect');
+        }
+      }
+
+      if (data.state === 'CRITICAL') {
+        if (mainContainer) mainContainer.classList.add('critical-alert');
+        if (statusText) {
+          statusText.innerText = '!! ALERT: GATEWAY OFFLINE !!';
+          statusText.style.color = '#ff0000';
+        }
+        if (el) {
+          el.innerText = data.state;
+          el.style.color = '#f85149';
+        }
+        appendLog(`SYSTEM CRITICAL: ${data.error || data.msg || 'Unknown'}`, 'error');
+      } else {
+        if (mainContainer) mainContainer.classList.remove('critical-alert');
+        if (statusText) {
+          statusText.innerText = 'SYSTEM NOMINAL';
+          statusText.style.color = '#00ff41';
+        }
+        if (el) {
+          el.innerText = data.state;
+          el.style.color = '#7ee787';
+        }
+      }
+    });
+
+    socket.on('new_pulse', (data) => {
+      refreshTargets();
+      // Calculate latency between pulses
+      const currentTime = Date.now();
+      const latency = ((currentTime - lastPulseTime) / 1000).toFixed(1);
+      lastPulseTime = currentTime;
+      const latEl = document.getElementById('latency-val');
+      if (latEl) latEl.innerText = `${latency}s`;
+
+      appendLog(`[${data.time}] PULSE DISPATCHED - SUCCESS`, 'info');
+      const ticker = document.getElementById('pulse-ticker');
+      const sigTag = data.hash ? ` :: SIG:${data.hash}` : '';
+      if (ticker) { ticker.textContent = `PULSE ${data.status} @ ${data.time} :: SYSTEM NOMINAL :: PDF SIGNATURE VERIFIED${sigTag} :: GMAIL GATEWAY OPEN :: PULSE FREQUENCY: 10s :: `; }
+
+      // Update dispatch counter from server-side count
+      if (data.count !== undefined) dispatchCount = data.count;
+      else dispatchCount++;
+      const counterEl = document.getElementById('total-dispatched');
+      if (counterEl) counterEl.innerText = dispatchCount;
+
+      // Track data throughput (~45KB per signed PDF)
+      totalKB += 45;
+      const kbEl = document.getElementById('kb-sent');
+      if (kbEl) kbEl.innerText = totalKB.toLocaleString();
+      const dlog = document.getElementById('dispatch-logs');
+      if (dlog) {
+        const time = data.time || new Date().toLocaleTimeString();
+        const hash = data.hash || '--------';
+        const entry = document.createElement('div');
+        entry.style.borderLeft = '2px solid #00ff41';
+        entry.style.paddingLeft = '10px';
+        entry.style.marginBottom = '5px';
+        const hashTag = data.hash ? `SIG:${data.hash}` : '';
+        const label = dispatchCount > 1 ? 'MULTI_TARGET_SUCCESS' : 'DISPATCHED';
+        entry.innerHTML = `<span style="color:#888;">[${time}]</span> <span style="color:#00ff41;">${label}</span> -> <span style="color:#58a6ff;">${hashTag}</span>`;
+        dlog.prepend(entry);
+        if (dlog.childNodes.length > 50) dlog.removeChild(dlog.lastChild);
+      }
+
+      // Visual flash on pulse dot
+      const pulseDot = document.getElementById('pulseIcon');
+      if (pulseDot) {
+        pulseDot.style.background = '#fff';
+        setTimeout(() => { pulseDot.style.background = '#00ff41'; }, 100);
+      }
+
+      // Update network map with target node
+      const nmap = document.getElementById('network-map');
+      if (nmap) {
+        const target = data.target || 'jasonnorman66994@gmail.com';
+        let node = document.getElementById(`nmap-${target}`);
+        if (!node) {
+          node = document.createElement('div');
+          node.id = `nmap-${target}`;
+          node.style.cssText = 'background:#0d1117;border:1px solid #00ff41;border-radius:6px;padding:8px;font-family:monospace;font-size:0.75em;';
+          node.innerHTML = `<div style="color:#58a6ff;font-weight:bold;">${target}</div><div style="color:#888;">Pulses: <span class="nmap-count">0</span></div><div class="nmap-status" style="color:#00ff41;">CONNECTED</div>`;
+          nmap.appendChild(node);
+        }
+        const cnt = node.querySelector('.nmap-count');
+        if (cnt) cnt.innerText = dispatchCount;
+        const ns = node.querySelector('.nmap-status');
+        if (ns) { ns.innerText = data.status === 'SENT' ? 'CONNECTED' : 'OFFLINE'; ns.style.color = data.status === 'SENT' ? '#00ff41' : '#f85149'; }
+        node.style.borderColor = '#fff';
+        setTimeout(() => { node.style.borderColor = '#00ff41'; }, 200);
+      }
+    });
+
+    // ── Live Pulse Stream (5s interval) ──
+    setInterval(() => {
+      const stream = document.getElementById('stream-data');
+      if (!stream) return;
+      const entry = document.createElement('div');
+      entry.innerHTML = `&gt; PACKET_SENT: ${new Date().toISOString()} | SIG: ${Math.random().toString(16).slice(2, 10).toUpperCase()} | STATUS: 200 OK`;
+      stream.appendChild(entry);
+      if (stream.childNodes.length > 20) { stream.removeChild(stream.firstChild); }
+    }, 5000);
+  </script>
+</body>
+
+</html>

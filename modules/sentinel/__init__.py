@@ -1,0 +1,1 @@
+"""Sentinel telemetry module."""

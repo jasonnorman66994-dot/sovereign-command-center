@@ -1,0 +1,213 @@
+{
+  "generated_at": "2026-04-14T17:53:18",
+  "campaign_modes": {
+    "single_scenario": {
+      "description": "Run one scenario at a time for focused detection and response drills.",
+      "mode": "one-scenario-at-a-time",
+      "supported_scenarios": [
+        "SCENARIO_1_SPAM_BURST",
+        "SCENARIO_2_MALWARE_ATTACHMENT",
+        "SCENARIO_3_UNAUTHORIZED_ACCESS",
+        "SCENARIO_4_BEC_ATTEMPT",
+        "SCENARIO_5_OAUTH_ABUSE",
+        "SCENARIO_6_VENDOR_COMPROMISE",
+        "SCENARIO_7_INSIDER_MISUSE",
+        "SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL",
+        "SCENARIO_9_LATERAL_MOVEMENT_OAUTH",
+        "SCENARIO_10_SERVICE_PRINCIPAL_HIJACK",
+        "SCENARIO_11_K8S_SIDECAR_BREAKOUT",
+        "SCENARIO_12_SUPPLY_CHAIN_POISONING",
+        "SCENARIO_13_ZERO_DAY_EXPLOIT",
+        "SCENARIO_14_HYBRID_CLOUD_RANSOMWARE",
+        "SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE",
+        "SCENARIO_16_OIDC_SIGNING_KEY_THEFT",
+        "SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE"
+      ]
+    },
+    "multi_scenario_chains": {
+      "description": "Run pre-defined chained campaigns for correlation and escalation analysis.",
+      "example_chain": [
+        "SCENARIO_3_UNAUTHORIZED_ACCESS",
+        "SCENARIO_5_OAUTH_ABUSE",
+        "SCENARIO_9_LATERAL_MOVEMENT_OAUTH",
+        "SCENARIO_14_HYBRID_CLOUD_RANSOMWARE"
+      ],
+      "recommended_chains": [
+        [
+          "SCENARIO_3_UNAUTHORIZED_ACCESS",
+          "SCENARIO_5_OAUTH_ABUSE",
+          "SCENARIO_9_LATERAL_MOVEMENT_OAUTH",
+          "SCENARIO_14_HYBRID_CLOUD_RANSOMWARE"
+        ],
+        [
+          "SCENARIO_5_OAUTH_ABUSE",
+          "SCENARIO_10_SERVICE_PRINCIPAL_HIJACK",
+          "SCENARIO_12_SUPPLY_CHAIN_POISONING",
+          "SCENARIO_16_OIDC_SIGNING_KEY_THEFT"
+        ],
+        [
+          "SCENARIO_11_K8S_SIDECAR_BREAKOUT",
+          "SCENARIO_13_ZERO_DAY_EXPLOIT",
+          "SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE"
+        ]
+      ]
+    },
+    "full_spectrum_campaign": {
+      "description": "Run Scenario 1 through Scenario 20 in sequence as a simulated, synthetic, safe campaign.",
+      "sequence": [
+        {
+          "order": 1,
+          "scenario_id": "SCENARIO_1_SPAM_BURST",
+          "status": "available",
+          "safety_mode": "simulated_synthetic_safe"
+        },
+        {
+          "order": 2,
+          "scenario_id": "SCENARIO_2_MALWARE_ATTACHMENT",
+          "status": "available",
+          "safety_mode": "simulated_synthetic_safe"
+        },
+        {
+          "order": 3,
+          "scenario_id": "SCENARIO_3_UNAUTHORIZED_ACCESS",
+          "status": "available",
+          "safety_mode": "simulated_synthetic_safe"
+        },
+        {
+          "order": 4,
+          "scenario_id": "SCENARIO_4_BEC_ATTEMPT",
+          "status": "available",
+          "safety_mode": "simulated_synthetic_safe"
+        },
+        {
+          "order": 5,
+          "scenario_id": "SCENARIO_5_OAUTH_ABUSE",
+          "status": "available",
+          "safety_mode": "simulated_synthetic_safe"
+        },
+        {
+          "order": 6,
+          "scenario_id": "SCENARIO_6_VENDOR_COMPROMISE",
+          "status": "available",
+          "safety_mode": "simulated_synthetic_safe"
+        },
+        {
+          "order": 7,
+          "scenario_id": "SCENARIO_7_INSIDER_MISUSE",
+          "status": "available",
+          "safety_mode": "simulated_synthetic_safe"
+        },
+        {
+          "order": 8,
+          "scenario_id": "SCENARIO_8_TOKEN_REPLAY_IMPOSSIBLE_TRAVEL",
+          "status": "available",
+          "safety_mode": "simulated_synthetic_safe"
+        },
+        {
+          "order": 9,
+          "scenario_id": "SCENARIO_9_LATERAL_MOVEMENT_OAUTH",
+          "status": "available",
+          "safety_mode": "simulated_synthetic_safe"
+        },
+        {
+          "order": 10,
+          "scenario_id": "SCENARIO_10_SERVICE_PRINCIPAL_HIJACK",
+          "status": "available",
+          "safety_mode": "simulated_synthetic_safe"
+        },
+        {
+          "order": 11,
+          "scenario_id": "SCENARIO_11_K8S_SIDECAR_BREAKOUT",
+          "status": "available",
+          "safety_mode": "simulated_synthetic_safe"
+        },
+        {
+          "order": 12,
+          "scenario_id": "SCENARIO_12_SUPPLY_CHAIN_POISONING",
+          "status": "available",
+          "safety_mode": "simulated_synthetic_safe"
+        },
+        {
+          "order": 13,
+          "scenario_id": "SCENARIO_13_ZERO_DAY_EXPLOIT",
+          "status": "available",
+          "safety_mode": "simulated_synthetic_safe"
+        },
+        {
+          "order": 14,
+          "scenario_id": "SCENARIO_14_HYBRID_CLOUD_RANSOMWARE",
+          "status": "available",
+          "safety_mode": "simulated_synthetic_safe"
+        },
+        {
+          "order": 15,
+          "scenario_id": "SCENARIO_15_CROSS_TENANT_FEDERATION_ABUSE",
+          "status": "available",
+          "safety_mode": "simulated_synthetic_safe"
+        },
+        {
+          "order": 16,
+          "scenario_id": "SCENARIO_16_OIDC_SIGNING_KEY_THEFT",
+          "status": "available",
+          "safety_mode": "simulated_synthetic_safe"
+        },
+        {
+          "order": 17,
+          "scenario_id": "SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE",
+          "status": "available",
+          "safety_mode": "simulated_synthetic_safe"
+        },
+        {
+          "order": 18,
+          "scenario_id": "SCENARIO_18_SYNTHETIC_PLACEHOLDER",
+          "status": "synthetic_placeholder",
+          "safety_mode": "simulated_synthetic_safe"
+        },
+        {
+          "order": 19,
+          "scenario_id": "SCENARIO_19_SYNTHETIC_PLACEHOLDER",
+          "status": "synthetic_placeholder",
+          "safety_mode": "simulated_synthetic_safe"
+        },
+        {
+          "order": 20,
+          "scenario_id": "SCENARIO_20_SYNTHETIC_PLACEHOLDER",
+          "status": "synthetic_placeholder",
+          "safety_mode": "simulated_synthetic_safe"
+        }
+      ],
+      "safety_assertions": [
+        "No live malware deployment",
+        "No unauthorized external network targeting",
+        "No destructive commands against production systems",
+        "Synthetic payloads and controlled telemetry only"
+      ]
+    }
+  },
+  "red_team_deliverable_package": {
+    "package_number": 8,
+    "name": "Red Team Deliverable Package",
+    "deliverables": [
+      "Campaign scope and objectives",
+      "Scenario inject matrix",
+      "Unified incident attack graph",
+      "Detection and response checkpoints",
+      "Executive communication brief",
+      "Blue-team scoring workbook",
+      "After-action review template",
+      "Safety, legal, and control constraints"
+    ],
+    "references": {
+      "analytics_file": "cross_scenario_analytics.json",
+      "kpi_file": "chain_kpis.json",
+      "graph_file": "incident_attack_graph.json",
+      "graph_summary": {
+        "scenario_count": 17,
+        "node_count": 57,
+        "edge_count": 78,
+        "terminal_scenario": "SCENARIO_17_HARDWARE_ROOT_OF_TRUST_COMPROMISE",
+        "terminal_classification": "Hardware Root-of-Trust Compromise - TPM/Secure Enclave Extraction"
+      }
+    }
+  }
+}
