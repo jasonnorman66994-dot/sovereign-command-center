@@ -109,6 +109,35 @@ def _handle_notifications(
         hub.send_slack(alert_text, dedupe_key=dedupe_key)
         hub.send_telegram(alert_text, dedupe_key=dedupe_key)
 
+    if module_name in {"api_security_tester", "kubernetes_pod_analyzer"} and severity in {"warning", "critical"}:
+        dedupe_key = f"{module_name}:{event_name}:{severity}"
+        finding_target = payload.get("target") or f"{payload.get('namespace', 'default')}/{payload.get('pod', 'unknown')}"
+        finding_text = (
+            f"Module: {packet.module} | Event: {packet.event} | "
+            f"Target: {finding_target} | Evidence: {payload.get('evidence', 'n/a')}"
+        )
+
+        if business_hub:
+            business_name, business_config = business_hub.get_business_for_packet(packet.module, payload)
+            if business_name and business_config:
+                business_hub.send_business_alert(
+                    business_name,
+                    business_config,
+                    f"{severity.upper()} SECURITY FINDING",
+                    finding_text,
+                    packet.model_dump(),
+                    dedupe_key=dedupe_key,
+                    send_slack=True,
+                    send_email=(severity == "critical"),
+                    send_telegram=(severity == "critical"),
+                )
+                return
+
+        hub.send_slack(finding_text, dedupe_key=dedupe_key)
+        if severity == "critical":
+            hub.send_email("CRITICAL SECURITY FINDING", finding_text, dedupe_key=dedupe_key)
+            hub.send_telegram(finding_text, dedupe_key=dedupe_key)
+
 
 def init_db(db_path: Path = DB_PATH) -> None:
     db_path.parent.mkdir(parents=True, exist_ok=True)

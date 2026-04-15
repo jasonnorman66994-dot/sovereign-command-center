@@ -290,6 +290,12 @@ def main():
     api_sec_parser.add_argument(
         "--timeout", type=float, default=5.0, help="HTTP timeout in seconds"
     )
+    api_sec_parser.add_argument(
+        "--no-telemetry", action="store_true", help="Do not publish findings to telemetry bus"
+    )
+    api_sec_parser.add_argument(
+        "--bus-port", type=int, default=5555, help="Telemetry bus port"
+    )
 
     # -- Kubernetes Pod Analyzer (Phase 2) --
     k8s_parser = subparsers.add_parser(
@@ -297,6 +303,12 @@ def main():
     )
     k8s_parser.add_argument(
         "input", help="Path to pod JSON/YAML (kubectl get pods -o json)"
+    )
+    k8s_parser.add_argument(
+        "--no-telemetry", action="store_true", help="Do not publish findings to telemetry bus"
+    )
+    k8s_parser.add_argument(
+        "--bus-port", type=int, default=5555, help="Telemetry bus port"
     )
 
     # -- Dashboard --

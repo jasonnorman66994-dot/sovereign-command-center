@@ -17,6 +17,8 @@ from typing import Any
 import requests
 import yaml
 
+from core.bus import TelemetryBus
+
 
 @dataclass
 class APIFinding:
@@ -37,6 +39,37 @@ class APIReport:
     @property
     def duration(self) -> float:
         return self.end_time - self.start_time
+
+
+def _normalize_severity(value: str) -> str:
+    upper = (value or "").upper()
+    if upper in {"CRITICAL", "HIGH"}:
+        return "critical"
+    if upper in {"MEDIUM", "WARNING"}:
+        return "warning"
+    return "info"
+
+
+def _publish_findings(report: APIReport, bus_port: int = 5555) -> None:
+    bus = TelemetryBus(port=bus_port)
+    try:
+        for finding in report.findings:
+            bus.publish(
+                module_name="api_security_tester",
+                event_type=finding.finding_type,
+                severity=_normalize_severity(finding.severity),
+                data={
+                    "target": finding.target,
+                    "finding_type": finding.finding_type,
+                    "severity": finding.severity,
+                    "evidence": finding.evidence,
+                    "remediation": finding.remediation,
+                    "report_target": report.target,
+                    "scan_duration": round(report.duration, 3),
+                },
+            )
+    finally:
+        bus.close()
 
 
 def _load_openapi_spec(spec_path: str) -> dict[str, Any]:
@@ -204,6 +237,9 @@ def run_api_security_tester(args) -> None:
     report.end_time = time.time()
     print_report(report)
 
+    if not getattr(args, "no_telemetry", False):
+        _publish_findings(report, bus_port=getattr(args, "bus_port", 5555))
+
 
 if __name__ == "__main__":
     import argparse
@@ -213,6 +249,8 @@ if __name__ == "__main__":
     parser.add_argument("--spec", help="Path to OpenAPI JSON/YAML file")
     parser.add_argument("--live", help="Live endpoint URL to test (safe header/posture checks)")
     parser.add_argument("--timeout", type=float, default=5.0)
+    parser.add_argument("--no-telemetry", action="store_true", help="Do not publish findings to telemetry bus")
+    parser.add_argument("--bus-port", type=int, default=5555, help="Telemetry bus port")
     args = parser.parse_args()
 
     run_api_security_tester(args)

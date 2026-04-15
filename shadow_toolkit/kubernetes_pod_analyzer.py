@@ -16,6 +16,8 @@ from typing import Any
 
 import yaml
 
+from core.bus import TelemetryBus
+
 
 @dataclass
 class PodFinding:
@@ -37,6 +39,38 @@ class PodAnalysisReport:
     @property
     def duration(self) -> float:
         return self.end_time - self.start_time
+
+
+def _normalize_severity(value: str) -> str:
+    upper = (value or "").upper()
+    if upper in {"CRITICAL", "HIGH"}:
+        return "critical"
+    if upper in {"MEDIUM", "WARNING"}:
+        return "warning"
+    return "info"
+
+
+def _publish_findings(report: PodAnalysisReport, bus_port: int = 5555) -> None:
+    bus = TelemetryBus(port=bus_port)
+    try:
+        for finding in report.findings:
+            bus.publish(
+                module_name="kubernetes_pod_analyzer",
+                event_type=finding.finding_type,
+                severity=_normalize_severity(finding.severity),
+                data={
+                    "namespace": finding.namespace,
+                    "pod": finding.pod,
+                    "finding_type": finding.finding_type,
+                    "severity": finding.severity,
+                    "evidence": finding.evidence,
+                    "remediation": finding.remediation,
+                    "source": report.source,
+                    "scan_duration": round(report.duration, 3),
+                },
+            )
+    finally:
+        bus.close()
 
 
 def _load_input(path: str) -> dict[str, Any]:
@@ -209,6 +243,9 @@ def run_kubernetes_pod_analyzer(args) -> None:
     report.end_time = time.time()
     print_report(report)
 
+    if not getattr(args, "no_telemetry", False):
+        _publish_findings(report, bus_port=getattr(args, "bus_port", 5555))
+
 
 if __name__ == "__main__":
     import argparse
@@ -217,6 +254,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "input", help="Path to pod JSON/YAML (kubectl get pods -o json output)"
     )
+    parser.add_argument("--no-telemetry", action="store_true", help="Do not publish findings to telemetry bus")
+    parser.add_argument("--bus-port", type=int, default=5555, help="Telemetry bus port")
     args = parser.parse_args()
 
     run_kubernetes_pod_analyzer(args)
