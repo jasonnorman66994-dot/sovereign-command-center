@@ -48,7 +48,7 @@ python attack_chain_timeline.py scenario_events.json
 
 Output (table with ATT&CK phase classification):
 
-```
+```text
 | Timestamp | Phase | Event | Details |
 |-----------|-------|-------|---------|
 | 2026-04-15T12:01:00Z | Initial Access | email_spam_burst | {...} |
@@ -90,6 +90,7 @@ python generate_unified_mitre_heatmap.py
 ```
 
 Output: `unified_mitre_attack_heatmap.md` with:
+
 - Heat-level summary (High/Medium/Low/None)
 - Technique frequency table
 - Most recurrent behavior clusters
@@ -160,7 +161,7 @@ The analysis workflow runs automatically when:
 
 ### Timeline: Table Format (default)
 
-```
+```text
 +-----------+-------------------+---------+------------------+
 | Timestamp | Phase             | Event   | Details          |
 +-----------+-------------------+---------+------------------+
@@ -237,22 +238,23 @@ See [CONTRIBUTING.md](../../CONTRIBUTING.md) for full workflow.
 
 ## Troubleshooting
 
-**Q: Timeline shows "Unknown" phase for my event**
+### Timeline shows "Unknown" phase for my event
 
-A: Add the event type to the `_PHASE_MAP` in `attack_chain_timeline.py`. Contribute the mapping upstream.
+Add the event type to the `_PHASE_MAP` in `attack_chain_timeline.py`. Contribute the mapping upstream.
 
-**Q: Heatmap has no Medium or High techniques**
+### Heatmap has no Medium or High techniques
 
-A: Check the scenario count thresholds:
+Check the scenario count thresholds:
+
 - High: 5+ scenarios
 - Medium: 3–4 scenarios
 - Low: 1–2 scenarios
 
 Add more scenarios to the dataset or adjust technique-to-scenario mappings in `data/unified_mitre_heatmap.json`.
 
-**Q: CI workflow fails but script runs locally**
+### CI workflow fails but script runs locally
 
-A: Verify `requirements.txt` includes all dependencies. CI runs in a clean Ubuntu environment.
+Verify `requirements.txt` includes all dependencies. CI runs in a clean Ubuntu environment.
 
 ---
 
