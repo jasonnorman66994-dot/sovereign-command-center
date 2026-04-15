@@ -33,6 +33,23 @@ powershell -ExecutionPolicy Bypass -File .\smoke_check.ps1 -Mode Quick
 powershell -ExecutionPolicy Bypass -File .\smoke_check.ps1 -Mode Full
 ```
 
+Run Phase 2 telemetry verification harness locally:
+
+```powershell
+python scripts/phase2_telemetry_harness.py
+```
+
+Expected pass indicators:
+
+- `Events consumed: 2`
+- `DB rows delta (phase2 modules): 2`
+- `Notification calls: slack=2, email=1, telegram=1`
+- `RESULT: PASS`
+
+If the first run reports `RESULT: FAIL`, run the harness one more time.
+
+Manual CI validation is available in GitHub Actions via `Telemetry Harness` workflow dispatch.
+
 ---
 
 ## 📧 Email Security Playbooks & Automation

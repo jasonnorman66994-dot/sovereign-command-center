@@ -21,6 +21,27 @@ Mode behavior:
 - `Quick`: scenario and timeline markdown lint + Python syntax checks.
 - `Full`: wider curated markdown lint scope + Python syntax checks.
 
+## Phase 2 Telemetry Validation
+
+Run the synthetic harness after telemetry or notification changes:
+
+```powershell
+python scripts/phase2_telemetry_harness.py
+```
+
+Pass criteria:
+
+- `Events consumed: 2`
+- `DB rows delta (phase2 modules): 2`
+- `Notification calls: slack=2, email=1, telegram=1`
+- `RESULT: PASS`
+
+If the first run fails with `Events consumed: 0`, run the harness once more.
+
+Manual CI job:
+
+- GitHub Actions -> `Telemetry Harness` -> `Run workflow`
+
 ## Git Hooks
 
 Repository-local hooks are enabled via `core.hooksPath=.githooks`.
