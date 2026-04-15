@@ -199,6 +199,75 @@ def main():
         "-l", "--limit", type=int, default=20, help="Max results (default: 20)"
     )
 
+    # -- SSL/TLS Certificate Analyzer (Phase 1) --
+    ssl_parser = subparsers.add_parser(
+        "sslanalyze", help="SSL/TLS certificate analyzer"
+    )
+    ssl_parser.add_argument("domain", help="Domain to analyze (e.g., example.com)")
+    ssl_parser.add_argument(
+        "-p", "--port", type=int, default=443, help="Port (default: 443)"
+    )
+    ssl_parser.add_argument(
+        "--no-resolve", action="store_true", help="Skip DNS resolution"
+    )
+    ssl_parser.add_argument(
+        "--timeout", type=float, default=5.0, help="Connection timeout (seconds)"
+    )
+    ssl_parser.add_argument(
+        "--verify-chain", action="store_true", help="Verify certificate chain"
+    )
+
+    # -- Secret Detector (Phase 1) --
+    secret_parser = subparsers.add_parser(
+        "detect-secrets", help="Secret & credential detection engine"
+    )
+    secret_parser.add_argument(
+        "target",
+        help="Target file or directory to scan",
+    )
+    secret_parser.add_argument(
+        "-r",
+        "--recursive",
+        action="store_true",
+        default=True,
+        help="Recursive directory scan (default: true)",
+    )
+    secret_parser.add_argument(
+        "--entropy-threshold",
+        type=float,
+        default=3.5,
+        help="Entropy threshold for flagging (default: 3.5)",
+    )
+    secret_parser.add_argument(
+        "-w",
+        "--workers",
+        type=int,
+        default=4,
+        help="Number of parallel workers (default: 4)",
+    )
+
+    # -- Compliance Scanner (Phase 1) --
+    compliance_parser = subparsers.add_parser(
+        "compliance", help="Compliance scanner (PCI-DSS, HIPAA, SOC2)"
+    )
+    compliance_parser.add_argument(
+        "--config",
+        required=True,
+        help="Path to compliance config (JSON format)",
+    )
+    compliance_parser.add_argument(
+        "--framework",
+        choices=["pci_dss", "hipaa", "soc2", "gdpr", "iso_27001", "all"],
+        default="all",
+        help="Framework(s) to scan (default: all)",
+    )
+    compliance_parser.add_argument(
+        "--severity",
+        choices=["critical", "high", "medium", "low", "info", "all"],
+        default="all",
+        help="Filter by severity (default: all)",
+    )
+
     # -- Dashboard --
     subparsers.add_parser(
         "dashboard", help="Interactive TUI dashboard (requires: pip install rich)"
@@ -311,6 +380,69 @@ def main():
         from shadow_toolkit.exploit_search import run_exploit_search
 
         run_exploit_search(args)
+    elif args.module == "sslanalyze":
+        from shadow_toolkit.ssl_certificate_analyzer import SSLAnalyzer, format_report
+
+        analyzer = SSLAnalyzer(timeout=args.timeout, verify_chain=args.verify_chain)
+        result = analyzer.analyze_domain(
+            args.domain,
+            port=args.port,
+            resolve_ip=not args.no_resolve,
+        )
+        print(format_report(result))
+    elif args.module == "detect-secrets":
+        from shadow_toolkit.secret_detector import SecretDetector, format_report
+        from pathlib import Path
+
+        target = Path(args.target)
+        detector = SecretDetector(entropy_threshold=args.entropy_threshold)
+
+        if target.is_dir():
+            result = detector.scan_directory(
+                target, max_workers=args.workers, recursive=args.recursive
+            )
+        else:
+            secrets = detector.scan_file(target)
+            from shadow_toolkit.secret_detector import ScanResult
+
+            result = ScanResult(files_scanned=1, secrets_found=secrets)
+
+        print(format_report(result))
+    elif args.module == "compliance":
+        import json
+        from shadow_toolkit.compliance_scanner import (
+            ComplianceScanner,
+            ComplianceFramework,
+            format_report,
+        )
+        from pathlib import Path
+
+        # Load config
+        config_path = Path(args.config)
+        if not config_path.exists():
+            print(f"[!] Config file not found: {args.config}")
+            sys.exit(1)
+
+        with open(config_path) as f:
+            config = json.load(f)
+
+        # Parse frameworks
+        framework_map = {
+            "pci_dss": ComplianceFramework.PCI_DSS,
+            "hipaa": ComplianceFramework.HIPAA,
+            "soc2": ComplianceFramework.SOC2,
+            "gdpr": ComplianceFramework.GDPR,
+            "iso_27001": ComplianceFramework.ISO_27001,
+        }
+
+        if args.framework == "all":
+            frameworks = list(framework_map.values())
+        else:
+            frameworks = [framework_map[args.framework]]
+
+        scanner = ComplianceScanner()
+        result = scanner.scan(config, frameworks=frameworks)
+        print(format_report(result))
     elif args.module == "sentinel":
         from shadow_toolkit.sentinel_baseline import run_sentinel
 

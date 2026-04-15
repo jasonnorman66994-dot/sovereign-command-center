@@ -1,0 +1,167 @@
+{
+    "comment": "Shadow Toolkit - Compliance Config Template (PCI-DSS + HIPAA)",
+    "firewall": {
+        "enabled": true,
+        "default_deny_inbound": true,
+        "default_deny_outbound": false,
+        "rules_documented": true
+    },
+    "services": [
+        {
+            "name": "web-frontend",
+            "use_defaults": false,
+            "critical_service": true
+        },
+        {
+            "name": "api-backend",
+            "use_defaults": false,
+            "critical_service": true
+        }
+    ],
+    "storage": {
+        "encryption_at_rest_enabled": true,
+        "encryption_algorithm": "AES-256",
+        "key_management": "HSM",
+        "tde_enabled": true
+    },
+    "network": {
+        "tls_enabled": true,
+        "tls_version": "1.3",
+        "cipher_suites": [
+            "TLS_AES_256_GCM_SHA384",
+            "TLS_CHACHA20_POLY1305_SHA256"
+        ],
+        "perfect_forward_secrecy": true
+    },
+    "authentication": {
+        "mfa_enabled": true,
+        "mfa_for_admins": true,
+        "mfa_for_remote_access": true,
+        "password_min_length": 12,
+        "password_complexity": true,
+        "password_history": 6,
+        "password_expiry_days": 90,
+        "account_lockout_enabled": true,
+        "account_lockout_threshold": 5,
+        "account_lockout_duration_minutes": 30
+    },
+    "logging": {
+        "enabled": true,
+        "retention_days": 365,
+        "centralized": true,
+        "immutable": true,
+        "tamper_protection": true,
+        "events_logged": [
+            "failed_login_attempts",
+            "privilege_changes",
+            "config_changes",
+            "data_access",
+            "data_modifications",
+            "data_deletions",
+            "security_patch_application"
+        ]
+    },
+    "systems": [
+        {
+            "name": "production-web-01",
+            "patch_level": "current",
+            "security_tools": [
+                "antivirus",
+                "host_firewall",
+                "logging_agent"
+            ],
+            "vulnerability_scanning": true,
+            "last_scanned": "2026-04-10"
+        },
+        {
+            "name": "production-db-01",
+            "patch_level": "current",
+            "security_tools": [
+                "host_firewall",
+                "logging_agent",
+                "encryption_at_rest"
+            ],
+            "vulnerability_scanning": true,
+            "last_scanned": "2026-04-10"
+        },
+        {
+            "name": "staging-api-01",
+            "patch_level": "current",
+            "security_tools": [
+                "antivirus",
+                "host_firewall",
+                "logging_agent"
+            ],
+            "vulnerability_scanning": true,
+            "last_scanned": "2026-04-08"
+        }
+    ],
+    "rbac": {
+        "enabled": true,
+        "least_privilege": true,
+        "separation_of_duties": true,
+        "admin_segregation": true,
+        "roles": [
+            "admin",
+            "developer",
+            "operator",
+            "viewer"
+        ]
+    },
+    "access_management": {
+        "access_control_implemented": true,
+        "user_provisioning_process": true,
+        "user_deprovisioning_process": true,
+        "periodic_access_review": true,
+        "access_review_frequency_months": 3,
+        "vendor_access_agreement": true,
+        "third_party_access_logged": true
+    },
+    "encryption_hipaa": {
+        "phi_encrypted_at_rest": true,
+        "phi_encrypted_in_transit": true,
+        "encryption_algorithm": "AES-256",
+        "key_derivation": "PBKDF2"
+    },
+    "authentication_hipaa": {
+        "unique_user_id": true,
+        "unique_user_id_enforcement": true,
+        "session_timeout": 15,
+        "session_timeout_inactivity_minutes": 15
+    },
+    "physical_security": {
+        "access_control_entry": true,
+        "access_control_method": "badge_reader",
+        "visitor_logs": true,
+        "surveillance": true,
+        "alarm_system": true,
+        "secure_disposal": true,
+        "workstation_security": true
+    },
+    "governance": {
+        "security_officer_assigned": true,
+        "security_officer_name": "CISO",
+        "security_awareness_training": true,
+        "training_frequency_months": 12,
+        "incident_response_plan": true,
+        "disaster_recovery_plan": true,
+        "business_continuity_plan": true,
+        "policies_documented": true,
+        "policies_approved_by_mgmt": true
+    },
+    "vendor_management": {
+        "vendor_security_review": true,
+        "service_level_agreements": true,
+        "breach_notification_clause": true,
+        "audit_rights": true
+    },
+    "monitoring": {
+        "intrusion_detection": true,
+        "intrusion_prevention": true,
+        "antimalware": true,
+        "antimalware_updates": "real-time",
+        "configuration_monitoring": true,
+        "file_integrity_monitoring": true,
+        "siem_enabled": true
+    }
+}
