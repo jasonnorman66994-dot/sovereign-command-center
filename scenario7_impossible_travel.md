@@ -1,5 +1,9 @@
 # Scenario 7 - Impossible Travel and Token Replay
 
+## Overview
+
+An attacker reuses a valid token in a second geography within minutes of a legitimate login, producing impossible-travel and token-replay indicators. This pattern strongly suggests credential or session theft.
+
 ## Input Evidence Bundle
 
 ### 1. Identity Provider Logs
@@ -16,7 +20,7 @@ Apr 14 14:03:10 session_analyzer[9001]: anomaly: impossible travel detected for 
 Apr 14 14:03:12 session_analyzer[9001]: anomaly: token replay suspected
 ```
 
-## Detection Logic
+## Key Detection Signals
 
 - Detect logins for the same user and token from distant locations within a short time window
 - Detect `session_analyzer` anomalies for impossible travel or token replay
@@ -47,3 +51,15 @@ SELECT * FROM session_analyzer WHERE anomaly LIKE '%token replay%';
 1. Review `idp_logs` and `session_analyzer` for anomalies.
 2. Use dashboard panels to visualize.
 3. Practice SOC response steps as above.
+
+## Timeline
+
+| Time  | Event |
+|-------|-------|
+| 14:01 | User login succeeds in New York with token `TK-123` |
+| 14:03 | Same token appears from Singapore, triggering impossible-travel condition |
+| 14:03 | Session analyzer flags likely token replay |
+
+## Analyst Guidance
+
+Treat same-token multi-region access inside a short window as high confidence compromise. Execute immediate session invalidation and identity hardening before deeper root-cause investigation.

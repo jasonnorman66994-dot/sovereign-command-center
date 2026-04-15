@@ -1,5 +1,9 @@
 # Scenario 6 - Vendor Email Compromise (Invoice Fraud Supply-Chain Attack)
 
+## Overview
+
+This scenario models a trusted-vendor compromise where legitimate sender authentication passes, but content and behavior indicate invoice fraud. Detection depends on business-context anomalies, vendor telemetry, and user interaction sequencing.
+
 ## Input Evidence Bundle
 
 ### 1. Vendor Email Logs
@@ -31,7 +35,7 @@ Apr 14 10:13:02 user_action: ap_team@example.com opened invoice_4471.pdf
 Apr 14 10:13:05 user_action: ap_team@example.com replied "Received. Processing now."
 ```
 
-## Detection Logic (for SOC Automation)
+## Key Detection Signals
 
 - Detect mailbox forwarding rules from the vendor
 - Detect vendor login from an unusual region
@@ -74,3 +78,15 @@ SELECT * FROM user_action WHERE user = 'ap_team@example.com' AND action LIKE '%o
 2. Check `user_action` for AP engagement.
 3. Use dashboard panels to correlate signals.
 4. Practice SOC response steps as listed above.
+
+## Timeline
+
+| Time  | Event |
+|-------|-------|
+| 09:55 | Threat intel indicates vendor mailbox forwarding and unusual-region login |
+| 10:12 | Updated invoice email arrives with changed banking details and urgency cues |
+| 10:13 | AP user opens and replies, increasing fraud execution risk |
+
+## Analyst Guidance
+
+Do not rely on SPF, DKIM, and DMARC alone for this pattern. Prioritize payment hold controls, out-of-band vendor verification, and rapid AP communication to stop fraudulent transfer completion.

@@ -1,5 +1,9 @@
 # Scenario 7 - Insider Misuse: Privilege Creep and Data Exfiltration
 
+## Overview
+
+This scenario represents insider-driven privilege abuse followed by unauthorized access to sensitive business data and external upload. Correlation across IAM, file activity, proxy telemetry, and UEBA is required for high-confidence response.
+
 ## Input Evidence Bundle
 
 ### 1. Privilege Escalation Events
@@ -35,7 +39,7 @@ Apr 14 13:27:56 proxy[8821]: CATEGORY=Personal Storage flagged=High-Risk
 Apr 14 13:28:10 ueba[9911]: anomaly_score=9.7 user=analyst_john@example.com reason="Accessing finance data; privilege escalation; large upload"
 ```
 
-## Detection Logic (for SOC Automation)
+## Key Detection Signals
 
 - Detect unauthorized role changes
 - Detect access to sensitive finance files
@@ -76,3 +80,17 @@ SELECT * FROM ueba WHERE anomaly_score > 9.0;
 1. Review `idp`, `fileserver`, `proxy`, and `ueba` logs for privilege creep and exfiltration.
 2. Use dashboard panels to visualize.
 3. Practice SOC response steps as above.
+
+## Timeline
+
+| Time  | Event |
+|-------|-------|
+| 13:22 | Unauthorized role escalation elevates user privileges |
+| 13:25 | Sensitive finance and contract documents are accessed |
+| 13:26 | Bulk ZIP archive is created for staging |
+| 13:27 | Large upload to personal storage is detected and flagged |
+| 13:28 | UEBA score spikes, confirming multi-signal insider anomaly |
+
+## Analyst Guidance
+
+Contain quickly but preserve evidence quality. Capture role-change provenance, file-access lineage, and transfer metadata to support both incident response and potential HR/legal escalation.

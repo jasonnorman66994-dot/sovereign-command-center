@@ -1,5 +1,9 @@
 # Scenario 10 - Cloud Workload Compromise (Service Principal Hijack)
 
+## Overview
+
+An attacker hijacks a cloud service principal and expands access through IAM abuse, compute manipulation, large data extraction, and credential persistence. Detection relies on identity, control-plane, workload, and storage telemetry correlation.
+
 ## Input Evidence Bundle
 
 ### 1. Suspicious Credential Use
@@ -43,7 +47,7 @@ Apr 14 17:26:10 iam[7712]: NEW SECRET CREATED spn="ci-deploy-agent" secret_id="s
 Apr 14 17:26:30 ueba[9911]: anomaly_score=9.9 entity="ci-deploy-agent" reason="privilege escalation + VM manipulation + secret creation + large data exfiltration"
 ```
 
-## Detection Logic (for SOC Automation)
+## Key Detection Signals
 
 - Detect foreign IP service principal logins
 - Detect use of old secrets
@@ -90,3 +94,17 @@ SELECT * FROM ueba WHERE anomaly_score > 9.0;
 1. Review `cloudapi`, `iam`, `compute`, `storage`, and `ueba` logs for service-principal hijack and lateral movement.
 2. Use dashboard panels to visualize.
 3. Practice SOC response steps as above.
+
+## Timeline
+
+| Time  | Event |
+|-------|-------|
+| 17:22 | Service principal login occurs from suspicious external IP using stale secret |
+| 17:23 | Principal attempts self-assigned privilege escalation |
+| 17:24 | Compute resources are enumerated and script extension deployed |
+| 17:25 | Large blob downloads begin across sensitive containers |
+| 17:26 | New long-lived secret is created and UEBA anomaly peaks |
+
+## Analyst Guidance
+
+Treat this as identity-to-workload pivot compromise. Prioritize principal disablement, secret/token revocation, VM extension rollback, and blast-radius scoping across all resources recently accessed by the principal.

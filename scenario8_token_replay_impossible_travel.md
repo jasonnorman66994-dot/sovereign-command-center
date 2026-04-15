@@ -1,5 +1,9 @@
 # Scenario 8 - Impossible Travel and Token Replay Attack
 
+## Overview
+
+This scenario captures session hijack behavior where a legitimate token is replayed from a distant region shortly after initial login. Subsequent sensitive API actions and UEBA spikes confirm a high-risk identity compromise path.
+
 ## Input Evidence Bundle
 
 ### 1. Legitimate User Session
@@ -29,7 +33,7 @@ Apr 14 08:04:11 graphapi[8821]: API CALL user=dev_lead@example.com token_id="TKN
 Apr 14 08:04:30 ueba[9911]: anomaly_score=9.9 user=dev_lead@example.com reason="impossible travel + token replay + sensitive repo access"
 ```
 
-## Detection Logic (for SOC Automation)
+## Key Detection Signals
 
 - Detect the same token used from distant locations within minutes
 - Detect token replay warnings
@@ -68,3 +72,16 @@ SELECT * FROM ueba WHERE anomaly_score > 9.0;
 1. Review `authz`, `graphapi`, and `ueba` logs for impossible travel and token replay.
 2. Use dashboard panels to visualize.
 3. Practice SOC response steps as above.
+
+## Timeline
+
+| Time  | Event |
+|-------|-------|
+| 08:01 | User session starts in New York with token `TKN-8841` |
+| 08:03 | Same token is replayed from Sydney and replay warning triggers |
+| 08:04 | Sensitive API calls execute (repo download and secrets listing) |
+| 08:04 | UEBA anomaly score reaches critical threshold |
+
+## Analyst Guidance
+
+Prioritize immediate token invalidation and session purge. Then scope downstream impact by reviewing secret exposure, repository access, and all API actions performed under the replayed token.

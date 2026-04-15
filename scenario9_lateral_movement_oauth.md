@@ -1,5 +1,9 @@
 # Scenario 9 - Lateral Movement via Compromised OAuth App
 
+## Overview
+
+An attacker abuses a compromised OAuth application to escalate permissions, impersonate multiple users, and extract sensitive data across services. Persistence is achieved through long-lived refresh token issuance.
+
 ## Input Evidence Bundle
 
 ### 1. OAuth App Modification
@@ -36,7 +40,7 @@ Apr 14 16:16:10 idp[4411]: REFRESH TOKEN ISSUED app="AnalyticsSync" lifetime="90
 Apr 14 16:16:30 ueba[9911]: anomaly_score=9.8 entity="AnalyticsSync" reason="permission escalation + multi-user impersonation + large data exports"
 ```
 
-## Detection Logic (for SOC Automation)
+## Key Detection Signals
 
 - Detect OAuth app permission escalation
 - Detect non-admin permission change
@@ -83,3 +87,16 @@ SELECT * FROM ueba WHERE anomaly_score > 9.0;
 1. Review `idp`, `graphapi`, and `ueba` logs for app escalation and lateral movement.
 2. Use dashboard panels to visualize.
 3. Practice SOC response steps as above.
+
+## Timeline
+
+| Time  | Event |
+|-------|-------|
+| 16:12 | OAuth app gains elevated directory-write permission via suspicious change |
+| 16:14 | Access tokens are used across multiple user contexts from one attacker IP |
+| 16:15 | High-volume repository and mailbox exports begin |
+| 16:16 | Long-lived refresh token is issued and UEBA score spikes |
+
+## Analyst Guidance
+
+Treat this as app-identity compromise with cross-tenant blast-radius potential. Focus on app disablement, token revocation, and retrospective audit of all operations executed under app grants.

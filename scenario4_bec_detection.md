@@ -1,6 +1,10 @@
 # Scenario 4 - Business Email Compromise (BEC) Attempt
 
-## Input Log + Behavioral Evidence Bundle
+## Overview
+
+An external actor uses a compromised executive mailbox to launch a financial fraud attempt. The attack combines abnormal login context, message tampering, and mailbox-rule persistence to evade normal user notice and drive urgent wire-transfer behavior.
+
+## Input Evidence Bundle
 
 ### 1. Login + Session Telemetry
 
@@ -25,7 +29,7 @@ Apr 14 06:06:10 mailboxd[3333]: RULE CREATED user=ceo@example.com action=move_to
 Apr 14 06:06:11 mailboxd[3333]: RULE CREATED user=ceo@example.com action=delete pattern="security"
 ```
 
-## Detection Logic (for SOC Automation)
+## Key Detection Signals
 
 - Detect successful login from unusual IP
 - Detect new device fingerprint for user
@@ -80,3 +84,15 @@ SELECT * FROM mailbox_rules WHERE action IN ('move_to_folder', 'delete') AND (pa
 3. Inspect `mailbox_rules` for suspicious changes.
 4. Use dashboard panels to visualize and correlate signals.
 5. Practice SOC response steps as listed above.
+
+## Timeline
+
+| Time  | Event |
+|-------|-------|
+| 06:02 | Suspicious login succeeds from unusual host and new device fingerprint |
+| 06:05 | Fraud-style email sent with modified reply-to and urgency language |
+| 06:06 | Mailbox rules created to hide invoice and security-related mail |
+
+## Analyst Guidance
+
+Treat this scenario as active account takeover with fraud intent. Prioritize session revocation, message-trace review, mailbox-rule rollback, and finance-team validation of all recent payment requests.
