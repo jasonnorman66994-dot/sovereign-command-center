@@ -24,6 +24,7 @@ This repository enforces validation in local Git hooks and CI:
 - Pre-commit hook runs `smoke_check.ps1 -Mode Quick`
 - Pre-push hook runs `smoke_check.ps1 -Mode Full`
 - GitHub Actions workflow runs Quick checks on pull requests and Full checks on pushes/tags
+- Contributor workflow and release guidance: [CONTRIBUTING.md](CONTRIBUTING.md)
 
 Run locally:
 
