@@ -31,6 +31,7 @@
         "!siem_rule_templates_oauth_abuse.md",
         "!sim_insider_exfiltration_summary.md",
         "!TODO.md",
-        "!unified_email_threat_response_playbook.md"
+        "!unified_email_threat_response_playbook.md",
+        "!docs/AZURE_NETWORK_TROUBLESHOOTING_PLAYBOOK.md"
     ]
 }
