@@ -23,13 +23,13 @@
 
 ## Scenario 1: VM Cannot Reach Internet
 
-### Symptoms
+### Scenario 1 Symptoms
 
 - VM cannot download packages (apt-get, yum, pip fails)
 - Outbound HTTP/HTTPS requests timeout
 - DNS resolution works but external connectivity fails
 
-### Diagnostic Steps
+### Scenario 1 Diagnostic Steps
 
 #### Step 1: Verify VM & NIC Status
 
@@ -106,7 +106,7 @@ if ($subnet.NatGateway) {
 }
 ```
 
-### Remediation
+### Scenario 1 Remediation
 
 | Issue | Fix |
 |---|---|
@@ -119,13 +119,13 @@ if ($subnet.NatGateway) {
 
 ## Scenario 2: VMs in Different Subnets Cannot Communicate
 
-### Symptoms
+### Scenario 2 Symptoms
 
 - Ping between subnets fails
 - Application connection timeout between tiers (app → database)
 - DNS resolution works, but TCP connections fail
 
-### Diagnostic Steps
+### Scenario 2 Diagnostic Steps
 
 #### Step 1: Verify Subnet Configuration
 
@@ -189,7 +189,7 @@ if ($routeData) {
 }
 ```
 
-### Remediation
+### Scenario 2 Remediation
 
 | Issue | Fix |
 |---|---|
@@ -201,13 +201,13 @@ if ($routeData) {
 
 ## Scenario 3: Cannot Reach Peered VNet
 
-### Symptoms
+### Scenario 3 Symptoms
 
 - Cross-VNet ping fails
 - Applications in peered VNets timeout when connecting
 - VNet peering shows "Connected" but traffic doesn't flow
 
-### Diagnostic Steps
+### Scenario 3 Diagnostic Steps
 
 #### Step 1: Check Peering Status
 
@@ -262,7 +262,7 @@ $destNSG.SecurityRules | Where-Object { $_.Direction -eq "Inbound" } |
   Select-Object Name, SourceAddressPrefix, Access | Format-Table
 ```
 
-### Remediation
+### Scenario 3 Remediation
 
 | Issue | Fix |
 |---|---|
@@ -275,13 +275,13 @@ $destNSG.SecurityRules | Where-Object { $_.Direction -eq "Inbound" } |
 
 ## Scenario 4: Hybrid Connectivity (VPN/ExpressRoute) Down
 
-### Symptoms
+### Scenario 4 Symptoms
 
 - Cannot reach on-premises resources from Azure
 - Site-to-site VPN connection shows "Disconnected"
 - BGP neighbor status is "Down"
 
-### Diagnostic Steps
+### Scenario 4 Diagnostic Steps
 
 #### Step 1: Check VPN Gateway Status
 
@@ -336,7 +336,7 @@ Write-Host "Encryption: Check Azure Portal → Connections → Configuration"
 # - Firewall blocking UDP 500/4500 (IPsec)
 ```
 
-### Remediation
+### Scenario 4 Remediation
 
 | Issue | Fix |
 |---|---|
