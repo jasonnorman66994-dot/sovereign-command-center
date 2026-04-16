@@ -167,61 +167,47 @@ https://client-pi-tawny.vercel.app
 
 ### Morning (08:00-11:00): Identity Drill and Feedback
 
-- Scenario: MFA bypass (VIP user)
-- Action: Inject synthetic event, analyst reviews, analyst approves remediation
-- Adaptive loop: Analyst rejection/approval logged, OPA policy thresholds adjusted
-- Command center setup:
-  - iPad Pro: Notion knowledge base and Slack feed
-  - Laptop: Secure portal for drill execution
+- Scenario: MFA Bypass (VIP User).
+- Action: Inject synthetic event -> analyst reviews -> approves remediation.
+- Adaptive loop: Analyst rejection/approval logged -> OPA policy thresholds adjusted.
+- Command center setup: iPad Pro shows Notion (knowledge base) and Slack feed; laptop runs secure portal for drill execution.
 
 ### Midday (11:00-14:00): Network Drill and Remediation Outcome
 
-- Scenario: Lateral movement across pods
-- Action: Enforce K8s NetworkPolicy and Cisco ISE ANC
-- Adaptive loop: Executor success/failure logged, Python playbooks refined
-- Command center workflow:
-  - Laptop: Secure remediation portal
-  - iPad: Airtable dashboard with live metrics
+- Scenario: Lateral Movement across pods.
+- Action: Executors enforce K8s NetworkPolicy and Cisco ISE ANC.
+- Adaptive loop: Executor success/failure logged -> Python playbooks refined.
+- Command center workflow: Laptop dedicated to secure remediation portal; iPad displays Airtable dashboard with live metrics.
 
 ### Afternoon (14:00-17:00): Endpoint Drill and Metrics Loop
 
-- Scenario: Privilege escalation via endpoint telemetry
-- Action: Revoke privileges, restrict lateral movement
-- Adaptive loop: KPI analysis (MTTD, MTTR), thresholds tuned
-- Command center workflow:
-  - iPad: Sisense charts
-  - Laptop: CrowdStrike console
+- Scenario: Privilege Escalation via endpoint telemetry.
+- Action: Executors revoke privileges and restrict lateral movement.
+- Adaptive loop: Dashboard KPIs (MTTD, MTTR) analyzed -> thresholds tuned.
+- Command center workflow: iPad shows Sisense charts; laptop runs CrowdStrike console.
 
 ### Evening (17:00-20:00): Combined Drill and Threat Intel Loop
 
-- Scenario: Ghost Walk Lockdown (identity and network)
-- Action: Coordinated lockdown with Verification Middleware approval
-- Adaptive loop: External threat intel (MITRE ATT&CK) mapped, playbooks expanded
-- Command center workflow:
-  - iPad: Audit timeline
-  - Laptop: GitOps pipeline for policy commits
+- Scenario: Ghost Walk Lockdown (Identity and Network).
+- Action: Coordinated lockdown executed with Verification Middleware approval.
+- Adaptive loop: External threat intel (MITRE ATT&CK) mapped -> playbooks expanded.
+- Command center workflow: iPad shows audit timeline; laptop runs GitOps pipeline for policy commits.
 
 ### End of Day (20:00-21:00): Review and Governance
 
-- Analyst debrief:
-  - Incident outcomes
-  - False positives
-  - Remediation success
-- Leadership dashboard metrics:
+- Analyst debrief: Document incident outcomes, false positives, remediation success.
+- Leadership dashboard:
   - MTTD trend
   - MTTR trend
   - False positive rate
   - Remediation success percentage
-- Governance flow:
-  - SOC leadership approves adaptive changes
-  - GitOps deploys updates
-  - Audit trail logged
+- Governance: SOC leadership approves adaptive changes -> GitOps deploys -> audit trail logged.
 
 ## 13. Strategic Outcome
 
-In one day, the SOC team:
+In one day, my SOC team:
 
-- Practices identity, network, endpoint, and combined scenarios.
-- Feeds analyst feedback, remediation outcomes, KPI trends, and threat intel into adaptive loops.
-- Tunes policies and playbooks in near real time.
+- Practices Identity, Network, Endpoint, and Combined scenarios.
+- Feeds analyst feedback, remediation outcomes, metrics, and threat intel into adaptive loops.
+- Tunes policies and playbooks in real time.
 - Operates from a Sovereign Command Center with high-density visibility and execution.
