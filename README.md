@@ -115,6 +115,8 @@ Quick reference guides for Azure networking, infrastructure design, and operatio
 | 📄 Resource | Description |
 | --- | --- |
 | [🌐 Azure Networking Resources Cheat Sheet](docs/AZURE_NETWORKING_RESOURCES_CHEAT_SHEET.md) | Quick reference to Azure VNets, NSGs, firewalls, load balancers, gateways, and hub-spoke topology patterns. Perfect for architecture planning, audits, and troubleshooting. |
+| [🎯 Azure Networking Decision Matrix](docs/AZURE_NETWORKING_DECISION_MATRIX.md) | Scenario-based decision matrix to help select the right Azure networking resource. Includes load balancing, security, hybrid connectivity, DNS, and specialized networking guidance. |
+| [🏗️ Azure Architecture Comparison: Cloud-Native vs Hybrid vs Multi-Region](docs/AZURE_ARCHITECTURE_COMPARISON.md) | Detailed comparison of three common Azure architectures with strengths, limitations, best-fit scenarios, and a decision tree. Includes implementation roadmap and cost estimation. |
 
 ---
 

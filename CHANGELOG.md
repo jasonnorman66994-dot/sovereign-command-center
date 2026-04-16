@@ -17,7 +17,9 @@
 ### Azure Infrastructure Additions
 
 - Azure Networking Resources Cheat Sheet: Quick reference guide for VNets, NSGs, firewalls, load balancers, gateways, and hub-spoke deployment patterns.
-- Added Azure Infrastructure & Architecture References section to README for improved discoverability.
+- Azure Networking Decision Matrix: Scenario-based decision matrix for selecting the right Azure networking resource across load balancing, security, hybrid connectivity, DNS, and specialized networking.
+- Azure Architecture Comparison (Cloud-Native vs Hybrid vs Multi-Region): Detailed analysis with strengths, limitations, best-fit scenarios, decision tree, and implementation roadmap for three common Azure architectures.
+- Added Azure Infrastructure & Architecture References section to README for improved discoverability of all three reference documents.
 
 ## v1.0.0 - 2026-04-15
 
