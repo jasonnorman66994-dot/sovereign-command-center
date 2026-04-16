@@ -98,6 +98,14 @@ Pre-generated consolidated report combining ATT&CK coverage and timeline narrati
 - Covers: Scenario 10–16 timeline progression and heat analysis
 - Audience: Executive and detection engineering leadership
 
+### Release Notes and Templates
+
+Use the scenario-analysis release-note artifacts to summarize milestone progress for stakeholders:
+
+- Latest milestone note: [docs/SCENARIO_ANALYSIS_RELEASE_NOTES_2026-04-15.md](docs/SCENARIO_ANALYSIS_RELEASE_NOTES_2026-04-15.md)
+- Reusable template: [docs/SCENARIO_ANALYSIS_RELEASE_NOTES_TEMPLATE.md](docs/SCENARIO_ANALYSIS_RELEASE_NOTES_TEMPLATE.md)
+- Operator guide: [docs/SCENARIO_ANALYSIS_TOOLS_GUIDE.md](docs/SCENARIO_ANALYSIS_TOOLS_GUIDE.md)
+
 ---
 
 ## 📧 Email Security Playbooks & Automation

@@ -93,6 +93,15 @@ The consolidated leadership report (`leadership_attack_coverage_timeline_report.
 - ATT&CK coverage profile changes significantly
 - Timeline narratives need revision for clarity
 
+### Scenario Release Notes
+
+Create or update a milestone summary when scenario-analysis deliverables change materially:
+
+- Use `docs/SCENARIO_ANALYSIS_RELEASE_NOTES_TEMPLATE.md` as the starting point.
+- Publish dated notes under `docs/SCENARIO_ANALYSIS_RELEASE_NOTES_YYYY-MM-DD.md`.
+- Link major scenario-analysis milestones, validation outcomes, and commit traceability.
+- Update the latest note when documentation, CI workflows, or scenario standardization changes affect stakeholder reporting.
+
 ## Git Hooks
 
 Repository-local hooks are enabled via `core.hooksPath=.githooks`.
