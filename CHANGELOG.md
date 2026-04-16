@@ -14,6 +14,11 @@
 - Standardized 10 scenario reports to the common analysis template with Overview, Input Evidence Bundle, Key Detection Signals, Expected Classification, SOC Actions, Timeline, and Analyst Guidance sections.
 - Linked release-note workflow artifacts from README and CONTRIBUTING for easier discoverability.
 
+### Azure Infrastructure Additions
+
+- Azure Networking Resources Cheat Sheet: Quick reference guide for VNets, NSGs, firewalls, load balancers, gateways, and hub-spoke deployment patterns.
+- Added Azure Infrastructure & Architecture References section to README for improved discoverability.
+
 ## v1.0.0 - 2026-04-15
 
 ### Added
