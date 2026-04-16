@@ -21,3 +21,6 @@ sovereign-hud/build/
 
 # Misc
 *.log
+
+# Generated IaC build outputs
+infra/bicep/**/main.json
