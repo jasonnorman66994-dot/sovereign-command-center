@@ -1,0 +1,198 @@
+/* Email Template Global Styles */
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f4f6f9;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Main container table */
+table[role="presentation"] {
+    width: 100%;
+    cellspacing: 0;
+    cellpadding: 0;
+    border: 0;
+}
+
+/* Center column */
+td.email-center {
+    text-align: center;
+    padding: 32px 16px;
+}
+
+/* Card wrapper */
+table.email-card {
+    max-width: 600px;
+    width: 100%;
+    background-color: #ffffff;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Header bar - Blue theme */
+td.email-header-blue {
+    background-color: #1a6bbf;
+    padding: 14px 28px;
+}
+
+td.email-header-blue p {
+    margin: 0;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* Header bar - Green theme */
+td.email-header-green {
+    background-color: #1e8c45;
+    padding: 14px 28px;
+}
+
+td.email-header-green p {
+    margin: 0;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* Subject line - Blue theme */
+td.email-subject-blue {
+    background-color: #eaf2fc;
+    padding: 12px 28px;
+    border-bottom: 1px solid #cfe0f5;
+}
+
+td.email-subject-blue p {
+    margin: 0;
+    font-size: 14px;
+    color: #1a6bbf;
+    font-weight: 600;
+}
+
+/* Subject line - Green theme */
+td.email-subject-green {
+    background-color: #eaf7ef;
+    padding: 12px 28px;
+    border-bottom: 1px solid #b6e3c6;
+}
+
+td.email-subject-green p {
+    margin: 0;
+    font-size: 14px;
+    color: #1e8c45;
+    font-weight: 600;
+}
+
+/* Body content */
+td.email-body {
+    padding: 28px 28px 8px;
+}
+
+td.email-body p {
+    font-size: 14px;
+    color: #333333;
+    line-height: 1.6;
+}
+
+td.email-body p.greeting {
+    margin: 0 0 16px;
+}
+
+td.email-body p.intro {
+    margin: 0 0 20px;
+}
+
+td.email-body p.section-label {
+    margin: 0 0 8px;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.6;
+}
+
+td.email-body p.section-label-blue {
+    color: #1a6bbf;
+}
+
+td.email-body p.section-label-green {
+    color: #1e8c45;
+}
+
+td.email-body ul {
+    margin: 0 0 20px;
+    padding-left: 20px;
+}
+
+td.email-body li {
+    font-size: 14px;
+    color: #333333;
+    line-height: 1.8;
+}
+
+a.email-link-blue {
+    color: #1a6bbf;
+    text-decoration: none;
+}
+
+a.email-link-green {
+    color: #1e8c45;
+    text-decoration: none;
+}
+
+td.email-body p.closing {
+    margin: 0 0 8px;
+}
+
+td.email-body p.signoff {
+    margin: 0 0 28px;
+}
+
+/* Footer bar - Blue theme */
+td.email-footer-blue {
+    background-color: #1a6bbf;
+    padding: 14px 28px;
+    text-align: center;
+}
+
+td.email-footer-blue p {
+    margin: 0;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+/* Footer bar - Green theme */
+td.email-footer-green {
+    background-color: #1e8c45;
+    padding: 14px 28px;
+    text-align: center;
+}
+
+td.email-footer-green p {
+    margin: 0;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    table.email-card {
+        border-radius: 0;
+    }
+
+    td.email-center {
+        padding: 16px;
+    }
+
+    td.email-body {
+        padding: 20px 20px 8px;
+    }
+}
