@@ -70,7 +70,8 @@ resource secondaryHubVnet 'Microsoft.Network/virtualNetworks@2023-11-01' = {
 }
 
 resource primaryToSecondaryPeering 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023-11-01' = {
-  name: '${primaryHubVnet.name}/primary-to-secondary'
+  name: 'primary-to-secondary'
+  parent: primaryHubVnet
   properties: {
     allowVirtualNetworkAccess: true
     allowForwardedTraffic: true
@@ -81,7 +82,8 @@ resource primaryToSecondaryPeering 'Microsoft.Network/virtualNetworks/virtualNet
 }
 
 resource secondaryToPrimaryPeering 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023-11-01' = {
-  name: '${secondaryHubVnet.name}/secondary-to-primary'
+  name: 'secondary-to-primary'
+  parent: secondaryHubVnet
   properties: {
     allowVirtualNetworkAccess: true
     allowForwardedTraffic: true
@@ -114,4 +116,6 @@ resource trafficManagerProfile 'Microsoft.Network/trafficManagerProfiles@2022-04
 
 output primaryHubVnetId string = primaryHubVnet.id
 output secondaryHubVnetId string = secondaryHubVnet.id
-output trafficManagerFqdn string = enableTrafficManager ? trafficManagerProfile.properties.dnsConfig.fqdn : 'disabled'
+output trafficManagerFqdn string = enableTrafficManager
+  ? trafficManagerProfile!.properties.dnsConfig.relativeName
+  : 'disabled'

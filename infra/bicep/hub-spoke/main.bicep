@@ -59,55 +59,65 @@ resource hubVnet 'Microsoft.Network/virtualNetworks@2023-11-01' = {
   }
 }
 
-resource spokeVnets 'Microsoft.Network/virtualNetworks@2023-11-01' = [for (prefix, i) in spokeAddressPrefixes: {
-  name: '${namePrefix}-spoke-${i + 1}-vnet'
-  location: location
-  properties: {
-    addressSpace: {
-      addressPrefixes: [prefix]
-    }
-    subnets: [
-      {
-        name: 'ApplicationSubnet'
-        properties: {
-          addressPrefix: '10.${i + 1}.1.0/24'
-          routeTable: enableFirewall ? {
-            id: spokeRouteTable.id
-          } : null
-        }
+resource spokeVnets 'Microsoft.Network/virtualNetworks@2023-11-01' = [
+  for (prefix, i) in spokeAddressPrefixes: {
+    name: '${namePrefix}-spoke-${i + 1}-vnet'
+    location: location
+    properties: {
+      addressSpace: {
+        addressPrefixes: [prefix]
       }
-      {
-        name: 'DataSubnet'
-        properties: {
-          addressPrefix: '10.${i + 1}.2.0/24'
+      subnets: [
+        {
+          name: 'ApplicationSubnet'
+          properties: {
+            addressPrefix: '10.${i + 1}.1.0/24'
+            routeTable: enableFirewall
+              ? {
+                  id: spokeRouteTable.id
+                }
+              : null
+          }
         }
+        {
+          name: 'DataSubnet'
+          properties: {
+            addressPrefix: '10.${i + 1}.2.0/24'
+          }
+        }
+      ]
+    }
+  }
+]
+
+resource hubToSpokePeerings 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023-11-01' = [
+  for (prefix, i) in spokeAddressPrefixes: {
+    name: 'hub-to-spoke-${i + 1}'
+    parent: hubVnet
+    properties: {
+      allowVirtualNetworkAccess: true
+      allowForwardedTraffic: true
+      remoteVirtualNetwork: {
+        id: spokeVnets[i].id
       }
-    ]
-  }
-}]
-
-resource hubToSpokePeerings 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023-11-01' = [for (prefix, i) in spokeAddressPrefixes: {
-  name: '${hubVnet.name}/hub-to-spoke-${i + 1}'
-  properties: {
-    allowVirtualNetworkAccess: true
-    allowForwardedTraffic: true
-    remoteVirtualNetwork: {
-      id: spokeVnets[i].id
     }
   }
-}]
+]
 
-resource spokeToHubPeerings 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023-11-01' = [for (prefix, i) in spokeAddressPrefixes: {
-  name: '${spokeVnets[i].name}/spoke-${i + 1}-to-hub'
-  properties: {
-    allowVirtualNetworkAccess: true
-    allowForwardedTraffic: true
-    useRemoteGateways: true
-    remoteVirtualNetwork: {
-      id: hubVnet.id
+resource spokeToHubPeerings 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023-11-01' = [
+  for (prefix, i) in spokeAddressPrefixes: {
+    name: 'spoke-${i + 1}-to-hub'
+    parent: spokeVnets[i]
+    properties: {
+      allowVirtualNetworkAccess: true
+      allowForwardedTraffic: true
+      useRemoteGateways: true
+      remoteVirtualNetwork: {
+        id: hubVnet.id
+      }
     }
   }
-}]
+]
 
 resource firewallPip 'Microsoft.Network/publicIPAddresses@2023-11-01' = if (enableFirewall) {
   name: firewallPipName
@@ -166,7 +176,7 @@ resource spokeRouteTable 'Microsoft.Network/routeTables@2023-11-01' = if (enable
         properties: {
           addressPrefix: '0.0.0.0/0'
           nextHopType: 'VirtualAppliance'
-          nextHopIpAddress: reference(firewall.id, '2023-11-01').ipConfigurations[0].properties.privateIPAddress
+          nextHopIpAddress: firewall!.properties.ipConfigurations[0].properties.privateIPAddress
         }
       }
     ]
@@ -196,5 +206,7 @@ resource hubNsg 'Microsoft.Network/networkSecurityGroups@2023-11-01' = {
 }
 
 output hubVnetResourceId string = hubVnet.id
-output spokeVnetResourceIds array = [for v in spokeVnets: v.id]
-output firewallPrivateIp string = enableFirewall ? reference(firewall.id, '2023-11-01').ipConfigurations[0].properties.privateIPAddress : 'not-deployed'
+output spokeVnetResourceIds array = [for (prefix, i) in spokeAddressPrefixes: spokeVnets[i].id]
+output firewallPrivateIp string = enableFirewall
+  ? firewall!.properties.ipConfigurations[0].properties.privateIPAddress
+  : 'not-deployed'
