@@ -1,0 +1,10 @@
+name_prefix                   = "scc"
+primary_resource_group_name   = "rg-scc-primary"
+secondary_resource_group_name = "rg-scc-secondary"
+primary_location              = "eastus"
+secondary_location            = "westus2"
+primary_hub_cidr              = "10.10.0.0/16"
+secondary_hub_cidr            = "10.20.0.0/16"
+enable_traffic_manager        = true
+primary_endpoint_dns          = "app-primary.contoso.com"
+secondary_endpoint_dns        = "app-secondary.contoso.com"

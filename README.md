@@ -110,13 +110,38 @@ Use the scenario-analysis release-note artifacts to summarize milestone progress
 
 ## ☁️ Azure Infrastructure & Architecture References
 
-Quick reference guides for Azure networking, infrastructure design, and operational playbooks:
+Quick reference guides for Azure networking, infrastructure design, IaC templates, and operational runbooks:
 
 | 📄 Resource | Description |
 | --- | --- |
-| [🌐 Azure Networking Resources Cheat Sheet](docs/AZURE_NETWORKING_RESOURCES_CHEAT_SHEET.md) | Quick reference to Azure VNets, NSGs, firewalls, load balancers, gateways, and hub-spoke topology patterns. Perfect for architecture planning, audits, and troubleshooting. |
-| [🎯 Azure Networking Decision Matrix](docs/AZURE_NETWORKING_DECISION_MATRIX.md) | Scenario-based decision matrix to help select the right Azure networking resource. Includes load balancing, security, hybrid connectivity, DNS, and specialized networking guidance. |
-| [🏗️ Azure Architecture Comparison: Cloud-Native vs Hybrid vs Multi-Region](docs/AZURE_ARCHITECTURE_COMPARISON.md) | Detailed comparison of three common Azure architectures with strengths, limitations, best-fit scenarios, and a decision tree. Includes implementation roadmap and cost estimation. |
+| [🌐 Azure Networking Resources Cheat Sheet](docs/AZURE_NETWORKING_RESOURCES_CHEAT_SHEET.md) | Quick reference to Azure VNets, NSGs, firewalls, load balancers, gateways, and hub-spoke topology patterns. |
+| [🎯 Azure Networking Decision Matrix](docs/AZURE_NETWORKING_DECISION_MATRIX.md) | Scenario-based matrix for selecting Azure networking services by use case. |
+| [🏗️ Azure Architecture Comparison: Cloud-Native vs Hybrid vs Multi-Region](docs/AZURE_ARCHITECTURE_COMPARISON.md) | Strategic architecture comparison with tradeoffs, cost, and resilience guidance. |
+| [🧭 Azure Hub-Spoke Architecture Plan](docs/AZURE_HUB_SPOKE_ARCHITECTURE_PLAN.md) | Enterprise hub-spoke design blueprint covering segmentation, security, and scaling. |
+| [🌍 Azure Multi-Region Architecture Plan](docs/AZURE_MULTI_REGION_ARCHITECTURE_PLAN.md) | Multi-region design for failover, global routing, and disaster recovery. |
+| [🛠️ Azure Network Troubleshooting & Diagnostics Playbook](docs/AZURE_NETWORK_TROUBLESHOOTING_PLAYBOOK.md) | Step-by-step diagnostics for NSG, routing, peering, firewall, and hybrid connectivity issues. |
+| [🔥 Azure Firewall Rule Management Runbook](docs/AZURE_FIREWALL_RULE_MANAGEMENT_RUNBOOK.md) | Operational standard for firewall change control, validation, rollback, and auditing. |
+| [🔁 Azure Hybrid Connectivity Failover Runbook](docs/AZURE_HYBRID_CONNECTIVITY_FAILOVER_RUNBOOK.md) | Procedures for ExpressRoute/VPN failover and restoration with verification steps. |
+| [🚨 Azure Multi-Region Failover and DR Playbook](docs/AZURE_MULTI_REGION_FAILOVER_DR_PLAYBOOK.md) | Incident-driven regional failover and controlled failback playbook. |
+| [🔐 Azure RBAC and Identity Management Runbook](docs/AZURE_RBAC_IDENTITY_MANAGEMENT_RUNBOOK.md) | Access governance, least-privilege role assignment, reviews, and break-glass controls. |
+
+### Infrastructure as Code Templates
+
+| 📄 Template Set | Path | Notes |
+| --- | --- | --- |
+| Bicep Hub-Spoke | [infra/bicep/hub-spoke/main.bicep](infra/bicep/hub-spoke/main.bicep) | Includes hub/spoke VNets, peering, optional firewall + default routes |
+| Bicep Multi-Region | [infra/bicep/multi-region/main.bicep](infra/bicep/multi-region/main.bicep) | Primary/secondary hubs with global routing profile |
+| Terraform Hub-Spoke | [infra/terraform/hub-spoke/main.tf](infra/terraform/hub-spoke/main.tf) | Enterprise baseline with optional firewall egress control |
+| Terraform Multi-Region | [infra/terraform/multi-region/main.tf](infra/terraform/multi-region/main.tf) | Two-region topology with Traffic Manager failover |
+
+---
+
+## ☁️ AWS Infrastructure References
+
+| 📄 Resource | Description |
+| --- | --- |
+| [🧱 AWS Networking, Lambda, and EC2 Patterns](docs/AWS_NETWORKING_LAMBDA_EC2_PATTERNS.md) | Practical architecture patterns for AWS VPC, Lambda, and EC2 workloads with Azure mapping. |
+| [🔄 AWS to Azure Migration Playbook](docs/AWS_TO_AZURE_MIGRATION_PLAYBOOK.md) | Wave-based migration playbook for networking, Lambda, and EC2 modernization to Azure. |
 
 ---
 

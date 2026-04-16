@@ -1,0 +1,24 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "primaryLocation": {
+            "value": "eastus"
+        },
+        "secondaryLocation": {
+            "value": "westus2"
+        },
+        "namePrefix": {
+            "value": "scc"
+        },
+        "primaryHubCidr": {
+            "value": "10.10.0.0/16"
+        },
+        "secondaryHubCidr": {
+            "value": "10.20.0.0/16"
+        },
+        "enableTrafficManager": {
+            "value": true
+        }
+    }
+}

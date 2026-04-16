@@ -19,7 +19,12 @@
 - Azure Networking Resources Cheat Sheet: Quick reference guide for VNets, NSGs, firewalls, load balancers, gateways, and hub-spoke deployment patterns.
 - Azure Networking Decision Matrix: Scenario-based decision matrix for selecting the right Azure networking resource across load balancing, security, hybrid connectivity, DNS, and specialized networking.
 - Azure Architecture Comparison (Cloud-Native vs Hybrid vs Multi-Region): Detailed analysis with strengths, limitations, best-fit scenarios, decision tree, and implementation roadmap for three common Azure architectures.
-- Added Azure Infrastructure & Architecture References section to README for improved discoverability of all three reference documents.
+- Azure Hub-Spoke Architecture Plan and Azure Multi-Region Architecture Plan for enterprise design blueprints and phased rollout guidance.
+- Bicep IaC templates added for hub-spoke and multi-region deployments under infra/bicep.
+- Terraform IaC templates added for hub-spoke and multi-region deployments under infra/terraform.
+- Azure operational runbooks added for network troubleshooting, firewall rule lifecycle, hybrid failover, DR failover/failback, and RBAC/identity controls.
+- AWS infrastructure topic expansion added, including AWS networking/Lambda/EC2 patterns and an AWS-to-Azure migration playbook.
+- Added expanded Azure and AWS infrastructure reference sections to README for discoverability.
 
 ## v1.0.0 - 2026-04-15
 

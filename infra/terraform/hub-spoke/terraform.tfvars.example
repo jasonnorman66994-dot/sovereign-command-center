@@ -1,0 +1,12 @@
+resource_group_name = "rg-scc-hub-spoke"
+location            = "eastus"
+name_prefix         = "scc"
+hub_cidr            = "10.0.0.0/16"
+
+spoke_cidrs = {
+  spoke1 = "10.1.0.0/16"
+  spoke2 = "10.2.0.0/16"
+  spoke3 = "10.3.0.0/16"
+}
+
+enable_firewall = true
