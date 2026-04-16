@@ -108,6 +108,16 @@ Use the scenario-analysis release-note artifacts to summarize milestone progress
 
 ---
 
+## ☁️ Azure Infrastructure & Architecture References
+
+Quick reference guides for Azure networking, infrastructure design, and operational playbooks:
+
+| 📄 Resource | Description |
+| --- | --- |
+| [🌐 Azure Networking Resources Cheat Sheet](docs/AZURE_NETWORKING_RESOURCES_CHEAT_SHEET.md) | Quick reference to Azure VNets, NSGs, firewalls, load balancers, gateways, and hub-spoke topology patterns. Perfect for architecture planning, audits, and troubleshooting. |
+
+---
+
 ## 📧 Email Security Playbooks & Automation
 
 | 📄 Resource | Description |
