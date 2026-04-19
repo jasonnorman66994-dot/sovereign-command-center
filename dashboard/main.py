@@ -443,9 +443,21 @@ def cpanel_status(
             module_name=module_name,
             business_filter=requested_tenant,
         )
+        last_event = (
+            max(
+                rows,
+                key=lambda row: (
+                    row.get("timestamp") or "",
+                    row.get("created_at") or "",
+                    row.get("id") or 0,
+                ),
+            )
+            if rows
+            else None
+        )
         module_summary[module_name] = {
             "event_count": len(rows),
-            "last_event": rows[-1] if rows else None,
+            "last_event": last_event,
             "warning_count": sum(1 for row in rows if row.get("severity") == "warning"),
             "critical_count": sum(
                 1 for row in rows if row.get("severity") == "critical"
