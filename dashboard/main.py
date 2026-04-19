@@ -1,7 +1,6 @@
 import asyncio
 import json
 import os
-import sqlite3
 import sys
 from pathlib import Path
 from typing import Any
@@ -9,10 +8,26 @@ from typing import Any
 from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, HTTPException, WebSocket
 from fastapi.responses import FileResponse
+from fastapi.responses import PlainTextResponse
 from starlette.websockets import WebSocketDisconnect
 
-from core.auth_verify import auth_config, require_clearance, verify_token, verify_websocket_token
+from core.auth_verify import (
+    auth_config,
+    enforce_abac,
+    get_abac_metrics,
+    reset_abac_metrics,
+    require_clearance,
+    verify_token,
+    verify_websocket_token,
+)
 from core.reporter import DailyReporter
+from core.storage import build_storage, track_usage
+from core.tasks import (
+    celery_app,
+    daily_report_task,
+    refresh_audit_task,
+    smoke_test_task,
+)
 
 
 if sys.platform.startswith("win"):
@@ -23,6 +38,7 @@ load_dotenv()
 
 
 DB_PATH = Path("data/telemetry.db")
+EVENT_STORAGE = build_storage()
 AUDIT_LOG_PATH = Path("data/master_audit.log")
 INDEX_PATH = Path(__file__).with_name("index.html")
 PROJECT_ROOT = INDEX_PATH.parent.parent
@@ -60,57 +76,70 @@ def run_dashboard_server(host: str = "127.0.0.1", port: int = 8000) -> None:
 
 
 def latest_events(limit: int = 25, business_filter: str = None) -> list[dict]:
-    if not DB_PATH.exists():
-        return []
-    conn = sqlite3.connect(DB_PATH)
-    
-    if business_filter and business_filter != "all":
-        rows = conn.execute(
-            "SELECT timestamp, module, event, severity, business, data_json FROM events WHERE business = ? ORDER BY id DESC LIMIT ?",
-            (business_filter, limit),
-        ).fetchall()
-    else:
-        rows = conn.execute(
-            "SELECT timestamp, module, event, severity, business, data_json FROM events ORDER BY id DESC LIMIT ?",
-            (limit,),
-        ).fetchall()
-    conn.close()
-
+    rows = EVENT_STORAGE.latest_events(limit=limit, business_filter=business_filter)
     return [
         {
-            "timestamp": row[0],
-            "module": row[1],
-            "event": row[2],
-            "severity": row[3],
-            "business": row[4],
-            "payload": json.loads(row[5] or "{}"),
+            "timestamp": row.get("timestamp"),
+            "module": row.get("module"),
+            "event": row.get("event"),
+            "severity": row.get("severity"),
+            "business": row.get("business"),
+            "payload": row.get("payload", {}),
         }
-        for row in reversed(rows)
+        for row in rows
     ]
 
 
 def latest_event_row() -> dict[str, Any] | None:
-    if not DB_PATH.exists():
-        return None
+    return EVENT_STORAGE.latest_event_row()
 
-    conn = sqlite3.connect(DB_PATH)
-    row = conn.execute(
-        "SELECT id, timestamp, module, event, severity, business, data_json FROM events ORDER BY id DESC LIMIT 1"
-    ).fetchone()
-    conn.close()
 
-    if not row:
-        return None
+def latest_ids_events(
+    limit: int = 50, severity: str | None = None
+) -> list[dict[str, Any]]:
+    return EVENT_STORAGE.latest_events(
+        limit=limit,
+        module_name="intrusion_detector",
+        severity=severity,
+    )
 
-    return {
-        "id": row[0],
-        "timestamp": row[1],
-        "module": row[2],
-        "event": row[3],
-        "severity": row[4],
-        "business": row[5],
-        "payload": json.loads(row[6] or "{}"),
-    }
+
+def latest_module_events(
+    module_name: str, limit: int = 50, severity: str | None = None
+) -> list[dict[str, Any]]:
+    return EVENT_STORAGE.latest_events(
+        limit=limit,
+        module_name=module_name,
+        severity=severity,
+    )
+
+
+def _tenant_from_claims(claims: dict[str, Any]) -> str:
+    tenant = (
+        claims.get("tenant")
+        or claims.get("tenant_id")
+        or claims.get("business")
+        or claims.get("org")
+        or "global"
+    )
+    return str(tenant).strip() or "global"
+
+
+def _tenant_allowed(claims: dict[str, Any], requested_tenant: str) -> bool:
+    clearance_raw = claims.get("security_clearance", claims.get("clearance", 0))
+    try:
+        clearance = int(clearance_raw)
+    except Exception:
+        clearance = 0
+
+    if clearance >= 5:
+        return True
+
+    return _tenant_from_claims(claims).lower() == requested_tenant.lower()
+
+
+def _prometheus_escape(value: str) -> str:
+    return value.replace("\\", "\\\\").replace('"', '\\"')
 
 
 @app.get("/")
@@ -135,14 +164,99 @@ def health() -> dict[str, str]:
     return {"status": "ok", "telemetry_port": str(TELEMETRY_PORT)}
 
 
-@app.get("/health/telemetry-pipeline")
-def telemetry_pipeline_health(_claims: dict[str, Any] = Depends(verify_token)) -> dict[str, Any]:
+@app.get("/ready")
+def ready() -> dict[str, Any]:
     latest = latest_event_row()
-    event_count = 0
-    if DB_PATH.exists():
-        conn = sqlite3.connect(DB_PATH)
-        event_count = int(conn.execute("SELECT COUNT(1) FROM events").fetchone()[0])
-        conn.close()
+    return {
+        "status": "ready",
+        "storage_events": EVENT_STORAGE.count_events(),
+        "latest_event": latest,
+    }
+
+
+@app.get("/metrics")
+def metrics() -> dict[str, Any]:
+    total = EVENT_STORAGE.count_events()
+    return {
+        "events_total": total,
+        "ws_connections": PIPELINE_DIAG.get("ws_telemetry_connections", 0),
+        "ws_frames_sent": PIPELINE_DIAG.get("ws_telemetry_frames_sent", 0),
+        "ws_errors": PIPELINE_DIAG.get("ws_telemetry_errors", 0),
+    }
+
+
+@app.get("/metrics/prometheus", response_class=PlainTextResponse)
+def metrics_prometheus() -> str:
+    events_total = EVENT_STORAGE.count_events()
+    ws_connections = int(PIPELINE_DIAG.get("ws_telemetry_connections", 0) or 0)
+    ws_frames_sent = int(PIPELINE_DIAG.get("ws_telemetry_frames_sent", 0) or 0)
+    ws_errors = int(PIPELINE_DIAG.get("ws_telemetry_errors", 0) or 0)
+    ws_disconnects = int(PIPELINE_DIAG.get("ws_telemetry_disconnects", 0) or 0)
+    abac_memory = get_abac_metrics()
+    abac_persisted = EVENT_STORAGE.abac_deny_summary(None)
+
+    combined_abac_total = int(abac_memory.get("deny_total", 0) or 0) + int(
+        abac_persisted.get("deny_total", 0) or 0
+    )
+    combined_abac_by_action: dict[str, int] = {}
+    for source in (
+        abac_memory.get("deny_by_action", {}),
+        abac_persisted.get("deny_by_action", {}),
+    ):
+        for action, count in source.items():
+            key = str(action or "unknown")
+            combined_abac_by_action[key] = combined_abac_by_action.get(key, 0) + int(
+                count or 0
+            )
+
+    lines = [
+        "# HELP shadow_events_total Total number of persisted telemetry events",
+        "# TYPE shadow_events_total counter",
+        f"shadow_events_total {events_total}",
+        "# HELP shadow_ws_telemetry_connections_total Total websocket telemetry connections",
+        "# TYPE shadow_ws_telemetry_connections_total counter",
+        f"shadow_ws_telemetry_connections_total {ws_connections}",
+        "# HELP shadow_ws_telemetry_frames_sent_total Total telemetry frames sent over websocket",
+        "# TYPE shadow_ws_telemetry_frames_sent_total counter",
+        f"shadow_ws_telemetry_frames_sent_total {ws_frames_sent}",
+        "# HELP shadow_ws_telemetry_disconnects_total Total websocket telemetry disconnects",
+        "# TYPE shadow_ws_telemetry_disconnects_total counter",
+        f"shadow_ws_telemetry_disconnects_total {ws_disconnects}",
+        "# HELP shadow_ws_telemetry_errors_total Total websocket telemetry errors",
+        "# TYPE shadow_ws_telemetry_errors_total counter",
+        f"shadow_ws_telemetry_errors_total {ws_errors}",
+        "# HELP shadow_usage_metric_total Accumulated tenant usage value by metric",
+        "# TYPE shadow_usage_metric_total gauge",
+        "# HELP shadow_abac_denies_total Total ABAC deny decisions (memory + persisted)",
+        "# TYPE shadow_abac_denies_total counter",
+        f"shadow_abac_denies_total {combined_abac_total}",
+        "# HELP shadow_abac_denies_by_action_total Total ABAC deny decisions by action (memory + persisted)",
+        "# TYPE shadow_abac_denies_by_action_total counter",
+    ]
+
+    for row in EVENT_STORAGE.usage_summary(None):
+        tenant = _prometheus_escape(str(row.get("tenant_id", "global")))
+        metric = _prometheus_escape(str(row.get("metric", "unknown")))
+        value = float(row.get("value", 0) or 0)
+        lines.append(
+            f'shadow_usage_metric_total{{tenant="{tenant}",metric="{metric}"}} {value}'
+        )
+
+    for action, count in sorted(combined_abac_by_action.items()):
+        action_label = _prometheus_escape(action)
+        lines.append(
+            f'shadow_abac_denies_by_action_total{{action="{action_label}"}} {int(count)}'
+        )
+
+    return "\n".join(lines) + "\n"
+
+
+@app.get("/health/telemetry-pipeline")
+def telemetry_pipeline_health(
+    _claims: dict[str, Any] = Depends(verify_token),
+) -> dict[str, Any]:
+    latest = latest_event_row()
+    event_count = EVENT_STORAGE.count_events()
 
     return {
         "status": "ok",
@@ -160,7 +274,9 @@ def get_auth_config() -> dict[str, Any]:
 
 
 @app.get("/health/notifications")
-def notification_health(_claims: dict[str, Any] = Depends(verify_token)) -> dict[str, object]:
+def notification_health(
+    _claims: dict[str, Any] = Depends(verify_token),
+) -> dict[str, object]:
     """Expose channel readiness for notification integrations."""
     email_ready = all(
         [
@@ -193,9 +309,9 @@ def list_targets(_claims: dict[str, Any] = Depends(verify_token)) -> dict[str, o
     targets_file = Path("data/targets.json")
     if not targets_file.exists():
         return {"targets": {}}
-    
+
     try:
-        with open(targets_file, 'r') as f:
+        with open(targets_file, "r") as f:
             targets = json.load(f)
         return {"targets": targets}
     except Exception as exc:
@@ -203,7 +319,9 @@ def list_targets(_claims: dict[str, Any] = Depends(verify_token)) -> dict[str, o
 
 
 @app.get("/logs/audit")
-def get_audit_logs(limit: int = 50, _claims: dict[str, Any] = Depends(verify_token)) -> dict[str, list[str]]:
+def get_audit_logs(
+    limit: int = 50, _claims: dict[str, Any] = Depends(verify_token)
+) -> dict[str, list[str]]:
     """Retrieve audit logs with Bearer token authentication."""
     if not AUDIT_LOG_PATH.exists():
         return {"logs": []}
@@ -212,16 +330,491 @@ def get_audit_logs(limit: int = 50, _claims: dict[str, Any] = Depends(verify_tok
     return {"logs": lines[-capped:]}
 
 
+@app.get("/ids/status")
+def ids_status(_claims: dict[str, Any] = Depends(verify_token)) -> dict[str, Any]:
+    rows = latest_ids_events(limit=200)
+    snapshots = [row for row in rows if row.get("event") == "ids_snapshot"]
+    alerts = [row for row in rows if row.get("severity") in {"warning", "critical"}]
+    last_snapshot = snapshots[-1] if snapshots else None
+    last_alert = alerts[-1] if alerts else None
+
+    critical_count = sum(1 for row in rows if row.get("severity") == "critical")
+    warning_count = sum(1 for row in rows if row.get("severity") == "warning")
+
+    return {
+        "status": "ok",
+        "module": "intrusion_detector",
+        "last_snapshot": last_snapshot,
+        "last_alert": last_alert,
+        "recent_warning_count": warning_count,
+        "recent_critical_count": critical_count,
+    }
+
+
+@app.get("/ids/alerts")
+def ids_alerts(
+    limit: int = 50,
+    severity: str | None = None,
+    _claims: dict[str, Any] = Depends(verify_token),
+) -> dict[str, Any]:
+    capped = max(1, min(limit, 500))
+    requested_severity = severity.lower() if severity else None
+    allowed = {None, "info", "warning", "critical"}
+    if requested_severity not in allowed:
+        raise HTTPException(status_code=400, detail="Invalid severity filter")
+
+    events = latest_ids_events(limit=capped, severity=requested_severity)
+    return {
+        "status": "ok",
+        "count": len(events),
+        "events": events,
+    }
+
+
+@app.get("/monitoring/status")
+def monitoring_status(
+    _claims: dict[str, Any] = Depends(verify_token),
+) -> dict[str, Any]:
+    rows = latest_module_events(module_name="monitoring_agent", limit=200)
+    snapshots = [row for row in rows if row.get("event") == "host_snapshot"]
+    alerts = [row for row in rows if row.get("severity") in {"warning", "critical"}]
+
+    return {
+        "status": "ok",
+        "module": "monitoring_agent",
+        "last_snapshot": snapshots[-1] if snapshots else None,
+        "last_alert": alerts[-1] if alerts else None,
+        "recent_warning_count": sum(
+            1 for row in rows if row.get("severity") == "warning"
+        ),
+        "recent_critical_count": sum(
+            1 for row in rows if row.get("severity") == "critical"
+        ),
+    }
+
+
+@app.get("/monitoring/events")
+def monitoring_events(
+    limit: int = 50,
+    severity: str | None = None,
+    _claims: dict[str, Any] = Depends(verify_token),
+) -> dict[str, Any]:
+    capped = max(1, min(limit, 500))
+    requested_severity = severity.lower() if severity else None
+    allowed = {None, "info", "warning", "critical"}
+    if requested_severity not in allowed:
+        raise HTTPException(status_code=400, detail="Invalid severity filter")
+
+    events = latest_module_events(
+        module_name="monitoring_agent",
+        limit=capped,
+        severity=requested_severity,
+    )
+    return {
+        "status": "ok",
+        "count": len(events),
+        "events": events,
+    }
+
+
+@app.get("/cpanel/status")
+def cpanel_status(
+    tenant: str | None = None,
+    claims: dict[str, Any] = Depends(verify_token),
+) -> dict[str, Any]:
+    requested_tenant = (tenant or _tenant_from_claims(claims)).strip() or "global"
+    enforce_abac(action="cpanel.status.read", claims=claims, tenant=requested_tenant)
+    if not _tenant_allowed(claims, requested_tenant):
+        raise HTTPException(status_code=403, detail="Tenant access denied")
+
+    modules = [
+        "sentinel_01",
+        "arp_detector",
+        "wifi_analyzer",
+        "intrusion_detector",
+        "monitoring_agent",
+        "stream_processor",
+    ]
+    module_summary: dict[str, Any] = {}
+
+    for module_name in modules:
+        rows = EVENT_STORAGE.latest_events(
+            limit=50,
+            module_name=module_name,
+            business_filter=requested_tenant,
+        )
+        last_event = (
+            max(
+                rows,
+                key=lambda row: (
+                    row.get("timestamp") or "",
+                    row.get("created_at") or "",
+                    row.get("id") or 0,
+                ),
+            )
+            if rows
+            else None
+        )
+        module_summary[module_name] = {
+            "event_count": len(rows),
+            "last_event": last_event,
+            "warning_count": sum(1 for row in rows if row.get("severity") == "warning"),
+            "critical_count": sum(
+                1 for row in rows if row.get("severity") == "critical"
+            ),
+        }
+
+    total_events = EVENT_STORAGE.count_events(business=requested_tenant)
+
+    return {
+        "status": "ok",
+        "tenant": requested_tenant,
+        "telemetry_port": TELEMETRY_PORT,
+        "db_path": str(DB_PATH),
+        "db_events_total": total_events,
+        "modules": module_summary,
+    }
+
+
+@app.post("/cpanel/action")
+def cpanel_action(
+    action: str,
+    tenant: str | None = None,
+    claims: dict[str, Any] = Depends(require_clearance(2)),
+) -> dict[str, Any]:
+    requested_tenant = (tenant or _tenant_from_claims(claims)).strip() or "global"
+    enforce_abac(action="cpanel.action", claims=claims, tenant=requested_tenant)
+    if not _tenant_allowed(claims, requested_tenant):
+        raise HTTPException(status_code=403, detail="Tenant action denied")
+
+    normalized = action.strip().lower()
+    allowed = {
+        "smoke_test",
+        "refresh_audit",
+        "daily_report",
+    }
+    if normalized not in allowed:
+        raise HTTPException(status_code=400, detail="Unsupported cpanel action")
+
+    EVENT_STORAGE.persist_event(
+        {
+            "module": "cpanel",
+            "event": "action_dispatched",
+            "severity": "info",
+            "tenant_id": requested_tenant,
+            "payload": {"action": normalized, "tenant": requested_tenant},
+        },
+        business=requested_tenant,
+    )
+    track_usage(
+        tenant_id=requested_tenant,
+        metric="cpanel.action",
+        value=1.0,
+        meta={"action": normalized},
+        storage=EVENT_STORAGE,
+    )
+
+    celery_enabled = (
+        os.getenv("SHADOW_CELERY_ENABLED", "false").strip().lower() == "true"
+        and celery_app is not None
+    )
+
+    if celery_enabled:
+        if normalized == "daily_report":
+            task = daily_report_task.delay()
+        elif normalized == "refresh_audit":
+            task = refresh_audit_task.delay()
+        else:
+            task = smoke_test_task.delay()
+
+        EVENT_STORAGE.persist_event(
+            {
+                "module": "cpanel",
+                "event": "action_queued",
+                "severity": "info",
+                "tenant_id": requested_tenant,
+                "payload": {
+                    "action": normalized,
+                    "tenant": requested_tenant,
+                    "task_id": task.id,
+                },
+            },
+            business=requested_tenant,
+        )
+
+        return {
+            "status": "ok",
+            "tenant": requested_tenant,
+            "action": normalized,
+            "queued": True,
+            "task_id": task.id,
+        }
+
+    if normalized == "daily_report":
+        stats = DailyReporter().dispatch_reports()
+        return {
+            "status": "ok",
+            "tenant": requested_tenant,
+            "action": normalized,
+            "result": stats,
+        }
+
+    return {
+        "status": "ok",
+        "tenant": requested_tenant,
+        "action": normalized,
+        "result": "accepted",
+    }
+
+
+@app.get("/cpanel/task/{task_id}")
+def cpanel_task_status(
+    task_id: str,
+    tenant: str | None = None,
+    claims: dict[str, Any] = Depends(require_clearance(2)),
+) -> dict[str, Any]:
+    requested_tenant = (tenant or _tenant_from_claims(claims)).strip() or "global"
+    enforce_abac(action="cpanel.task.read", claims=claims, tenant=requested_tenant)
+    if not _tenant_allowed(claims, requested_tenant):
+        raise HTTPException(status_code=403, detail="Tenant access denied")
+
+    if celery_app is None:
+        raise HTTPException(status_code=503, detail="Celery is unavailable")
+
+    task = celery_app.AsyncResult(task_id)
+
+    payload: dict[str, Any] = {
+        "status": "ok",
+        "tenant": requested_tenant,
+        "task_id": task_id,
+        "state": task.state,
+        "ready": bool(task.ready()),
+        "successful": bool(task.successful()) if task.ready() else False,
+    }
+
+    if task.ready():
+        if task.successful():
+            payload["result"] = task.result
+        else:
+            payload["error"] = str(task.result)
+
+    return payload
+
+
+@app.get("/cpanel/tasks")
+def cpanel_recent_tasks(
+    limit: int = 10,
+    tenant: str | None = None,
+    include_live_state: bool = True,
+    claims: dict[str, Any] = Depends(require_clearance(2)),
+) -> dict[str, Any]:
+    requested_tenant = (tenant or _tenant_from_claims(claims)).strip() or "global"
+    enforce_abac(action="cpanel.task.read", claims=claims, tenant=requested_tenant)
+    if not _tenant_allowed(claims, requested_tenant):
+        raise HTTPException(status_code=403, detail="Tenant access denied")
+
+    capped = max(1, min(limit, 100))
+    rows = EVENT_STORAGE.latest_events(
+        limit=500,
+        module_name="cpanel",
+        business_filter=requested_tenant,
+    )
+    queued = [row for row in rows if row.get("event") == "action_queued"]
+    queued = queued[-capped:]
+
+    tasks: list[dict[str, Any]] = []
+    for row in queued:
+        payload = row.get("payload") if isinstance(row.get("payload"), dict) else {}
+        item: dict[str, Any] = {
+            "timestamp": row.get("timestamp"),
+            "tenant": row.get("business") or requested_tenant,
+            "action": payload.get("action", "unknown"),
+            "task_id": payload.get("task_id", ""),
+        }
+
+        task_id = str(item["task_id"] or "").strip()
+        if include_live_state and task_id and celery_app is not None:
+            task = celery_app.AsyncResult(task_id)
+            item["state"] = task.state
+            item["ready"] = bool(task.ready())
+            item["successful"] = bool(task.successful()) if task.ready() else False
+        tasks.append(item)
+
+    return {
+        "status": "ok",
+        "tenant": requested_tenant,
+        "count": len(tasks),
+        "tasks": tasks,
+    }
+
+
+@app.get("/billing/usage")
+def billing_usage_summary(
+    tenant: str | None = None,
+    claims: dict[str, Any] = Depends(require_clearance(4)),
+) -> dict[str, Any]:
+    requested_tenant = (tenant or _tenant_from_claims(claims)).strip() or "global"
+    enforce_abac(action="billing.usage.read", claims=claims, tenant=requested_tenant)
+    is_global_scope = requested_tenant.lower() in {"all", "*"}
+
+    if not is_global_scope and not _tenant_allowed(claims, requested_tenant):
+        raise HTTPException(status_code=403, detail="Tenant access denied")
+
+    summary = EVENT_STORAGE.usage_summary(
+        None if is_global_scope else requested_tenant,
+    )
+    return {
+        "status": "ok",
+        "tenant": "all" if is_global_scope else requested_tenant,
+        "entries": summary,
+    }
+
+
+@app.get("/audit/verify")
+def verify_immutable_audit_log(
+    tenant: str | None = None,
+    claims: dict[str, Any] = Depends(require_clearance(4)),
+) -> dict[str, Any]:
+    requested_tenant = (tenant or _tenant_from_claims(claims)).strip() or "global"
+    is_global_scope = requested_tenant.lower() in {"all", "*"}
+    effective_tenant = None if is_global_scope else requested_tenant
+
+    enforce_abac(
+        action="audit.verify",
+        claims=claims,
+        tenant=requested_tenant,
+    )
+    result = EVENT_STORAGE.verify_audit_chain(effective_tenant)
+    return {
+        "status": "ok" if result.get("ok") else "tamper-detected",
+        "tenant": "all" if is_global_scope else requested_tenant,
+        "result": result,
+    }
+
+
+@app.get("/audit/chain-tips")
+def audit_chain_tips(
+    claims: dict[str, Any] = Depends(require_clearance(4)),
+) -> dict[str, Any]:
+    enforce_abac(action="audit.verify", claims=claims, tenant="all")
+    verification = EVENT_STORAGE.verify_audit_chain(None)
+    details = verification.get("details", []) if isinstance(verification, dict) else []
+    tips = [
+        {
+            "tenant": item.get("tenant", "global"),
+            "ok": bool(item.get("ok", False)),
+            "chain_tip": item.get("chain_tip", ""),
+            "records": int(item.get("records", 0) or 0),
+        }
+        for item in details
+        if isinstance(item, dict)
+    ]
+    return {
+        "status": "ok",
+        "count": len(tips),
+        "tips": tips,
+    }
+
+
+@app.get("/abac/metrics")
+def abac_metrics(
+    claims: dict[str, Any] = Depends(require_clearance(4)),
+) -> dict[str, Any]:
+    enforce_abac(action="audit.verify", claims=claims, tenant="all")
+    in_memory = get_abac_metrics()
+    persisted = EVENT_STORAGE.abac_deny_summary(None)
+
+    combined_total = int(in_memory.get("deny_total", 0) or 0) + int(
+        persisted.get("deny_total", 0) or 0
+    )
+    combined_by_action: dict[str, int] = {}
+    for source in (
+        in_memory.get("deny_by_action", {}),
+        persisted.get("deny_by_action", {}),
+    ):
+        for action, count in source.items():
+            key = str(action or "unknown")
+            combined_by_action[key] = combined_by_action.get(key, 0) + int(count or 0)
+
+    return {
+        "status": "ok",
+        "metrics": {
+            "deny_total": combined_total,
+            "deny_by_action": combined_by_action,
+            "memory": in_memory,
+            "persisted": persisted,
+        },
+    }
+
+
+@app.post("/abac/metrics/reset")
+def reset_abac_metrics_in_memory(
+    claims: dict[str, Any] = Depends(require_clearance(5)),
+) -> dict[str, Any]:
+    enforce_abac(action="audit.verify", claims=claims, tenant="all")
+    EVENT_STORAGE.persist_event(
+        {
+            "module": "governance",
+            "event": "abac_memory_reset",
+            "severity": "info",
+            "tenant_id": "global",
+            "payload": {
+                "actor": str(
+                    claims.get("preferred_username") or claims.get("sub") or "unknown"
+                ),
+                "auth_mode": str(claims.get("auth_mode") or "unknown"),
+            },
+        },
+        business="global",
+    )
+    actor = str(claims.get("preferred_username") or claims.get("sub") or "unknown")
+    memory_after_reset = reset_abac_metrics(actor=actor)
+    persisted = EVENT_STORAGE.abac_deny_summary(None)
+    combined_total = int(memory_after_reset.get("deny_total", 0) or 0) + int(
+        persisted.get("deny_total", 0) or 0
+    )
+    combined_by_action: dict[str, int] = {}
+    for source in (
+        memory_after_reset.get("deny_by_action", {}),
+        persisted.get("deny_by_action", {}),
+    ):
+        for action, count in source.items():
+            key = str(action or "unknown")
+            combined_by_action[key] = combined_by_action.get(key, 0) + int(count or 0)
+
+    return {
+        "status": "ok",
+        "message": "In-memory ABAC deny counters reset. Persisted history preserved.",
+        "last_reset_by": memory_after_reset.get("last_reset_by", ""),
+        "last_reset_at": memory_after_reset.get("last_reset_at", ""),
+        "metrics": {
+            "deny_total": combined_total,
+            "deny_by_action": combined_by_action,
+            "memory": memory_after_reset,
+            "persisted": persisted,
+        },
+    }
+
+
 @app.post("/maintenance/daily-report")
-def run_daily_report_now(_claims: dict[str, Any] = Depends(require_clearance(2))) -> dict[str, object]:
+def run_daily_report_now(
+    _claims: dict[str, Any] = Depends(require_clearance(2)),
+) -> dict[str, object]:
     """Run daily report cycle immediately (authenticated)."""
     stats = DailyReporter().dispatch_reports()
     return {"status": "ok", "stats": stats}
 
 
 @app.get("/forensics/pcaps")
-def get_forensics_pcaps(_claims: dict[str, Any] = Depends(require_clearance(3))) -> dict[str, object]:
+def get_forensics_pcaps(
+    _claims: dict[str, Any] = Depends(require_clearance(3)),
+) -> dict[str, object]:
     """ABAC-protected sample endpoint for sensitive forensic data."""
+    enforce_abac(
+        action="forensics.pcaps.read",
+        claims=_claims,
+        tenant=_tenant_from_claims(_claims),
+    )
     return {
         "status": "ok",
         "data": "Sensitive forensic data access granted",
@@ -254,7 +847,9 @@ async def ws_telemetry(websocket: WebSocket, access_token: str | None = None) ->
 
 
 @app.websocket("/ws/telemetry")
-async def ws_telemetry_bridge(websocket: WebSocket, access_token: str | None = None) -> None:
+async def ws_telemetry_bridge(
+    websocket: WebSocket, access_token: str | None = None
+) -> None:
     try:
         verify_websocket_token(access_token)
     except HTTPException:
@@ -289,6 +884,40 @@ async def ws_telemetry_bridge(websocket: WebSocket, access_token: str | None = N
         await websocket.close()
     finally:
         PIPELINE_DIAG["ws_telemetry_disconnects"] += 1
+
+
+@app.websocket("/ws/ids")
+async def ws_ids(websocket: WebSocket, access_token: str | None = None) -> None:
+    try:
+        verify_websocket_token(access_token)
+    except HTTPException:
+        await websocket.close(code=1008)
+        return
+
+    await websocket.accept()
+    last_event_id = 0
+
+    try:
+        initial = latest_ids_events(limit=1)
+        if initial:
+            latest = initial[-1]
+            await websocket.send_json({k: v for k, v in latest.items() if k != "id"})
+            last_event_id = int(latest["id"])
+
+        while True:
+            latest_batch = latest_ids_events(limit=1)
+            if latest_batch:
+                candidate = latest_batch[-1]
+                if int(candidate["id"]) > last_event_id:
+                    await websocket.send_json(
+                        {k: v for k, v in candidate.items() if k != "id"}
+                    )
+                    last_event_id = int(candidate["id"])
+            await asyncio.sleep(1)
+    except WebSocketDisconnect:
+        pass
+    except Exception:
+        await websocket.close()
 
 
 if __name__ == "__main__":

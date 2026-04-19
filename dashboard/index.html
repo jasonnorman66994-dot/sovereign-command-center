@@ -89,7 +89,7 @@
             min-height: 0;
         }
 
-        .module-box.collapsed > :not(.module-header) {
+        .module-box.collapsed> :not(.module-header) {
             display: none;
         }
 
@@ -130,6 +130,98 @@
         .module-toggle:hover {
             border-color: var(--info);
             color: var(--info);
+        }
+
+        .cpanel-tenant-row {
+            margin-top: 8px;
+            justify-content: flex-start;
+        }
+
+        .cpanel-actions {
+            margin-top: 8px;
+        }
+
+        .cpanel-tenant-label {
+            margin: 0;
+        }
+
+        .cpanel-tenant-select {
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .cpanel-task-status {
+            margin-top: 8px;
+        }
+
+        .cpanel-task-list {
+            margin-top: 6px;
+            font-size: 10px;
+            color: var(--muted);
+            line-height: 1.4;
+            max-height: 130px;
+            overflow: auto;
+            display: grid;
+            gap: 4px;
+        }
+
+        .cpanel-task-item {
+            border: 1px solid var(--border);
+            background: rgba(11, 18, 36, 0.72);
+            color: var(--muted);
+            border-radius: 6px;
+            padding: 6px 8px;
+            font-size: 10px;
+            text-align: left;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .cpanel-task-item:hover {
+            border-color: var(--info);
+            color: var(--text);
+        }
+
+        .cpanel-task-item.active {
+            border-color: var(--ok);
+            color: var(--ok);
+        }
+
+        .cpanel-task-item.state-success {
+            border-color: rgba(126, 231, 135, 0.45);
+        }
+
+        .cpanel-task-item.state-failed {
+            border-color: rgba(255, 123, 114, 0.5);
+        }
+
+        .cpanel-task-item.state-running {
+            border-color: rgba(88, 166, 255, 0.5);
+        }
+
+        .cpanel-task-detail {
+            margin-top: 8px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 8px;
+            font-size: 10px;
+            color: var(--text);
+            line-height: 1.4;
+            white-space: pre-wrap;
+            background: rgba(11, 18, 36, 0.48);
+        }
+
+        .cpanel-task-detail-actions {
+            margin-top: 6px;
+            justify-content: flex-start;
+        }
+
+        .governance-meta {
+            margin-top: 4px;
+            font-size: 9px;
+            opacity: 0.7;
+            color: var(--muted);
+            padding: 0 8px;
         }
 
         .shortcut-hint {
@@ -1029,14 +1121,22 @@
         <div id="auth-status" class="status-line"></div>
         <div id="telemetry-status" class="status-line">Telemetry pipeline: waiting for data...</div>
         <div class="report-links">
-            <a class="report-link" href="/artifacts/mission_control_report.html" target="_blank" rel="noopener noreferrer">Open Mission Report</a>
-            <a class="report-link" href="/artifacts/mission_control_presentation.html" target="_blank" rel="noopener noreferrer">Open Presentation</a>
-            <a class="report-link" href="/artifacts/incident_attack_graph.md" target="_blank" rel="noopener noreferrer">Open Incident Graph</a>
-            <a class="report-link" href="/artifacts/incident_attack_graph.json" target="_blank" rel="noopener noreferrer">Open Graph JSON</a>
-            <a class="report-link" href="/artifacts/red_team_deliverable_package.md" target="_blank" rel="noopener noreferrer">Open Package 8</a>
-            <a class="report-link" href="/artifacts/red_team_deliverable_package.json" target="_blank" rel="noopener noreferrer">Open Package JSON</a>
-            <a class="report-link" href="/artifacts/campaign_launcher_manifest.md" target="_blank" rel="noopener noreferrer">Open Launcher Manifest</a>
-            <a class="report-link" href="/artifacts/campaign_launcher_manifest.json" target="_blank" rel="noopener noreferrer">Open Launcher JSON</a>
+            <a class="report-link" href="/artifacts/mission_control_report.html" target="_blank"
+                rel="noopener noreferrer">Open Mission Report</a>
+            <a class="report-link" href="/artifacts/mission_control_presentation.html" target="_blank"
+                rel="noopener noreferrer">Open Presentation</a>
+            <a class="report-link" href="/artifacts/incident_attack_graph.md" target="_blank"
+                rel="noopener noreferrer">Open Incident Graph</a>
+            <a class="report-link" href="/artifacts/incident_attack_graph.json" target="_blank"
+                rel="noopener noreferrer">Open Graph JSON</a>
+            <a class="report-link" href="/artifacts/red_team_deliverable_package.md" target="_blank"
+                rel="noopener noreferrer">Open Package 8</a>
+            <a class="report-link" href="/artifacts/red_team_deliverable_package.json" target="_blank"
+                rel="noopener noreferrer">Open Package JSON</a>
+            <a class="report-link" href="/artifacts/campaign_launcher_manifest.md" target="_blank"
+                rel="noopener noreferrer">Open Launcher Manifest</a>
+            <a class="report-link" href="/artifacts/campaign_launcher_manifest.json" target="_blank"
+                rel="noopener noreferrer">Open Launcher JSON</a>
         </div>
         <div class="action-row">
             <button id="export-dashboard-state-btn" class="report-btn secondary" onclick="exportDashboardState()">
@@ -1066,24 +1166,44 @@
         <details class="inline-help">
             <summary>Controls Help</summary>
             <div class="inline-help-panel">
-                <div class="shortcut-hint">Shortcuts: Alt+R reset view, Alt+L copy view link, Alt+C collapse all, Alt+E expand all.</div>
-                <div class="shortcut-hint">Module actions: <strong>Only</strong> isolates a single module in view. <strong>Collapse</strong> toggles only the current module.</div>
+                <div class="shortcut-hint">Shortcuts: Alt+R reset view, Alt+L copy view link, Alt+C collapse all, Alt+E
+                    expand all.</div>
+                <div class="shortcut-hint">Module actions: <strong>Only</strong> isolates a single module in view.
+                    <strong>Collapse</strong> toggles only the current module.
+                </div>
             </div>
         </details>
     </div>
 
     <div id="kpi-ribbon" class="kpi-ribbon">
-        <div class="kpi-card"><div class="kpi-label">Coverage</div><div class="kpi-value">--</div><div class="kpi-subtext">Awaiting KPI export</div></div>
-        <div class="kpi-card"><div class="kpi-label">Avg Response</div><div class="kpi-value">--</div><div class="kpi-subtext">Awaiting KPI export</div></div>
-        <div class="kpi-card"><div class="kpi-label">Avg Containment</div><div class="kpi-value">--</div><div class="kpi-subtext">Awaiting KPI export</div></div>
-        <div class="kpi-card"><div class="kpi-label">Signal Density</div><div class="kpi-value">--</div><div class="kpi-subtext">Awaiting KPI export</div></div>
+        <div class="kpi-card">
+            <div class="kpi-label">Coverage</div>
+            <div class="kpi-value">--</div>
+            <div class="kpi-subtext">Awaiting KPI export</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Avg Response</div>
+            <div class="kpi-value">--</div>
+            <div class="kpi-subtext">Awaiting KPI export</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Avg Containment</div>
+            <div class="kpi-value">--</div>
+            <div class="kpi-subtext">Awaiting KPI export</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Signal Density</div>
+            <div class="kpi-value">--</div>
+            <div class="kpi-subtext">Awaiting KPI export</div>
+        </div>
     </div>
     <div id="terminal-scenario-banner" class="terminal-banner pending">
         <div class="terminal-banner-header">
             <div class="terminal-banner-title">Terminal Incident Banner</div>
             <div class="terminal-banner-label">Awaiting analytics</div>
         </div>
-        <div class="terminal-banner-copy">Loading the highest-pressure scenario and ransomware detonation posture from the reporting artifacts.</div>
+        <div class="terminal-banner-copy">Loading the highest-pressure scenario and ransomware detonation posture from
+            the reporting artifacts.</div>
     </div>
     <div id="filter-summary" class="filter-summary">
         <div class="filter-pill"><strong>View</strong> Initializing</div>
@@ -1098,77 +1218,212 @@
         <section class="panel">
             <h1>Module Views</h1>
             <div class="module-box" data-module-key="sentinel">
-                <div class="module-header"><div class="module-title">Sentinel</div><div class="module-actions"><button type="button" class="module-toggle" data-role="isolate" aria-pressed="false" onclick="collapseOtherModules(this)">Only</button><button type="button" class="module-toggle" data-role="collapse" onclick="toggleModule(this)">Collapse</button></div></div>
+                <div class="module-header">
+                    <div class="module-title">Sentinel</div>
+                    <div class="module-actions"><button type="button" class="module-toggle" data-role="isolate"
+                            aria-pressed="false" onclick="collapseOtherModules(this)">Only</button><button type="button"
+                            class="module-toggle" data-role="collapse" onclick="toggleModule(this)">Collapse</button>
+                    </div>
+                </div>
                 <div id="sentinel"></div>
             </div>
             <div class="module-box" data-module-key="arp-detector">
-                <div class="module-header"><div class="module-title">ARP Detector</div><div class="module-actions"><button type="button" class="module-toggle" data-role="isolate" aria-pressed="false" onclick="collapseOtherModules(this)">Only</button><button type="button" class="module-toggle" data-role="collapse" onclick="toggleModule(this)">Collapse</button></div></div>
+                <div class="module-header">
+                    <div class="module-title">ARP Detector</div>
+                    <div class="module-actions"><button type="button" class="module-toggle" data-role="isolate"
+                            aria-pressed="false" onclick="collapseOtherModules(this)">Only</button><button type="button"
+                            class="module-toggle" data-role="collapse" onclick="toggleModule(this)">Collapse</button>
+                    </div>
+                </div>
                 <div id="arp"></div>
             </div>
             <div class="module-box" data-module-key="wifi-analyzer">
-                <div class="module-header"><div class="module-title">WiFi Analyzer</div><div class="module-actions"><button type="button" class="module-toggle" data-role="isolate" aria-pressed="false" onclick="collapseOtherModules(this)">Only</button><button type="button" class="module-toggle" data-role="collapse" onclick="toggleModule(this)">Collapse</button></div></div>
+                <div class="module-header">
+                    <div class="module-title">WiFi Analyzer</div>
+                    <div class="module-actions"><button type="button" class="module-toggle" data-role="isolate"
+                            aria-pressed="false" onclick="collapseOtherModules(this)">Only</button><button type="button"
+                            class="module-toggle" data-role="collapse" onclick="toggleModule(this)">Collapse</button>
+                    </div>
+                </div>
                 <div id="wifi"></div>
             </div>
+            <div class="module-box" data-module-key="intrusion-detector">
+                <div class="module-header">
+                    <div class="module-title">Intrusion Detector (Real-Time)</div>
+                    <div class="module-actions"><button type="button" class="module-toggle" data-role="isolate"
+                            aria-pressed="false" onclick="collapseOtherModules(this)">Only</button><button type="button"
+                            class="module-toggle" data-role="collapse" onclick="toggleModule(this)">Collapse</button>
+                    </div>
+                </div>
+                <div id="intrusion" class="audit-view">Waiting for IDS telemetry...</div>
+            </div>
+            <div class="module-box" data-module-key="host-monitoring">
+                <div class="module-header">
+                    <div class="module-title">Host Monitoring Agent</div>
+                    <div class="module-actions"><button type="button" class="module-toggle" data-role="isolate"
+                            aria-pressed="false" onclick="collapseOtherModules(this)">Only</button><button type="button"
+                            class="module-toggle" data-role="collapse" onclick="toggleModule(this)">Collapse</button>
+                    </div>
+                </div>
+                <div id="monitoring" class="audit-view">Waiting for CPU/memory/network snapshots...</div>
+            </div>
+            <div class="module-box" data-module-key="cpanel">
+                <div class="module-header">
+                    <div class="module-title">CPanel (Control Plane)</div>
+                    <div class="module-actions"><button type="button" class="module-toggle" data-role="isolate"
+                            aria-pressed="false" onclick="collapseOtherModules(this)">Only</button><button type="button"
+                            class="module-toggle" data-role="collapse" onclick="toggleModule(this)">Collapse</button>
+                    </div>
+                </div>
+                <div id="cpanel" class="audit-view">Waiting for control-plane status...</div>
+                <div class="module-actions cpanel-tenant-row">
+                    <span class="shortcut-hint cpanel-tenant-label">Tenant</span>
+                    <select id="cpanel-tenant" class="module-toggle cpanel-tenant-select"
+                        onchange="refreshCpanelStatus()" title="CPanel tenant selector"
+                        aria-label="CPanel tenant selector">
+                        <option value="global">global</option>
+                    </select>
+                </div>
+                <div class="module-actions cpanel-actions">
+                    <button type="button" class="module-toggle" onclick="triggerCpanelAction('smoke_test')">Smoke
+                        Test</button>
+                    <button type="button" class="module-toggle" onclick="triggerCpanelAction('refresh_audit')">Refresh
+                        Audit</button>
+                    <button type="button" class="module-toggle" onclick="triggerCpanelAction('daily_report')">Dispatch
+                        Report</button>
+                </div>
+                <div id="cpanel-task" class="shortcut-hint cpanel-task-status">No queued control task.</div>
+                <div id="cpanel-task-list" class="cpanel-task-list">No recent queued tasks.</div>
+                <div id="cpanel-task-detail" class="cpanel-task-detail">Select a recent task to view full details.</div>
+                <div class="module-actions cpanel-task-detail-actions">
+                    <button type="button" class="module-toggle" onclick="copyCpanelTaskResult()">Copy Result</button>
+                    <button type="button" class="module-toggle" onclick="copyCpanelTaskError()">Copy Error</button>
+                </div>
+            </div>
+            <div class="module-box" data-module-key="governance">
+                <div class="module-header">
+                    <div class="module-title">Governance (Audit + ABAC)</div>
+                    <div class="module-actions"><button type="button" class="module-toggle"
+                            onclick="resetGovernanceAbacMemory(this)">Reset ABAC Memory</button><button type="button"
+                            class="module-toggle" data-role="isolate" aria-pressed="false"
+                            onclick="collapseOtherModules(this)">Only</button><button type="button"
+                            class="module-toggle" data-role="collapse" onclick="toggleModule(this)">Collapse</button>
+                    </div>
+                </div>
+                <div id="governance-status" class="audit-view">Awaiting governance telemetry...</div>
+                <div id="governance-chain-tips" class="cpanel-task-list">No chain tip data yet.</div>
+                <div id="governance-abac" class="cpanel-task-detail">No ABAC deny metrics yet.</div>
+                <div id="governance-reset-info" class="governance-meta"></div>
+            </div>
             <div class="module-box" data-module-key="master-audit">
-                <div class="module-header"><div class="module-title">Master Audit (Last 50)</div><div class="module-actions"><button type="button" class="module-toggle" data-role="isolate" aria-pressed="false" onclick="collapseOtherModules(this)">Only</button><button type="button" class="module-toggle" data-role="collapse" onclick="toggleModule(this)">Collapse</button></div></div>
+                <div class="module-header">
+                    <div class="module-title">Master Audit (Last 50)</div>
+                    <div class="module-actions"><button type="button" class="module-toggle" data-role="isolate"
+                            aria-pressed="false" onclick="collapseOtherModules(this)">Only</button><button type="button"
+                            class="module-toggle" data-role="collapse" onclick="toggleModule(this)">Collapse</button>
+                    </div>
+                </div>
                 <div id="audit" class="audit-view"></div>
             </div>
             <div class="module-box" data-module-key="scenario-drilldown">
-                <div class="module-header"><div class="module-title">Scenario Drill-Down</div><div class="module-actions"><button type="button" class="module-toggle" data-role="isolate" aria-pressed="false" onclick="collapseOtherModules(this)">Only</button><button type="button" class="module-toggle" data-role="collapse" onclick="toggleModule(this)">Collapse</button></div></div>
+                <div class="module-header">
+                    <div class="module-title">Scenario Drill-Down</div>
+                    <div class="module-actions"><button type="button" class="module-toggle" data-role="isolate"
+                            aria-pressed="false" onclick="collapseOtherModules(this)">Only</button><button type="button"
+                            class="module-toggle" data-role="collapse" onclick="toggleModule(this)">Collapse</button>
+                    </div>
+                </div>
                 <div id="scenario-tabs" class="scenario-tabs">Awaiting analytics...</div>
                 <div id="scenario-chipbar" class="chip-bar">Awaiting analytics...</div>
-                <div class="chip-hint">Use arrow keys to move across chips. Press Enter to focus. Use Clear Focus to reset.</div>
-                <div id="scenario-detail" class="scenario-detail">Choose a scenario to sync the latency views and inspect signals.</div>
+                <div class="chip-hint">Use arrow keys to move across chips. Press Enter to focus. Use Clear Focus to
+                    reset.</div>
+                <div id="scenario-detail" class="scenario-detail">Choose a scenario to sync the latency views and
+                    inspect signals.</div>
             </div>
             <div class="module-box" data-module-key="scenario-13-focus">
-                <div class="module-header"><div class="module-title">Terminal War-Room</div><div class="module-actions"><button type="button" class="module-toggle" data-role="isolate" aria-pressed="false" onclick="collapseOtherModules(this)">Only</button><button type="button" class="module-toggle" data-role="collapse" onclick="toggleModule(this)">Collapse</button></div></div>
-                <div class="war-room-note"><strong>Terminal Event:</strong> The highest-pressure scenario is loaded here as the suite capstone so the war-room view always follows the current terminal event.</div>
+                <div class="module-header">
+                    <div class="module-title">Terminal War-Room</div>
+                    <div class="module-actions"><button type="button" class="module-toggle" data-role="isolate"
+                            aria-pressed="false" onclick="collapseOtherModules(this)">Only</button><button type="button"
+                            class="module-toggle" data-role="collapse" onclick="toggleModule(this)">Collapse</button>
+                    </div>
+                </div>
+                <div class="war-room-note"><strong>Terminal Event:</strong> The highest-pressure scenario is loaded here
+                    as the suite capstone so the war-room view always follows the current terminal event.</div>
                 <div id="scenario13" class="scenario-grid">Awaiting analytics...</div>
             </div>
             <div class="module-box" data-module-key="focused-timeline">
-                <div class="module-header"><div id="timeline-title" class="module-title">Focused War-Room Timeline</div><div class="module-actions"><button type="button" class="module-toggle" data-role="isolate" aria-pressed="false" onclick="collapseOtherModules(this)">Only</button><button type="button" class="module-toggle" data-role="collapse" onclick="toggleModule(this)">Collapse</button></div></div>
+                <div class="module-header">
+                    <div id="timeline-title" class="module-title">Focused War-Room Timeline</div>
+                    <div class="module-actions"><button type="button" class="module-toggle" data-role="isolate"
+                            aria-pressed="false" onclick="collapseOtherModules(this)">Only</button><button type="button"
+                            class="module-toggle" data-role="collapse" onclick="toggleModule(this)">Collapse</button>
+                    </div>
+                </div>
                 <div id="scenario13-timeline" class="timeline-list">Awaiting chain data...</div>
             </div>
             <div class="module-box" data-module-key="response-latency">
-                <div class="module-header"><div class="module-title">Chain Response Latency</div><div class="module-actions"><button type="button" class="module-toggle" data-role="isolate" aria-pressed="false" onclick="collapseOtherModules(this)">Only</button><button type="button" class="module-toggle" data-role="collapse" onclick="toggleModule(this)">Collapse</button></div></div>
+                <div class="module-header">
+                    <div class="module-title">Chain Response Latency</div>
+                    <div class="module-actions"><button type="button" class="module-toggle" data-role="isolate"
+                            aria-pressed="false" onclick="collapseOtherModules(this)">Only</button><button type="button"
+                            class="module-toggle" data-role="collapse" onclick="toggleModule(this)">Collapse</button>
+                    </div>
+                </div>
                 <div class="latency-toolbar">
-                    <select id="response-sort" onchange="refreshScenarioAnalyticsPanels()" title="Response latency sort">
+                    <select id="response-sort" onchange="refreshScenarioAnalyticsPanels()"
+                        title="Response latency sort">
                         <option value="desc">Highest First</option>
                         <option value="asc">Lowest First</option>
                     </select>
-                    <select id="response-filter" onchange="refreshScenarioAnalyticsPanels()" title="Response latency filter">
+                    <select id="response-filter" onchange="refreshScenarioAnalyticsPanels()"
+                        title="Response latency filter">
                         <option value="all">All Severities</option>
                         <option value="critical">Critical (15m+)</option>
                         <option value="high">High (5m+)</option>
                         <option value="medium">Medium (under 5m)</option>
                     </select>
-                    <input id="response-search" type="search" placeholder="Find scenario" oninput="refreshScenarioAnalyticsPanels()" aria-label="Search response latency scenarios">
+                    <input id="response-search" type="search" placeholder="Find scenario"
+                        oninput="refreshScenarioAnalyticsPanels()" aria-label="Search response latency scenarios">
                 </div>
                 <div class="detail-actions">
-                    <button type="button" class="detail-clear secondary" onclick="exportLatencyCsv('response')">Export Filtered CSV</button>
-                    <button type="button" class="detail-clear secondary" onclick="copyLatencyCsv('response')">Copy CSV</button>
+                    <button type="button" class="detail-clear secondary" onclick="exportLatencyCsv('response')">Export
+                        Filtered CSV</button>
+                    <button type="button" class="detail-clear secondary" onclick="copyLatencyCsv('response')">Copy
+                        CSV</button>
                 </div>
                 <div id="response-latency-summary" class="latency-summary">Awaiting latency export...</div>
                 <div id="response-latency" class="audit-view">Awaiting latency export...</div>
             </div>
             <div class="module-box" data-module-key="containment-latency">
-                <div class="module-header"><div class="module-title">Chain Containment Latency</div><div class="module-actions"><button type="button" class="module-toggle" data-role="isolate" aria-pressed="false" onclick="collapseOtherModules(this)">Only</button><button type="button" class="module-toggle" data-role="collapse" onclick="toggleModule(this)">Collapse</button></div></div>
+                <div class="module-header">
+                    <div class="module-title">Chain Containment Latency</div>
+                    <div class="module-actions"><button type="button" class="module-toggle" data-role="isolate"
+                            aria-pressed="false" onclick="collapseOtherModules(this)">Only</button><button type="button"
+                            class="module-toggle" data-role="collapse" onclick="toggleModule(this)">Collapse</button>
+                    </div>
+                </div>
                 <div class="latency-toolbar">
-                    <select id="containment-sort" onchange="refreshScenarioAnalyticsPanels()" title="Containment latency sort">
+                    <select id="containment-sort" onchange="refreshScenarioAnalyticsPanels()"
+                        title="Containment latency sort">
                         <option value="desc">Highest First</option>
                         <option value="asc">Lowest First</option>
                     </select>
-                    <select id="containment-filter" onchange="refreshScenarioAnalyticsPanels()" title="Containment latency filter">
+                    <select id="containment-filter" onchange="refreshScenarioAnalyticsPanels()"
+                        title="Containment latency filter">
                         <option value="all">All Severities</option>
                         <option value="critical">Critical (15m+)</option>
                         <option value="high">High (5m+)</option>
                         <option value="medium">Medium (under 5m)</option>
                     </select>
-                    <input id="containment-search" type="search" placeholder="Find scenario" oninput="refreshScenarioAnalyticsPanels()" aria-label="Search containment latency scenarios">
+                    <input id="containment-search" type="search" placeholder="Find scenario"
+                        oninput="refreshScenarioAnalyticsPanels()" aria-label="Search containment latency scenarios">
                 </div>
                 <div class="detail-actions">
-                    <button type="button" class="detail-clear secondary" onclick="exportLatencyCsv('containment')">Export Filtered CSV</button>
-                    <button type="button" class="detail-clear secondary" onclick="copyLatencyCsv('containment')">Copy CSV</button>
+                    <button type="button" class="detail-clear secondary"
+                        onclick="exportLatencyCsv('containment')">Export Filtered CSV</button>
+                    <button type="button" class="detail-clear secondary" onclick="copyLatencyCsv('containment')">Copy
+                        CSV</button>
                 </div>
                 <div id="containment-latency-summary" class="latency-summary">Awaiting latency export...</div>
                 <div id="containment-latency" class="audit-view">Awaiting latency export...</div>
@@ -1191,6 +1446,13 @@
         let latestScenarioAnalytics = null;
         let latestResponseRows = [];
         let latestContainmentRows = [];
+        let latestIdsEvent = null;
+        let latestMonitoringEvent = null;
+        let latestCpanelStatus = null;
+        let latestCpanelTaskId = "";
+        let latestCpanelSelectedTaskId = "";
+        let latestCpanelTaskDetail = null;
+        let latestGovernance = null;
         let telemetryLastEventId = null;
         let telemetryLastAdvanceAt = 0;
         let terminalAutoFocusEligible = !currentScenarioFocus && !urlParams.get("scenario");
@@ -1895,6 +2157,10 @@
                     triggerThreatAlert(packet);
                 } else if (packet.module === "wifi_analyzer") {
                     updateWifiUI(packet);
+                } else if (packet.module === "intrusion_detector") {
+                    updateIntrusionUI(packet);
+                } else if (packet.module === "monitoring_agent") {
+                    updateMonitoringUI(packet);
                 }
             };
 
@@ -1936,6 +2202,7 @@
                 const data = await response.json();
                 const targets = data.targets || {};
                 knownTargets = targets;
+                refreshCpanelTenantOptions();
                 const select = document.getElementById("business-filter");
                 select.querySelectorAll("option:not([value='all'])").forEach((option) => option.remove());
 
@@ -1956,8 +2223,43 @@
                 updateBusinessStatus(targets);
             } catch (err) {
                 console.warn("[targets] Failed to load business registry:", err);
+                refreshCpanelTenantOptions();
                 setStatusLine("business-status", "Business registry unavailable", "warn");
             }
+        }
+
+        function refreshCpanelTenantOptions() {
+            const select = document.getElementById("cpanel-tenant");
+            if (!select) {
+                return;
+            }
+
+            const previous = select.value || "global";
+            select.innerHTML = "";
+
+            const tenants = ["global", ...Object.keys(knownTargets || {})];
+            tenants.forEach((tenantName) => {
+                const option = document.createElement("option");
+                option.value = tenantName;
+                option.textContent = tenantName;
+                select.appendChild(option);
+            });
+
+            if (tenants.includes(previous)) {
+                select.value = previous;
+            } else if (currentBusinessFilter !== "all" && tenants.includes(currentBusinessFilter)) {
+                select.value = currentBusinessFilter;
+            } else {
+                select.value = "global";
+            }
+        }
+
+        function getCpanelTenant() {
+            const select = document.getElementById("cpanel-tenant");
+            if (!select) {
+                return currentBusinessFilter !== "all" ? currentBusinessFilter : "global";
+            }
+            return select.value || "global";
         }
 
         function updateBusinessStatus(targets) {
@@ -1971,6 +2273,10 @@
             currentBusinessFilter = select.value;
             sessionStorage.setItem("businessFilter", currentBusinessFilter);
             updateBusinessStatus(knownTargets);
+            const cpanelTenant = document.getElementById("cpanel-tenant");
+            if (cpanelTenant && currentBusinessFilter !== "all") {
+                cpanelTenant.value = currentBusinessFilter;
+            }
             syncDashboardUrlState();
             clearScenarioReplayConsole();
             consoleEl.innerHTML = ""; // Clear console on filter change
@@ -2233,6 +2539,482 @@
         function updateWifiUI(packet) {
             const p = packet.payload || {};
             document.getElementById("wifi").textContent = `networks=${p.network_count ?? 0} rogues=${p.rogue_count ?? 0}`;
+        }
+
+        function updateIntrusionUI(packet) {
+            const payload = packet.payload || {};
+            latestIdsEvent = packet;
+
+            const node = document.getElementById("intrusion");
+            if (!node) {
+                return;
+            }
+
+            if (packet.event === "ids_snapshot") {
+                const activeIps = payload.active_external_ips ?? 0;
+                const observed = payload.observed_connections ?? 0;
+                const windows = payload.window_count ?? 0;
+                node.textContent = `status=live active_external_ips=${activeIps} observed_connections=${observed} lookback_windows=${windows}`;
+                return;
+            }
+
+            const sourceIp = payload.source_ip || "unknown";
+            const metric = payload.metric || "n/a";
+            node.textContent = `event=${packet.event} severity=${packet.severity} source=${sourceIp} metric=${metric}`;
+        }
+
+        function updateMonitoringUI(packet) {
+            const payload = packet.payload || {};
+            latestMonitoringEvent = packet;
+
+            const node = document.getElementById("monitoring");
+            if (!node) {
+                return;
+            }
+
+            if (packet.event === "host_snapshot") {
+                const cpu = payload.cpu_percent ?? "--";
+                const memory = payload.memory_percent ?? "--";
+                const sent = payload.network_bytes_sent_per_sec ?? "--";
+                const recv = payload.network_bytes_recv_per_sec ?? "--";
+                node.textContent = `cpu=${cpu}% memory=${memory}% net_out=${sent}B/s net_in=${recv}B/s`;
+                return;
+            }
+
+            const metric = payload.metric || "host";
+            const value = payload.value ?? "n/a";
+            node.textContent = `event=${packet.event} severity=${packet.severity} metric=${metric} value=${value}`;
+        }
+
+        async function refreshCpanelStatus() {
+            const node = document.getElementById("cpanel");
+            if (!node) {
+                return;
+            }
+
+            const tenant = getCpanelTenant();
+
+            try {
+                const response = await fetch(`/cpanel/status?tenant=${encodeURIComponent(tenant)}`, {
+                    headers: authHeaders()
+                });
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        handleProtectedAuthFailure("CPanel requires login.");
+                    }
+                    node.textContent = `cpanel_status=unavailable code=${response.status}`;
+                    return;
+                }
+
+                const data = await response.json();
+                latestCpanelStatus = data;
+                const dbEvents = data.db_events_total ?? 0;
+                const modules = data.modules || {};
+                const critical = Object.values(modules).reduce((acc, item) => acc + Number(item.critical_count || 0), 0);
+                const warning = Object.values(modules).reduce((acc, item) => acc + Number(item.warning_count || 0), 0);
+                node.textContent = `status=online tenant=${data.tenant || tenant} db_events=${dbEvents} warning=${warning} critical=${critical} modules=${Object.keys(modules).length}`;
+                await refreshCpanelRecentTasks();
+            } catch {
+                node.textContent = "cpanel_status=connection_error";
+            }
+        }
+
+        async function refreshCpanelRecentTasks() {
+            const listNode = document.getElementById("cpanel-task-list");
+            const detailNode = document.getElementById("cpanel-task-detail");
+            if (!listNode) {
+                return;
+            }
+
+            const tenant = getCpanelTenant();
+            try {
+                const response = await fetch(`/cpanel/tasks?tenant=${encodeURIComponent(tenant)}&limit=8`, {
+                    headers: authHeaders()
+                });
+                if (!response.ok) {
+                    listNode.textContent = `Recent tasks unavailable (${response.status}).`;
+                    if (detailNode) {
+                        detailNode.textContent = "Task detail unavailable.";
+                    }
+                    return;
+                }
+
+                const data = await response.json();
+                const tasks = Array.isArray(data.tasks) ? data.tasks : [];
+                if (!tasks.length) {
+                    listNode.textContent = "No recent queued tasks.";
+                    if (detailNode) {
+                        detailNode.textContent = "Select a recent task to view full details.";
+                    }
+                    return;
+                }
+
+                listNode.innerHTML = "";
+                const displayTasks = tasks.slice().reverse();
+                if (!latestCpanelSelectedTaskId && displayTasks.length) {
+                    latestCpanelSelectedTaskId = String(displayTasks[0].task_id || "");
+                }
+
+                displayTasks.forEach((task) => {
+                    const taskId = String(task.task_id || "");
+                    const taskButton = document.createElement("button");
+                    taskButton.type = "button";
+                    taskButton.className = "cpanel-task-item";
+                    const state = String(task.state || "queued").toUpperCase();
+                    if (["SUCCESS", "SUCCESSFUL"].includes(state)) {
+                        taskButton.classList.add("state-success");
+                    } else if (["FAILURE", "FAILED"].includes(state)) {
+                        taskButton.classList.add("state-failed");
+                    } else if (["STARTED", "PENDING", "RETRY", "RECEIVED", "RUNNING"].includes(state)) {
+                        taskButton.classList.add("state-running");
+                    }
+                    if (taskId && taskId === latestCpanelSelectedTaskId) {
+                        taskButton.classList.add("active");
+                    }
+
+                    const shortId = taskId ? taskId.slice(0, 8) : "n/a";
+                    const displayState = task.state || "queued";
+                    const action = task.action || "unknown";
+                    taskButton.textContent = `${action} | ${displayState} | ${shortId}`;
+                    taskButton.setAttribute("title", `View task ${taskId || shortId}`);
+                    taskButton.onclick = () => {
+                        latestCpanelSelectedTaskId = taskId;
+                        listNode.querySelectorAll(".cpanel-task-item").forEach((item) => {
+                            item.classList.remove("active");
+                        });
+                        taskButton.classList.add("active");
+                        openCpanelTaskDetails(taskId, tenant, false);
+                    };
+                    listNode.appendChild(taskButton);
+                });
+
+                if (latestCpanelSelectedTaskId) {
+                    await openCpanelTaskDetails(latestCpanelSelectedTaskId, tenant, false);
+                }
+            } catch {
+                listNode.textContent = "Recent tasks unavailable (connection error).";
+                if (detailNode) {
+                    detailNode.textContent = "Task detail unavailable (connection error).";
+                }
+            }
+        }
+
+        async function openCpanelTaskDetails(taskId, tenant, refreshList = true) {
+            const detailNode = document.getElementById("cpanel-task-detail");
+            if (!detailNode) {
+                return;
+            }
+
+            if (!taskId) {
+                detailNode.textContent = "No task id available for this item.";
+                return;
+            }
+
+            latestCpanelSelectedTaskId = taskId;
+            if (refreshList) {
+                const listNode = document.getElementById("cpanel-task-list");
+                if (listNode) {
+                    listNode.querySelectorAll(".cpanel-task-item").forEach((item) => {
+                        item.classList.remove("active");
+                    });
+                }
+            }
+
+            detailNode.textContent = `Loading task ${taskId}...`;
+            try {
+                const response = await fetch(`/cpanel/task/${encodeURIComponent(taskId)}?tenant=${encodeURIComponent(tenant)}`, {
+                    headers: authHeaders()
+                });
+
+                if (!response.ok) {
+                    detailNode.textContent = `Task ${taskId} detail unavailable (${response.status}).`;
+                    return;
+                }
+
+                const data = await response.json();
+                latestCpanelTaskDetail = data;
+                const resultText = data.result ? JSON.stringify(data.result, null, 2) : "n/a";
+                const errorText = data.error ? String(data.error) : "none";
+                detailNode.textContent = [
+                    `Task: ${data.task_id || taskId}`,
+                    `State: ${data.state || "unknown"}`,
+                    `Ready: ${data.ready ? "yes" : "no"}`,
+                    `Successful: ${data.successful ? "yes" : "no"}`,
+                    `Result:`,
+                    `${resultText}`,
+                    `Error: ${errorText}`,
+                ].join("\n");
+
+                if (!data.ready && String(data.task_id || "") === latestCpanelSelectedTaskId) {
+                    setTimeout(() => {
+                        if (latestCpanelSelectedTaskId === String(data.task_id || "")) {
+                            openCpanelTaskDetails(String(data.task_id || ""), tenant, false);
+                        }
+                    }, 2000);
+                }
+            } catch {
+                detailNode.textContent = `Task ${taskId} detail unavailable (connection error).`;
+            }
+        }
+
+        async function copyCpanelTaskResult() {
+            const taskNode = document.getElementById("cpanel-task");
+            const resultText = latestCpanelTaskDetail?.result
+                ? JSON.stringify(latestCpanelTaskDetail.result, null, 2)
+                : "n/a";
+            try {
+                await navigator.clipboard.writeText(resultText);
+                if (taskNode) {
+                    taskNode.textContent = "Copied task result to clipboard.";
+                }
+            } catch {
+                if (taskNode) {
+                    taskNode.textContent = "Failed to copy task result.";
+                }
+            }
+        }
+
+        async function copyCpanelTaskError() {
+            const taskNode = document.getElementById("cpanel-task");
+            const errorText = latestCpanelTaskDetail?.error
+                ? String(latestCpanelTaskDetail.error)
+                : "none";
+            try {
+                await navigator.clipboard.writeText(errorText);
+                if (taskNode) {
+                    taskNode.textContent = "Copied task error to clipboard.";
+                }
+            } catch {
+                if (taskNode) {
+                    taskNode.textContent = "Failed to copy task error.";
+                }
+            }
+        }
+
+        async function triggerCpanelAction(action) {
+            const node = document.getElementById("cpanel");
+            const taskNode = document.getElementById("cpanel-task");
+            if (!node) {
+                return;
+            }
+
+            const tenant = getCpanelTenant();
+            node.textContent = `dispatching_action=${action} ...`;
+            try {
+                const response = await fetch(`/cpanel/action?action=${encodeURIComponent(action)}&tenant=${encodeURIComponent(tenant)}`, {
+                    method: 'POST',
+                    headers: authHeaders()
+                });
+
+                let data = {};
+                try {
+                    data = await response.json();
+                } catch {
+                    data = {};
+                }
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        handleProtectedAuthFailure("CPanel action requires login.");
+                    }
+                    node.textContent = `action=${action} failed code=${response.status}`;
+                    return;
+                }
+
+                if (data.queued && data.task_id) {
+                    latestCpanelTaskId = data.task_id;
+                    latestCpanelSelectedTaskId = data.task_id;
+                    node.textContent = `action=${action} queued task_id=${data.task_id}`;
+                    if (taskNode) {
+                        taskNode.textContent = `Task ${data.task_id} is queued for tenant ${data.tenant || tenant}.`;
+                    }
+                    await refreshCpanelRecentTasks();
+                    await pollCpanelTask(data.task_id, tenant);
+                    return;
+                }
+
+                node.textContent = `action=${action} result=${data.result ? 'ok' : 'accepted'}`;
+                if (taskNode) {
+                    taskNode.textContent = "No queued control task.";
+                }
+                await refreshCpanelStatus();
+            } catch {
+                node.textContent = `action=${action} failed connection_error`;
+            }
+        }
+
+        async function pollCpanelTask(taskId, tenant) {
+            const taskNode = document.getElementById("cpanel-task");
+            const node = document.getElementById("cpanel");
+            for (let attempt = 0; attempt < 30; attempt += 1) {
+                try {
+                    const response = await fetch(`/cpanel/task/${encodeURIComponent(taskId)}?tenant=${encodeURIComponent(tenant)}`, {
+                        headers: authHeaders()
+                    });
+
+                    if (!response.ok) {
+                        if (taskNode) {
+                            taskNode.textContent = `Task ${taskId} status unavailable (${response.status}).`;
+                        }
+                        return;
+                    }
+
+                    const data = await response.json();
+                    if (taskNode) {
+                        taskNode.textContent = `Task ${taskId} state=${data.state} ready=${data.ready ? 'yes' : 'no'}`;
+                    }
+
+                    if (data.ready) {
+                        if (node) {
+                            node.textContent = `last_task=${taskId} state=${data.state} success=${data.successful ? 'yes' : 'no'}`;
+                        }
+                        await refreshCpanelRecentTasks();
+                        await refreshCpanelStatus();
+                        return;
+                    }
+                } catch {
+                    if (taskNode) {
+                        taskNode.textContent = `Task ${taskId} polling failed.`;
+                    }
+                    return;
+                }
+                await new Promise((resolve) => setTimeout(resolve, 2000));
+            }
+
+            if (taskNode) {
+                taskNode.textContent = `Task ${taskId} still running; refresh to continue tracking.`;
+            }
+        }
+
+        async function refreshGovernancePanel() {
+            const statusNode = document.getElementById("governance-status");
+            const tipsNode = document.getElementById("governance-chain-tips");
+            const abacNode = document.getElementById("governance-abac");
+            const resetInfoNode = document.getElementById("governance-reset-info");
+            if (!statusNode || !tipsNode || !abacNode) {
+                return;
+            }
+
+            try {
+                const [verifyResp, tipsResp, abacResp] = await Promise.all([
+                    fetch('/audit/verify?tenant=all', { headers: authHeaders() }),
+                    fetch('/audit/chain-tips', { headers: authHeaders() }),
+                    fetch('/abac/metrics', { headers: authHeaders() }),
+                ]);
+
+                if (!verifyResp.ok || !tipsResp.ok || !abacResp.ok) {
+                    const failing = [verifyResp, tipsResp, abacResp].find((item) => !item.ok);
+                    const code = failing?.status || 0;
+                    if (code === 401) {
+                        handleProtectedAuthFailure("Governance panel requires login.");
+                    }
+                    statusNode.textContent = `governance_status=unavailable code=${code}`;
+                    tipsNode.textContent = "Chain tips unavailable.";
+                    abacNode.textContent = "ABAC metrics unavailable.";
+                    return;
+                }
+
+                const verifyData = await verifyResp.json();
+                const tipsData = await tipsResp.json();
+                const abacData = await abacResp.json();
+                latestGovernance = {
+                    verify: verifyData,
+                    tips: tipsData,
+                    abac: abacData,
+                };
+
+                const verifyOk = (verifyData?.result?.ok === true) || verifyData?.status === "ok";
+                const details = Array.isArray(verifyData?.result?.details) ? verifyData.result.details : [];
+                statusNode.textContent = `audit_chain=${verifyOk ? 'verified' : 'tamper-detected'} tenants=${details.length}`;
+
+                const tips = Array.isArray(tipsData?.tips) ? tipsData.tips : [];
+                if (!tips.length) {
+                    tipsNode.textContent = "No chain tip data available.";
+                } else {
+                    tipsNode.innerHTML = '';
+                    tips.forEach((tip) => {
+                        const row = document.createElement('div');
+                        const chainTip = String(tip.chain_tip || '').trim();
+                        const compactTip = chainTip ? `${chainTip.slice(0, 10)}...${chainTip.slice(-8)}` : 'n/a';
+                        row.textContent = `${tip.tenant} | ${tip.ok ? 'ok' : 'fail'} | records=${tip.records || 0} | tip=${compactTip}`;
+                        tipsNode.appendChild(row);
+                    });
+                }
+
+                const metrics = abacData?.metrics || {};
+                const total = Number(metrics?.deny_total || 0);
+                const byAction = metrics?.deny_by_action || {};
+                const actionRows = Object.entries(byAction)
+                    .sort((a, b) => Number(b[1]) - Number(a[1]))
+                    .map(([action, count]) => `${action}: ${count}`);
+                abacNode.textContent = [
+                    `ABAC deny total: ${total}`,
+                    actionRows.length ? 'By action:' : 'By action: none',
+                    ...(actionRows.length ? actionRows : []),
+                ].join('\n');
+
+                if (resetInfoNode) {
+                    const resetBy = String(abacData?.metrics?.memory?.last_reset_by || '');
+                    const resetAt = String(abacData?.metrics?.memory?.last_reset_at || '');
+                    resetInfoNode.textContent = resetBy
+                        ? `Last memory reset: ${resetBy} at ${resetAt}`
+                        : '';
+                }
+            } catch {
+                statusNode.textContent = 'governance_status=connection_error';
+                tipsNode.textContent = 'Chain tips unavailable (connection error).';
+                abacNode.textContent = 'ABAC metrics unavailable (connection error).';
+            }
+        }
+
+        async function resetGovernanceAbacMemory(button) {
+            const statusNode = document.getElementById("governance-status");
+            const abacNode = document.getElementById("governance-abac");
+            if (!button || !statusNode || !abacNode) {
+                return;
+            }
+
+            const originalLabel = button.textContent;
+            button.disabled = true;
+            button.textContent = 'Resetting...';
+            statusNode.textContent = 'governance_status=resetting_abac_memory';
+
+            try {
+                const response = await fetch('/abac/metrics/reset', {
+                    method: 'POST',
+                    headers: authHeaders(),
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        handleProtectedAuthFailure('Governance reset requires login.');
+                    }
+                    const message = `ABAC memory reset failed code=${response.status}`;
+                    statusNode.textContent = `governance_status=reset_failed code=${response.status}`;
+                    abacNode.textContent = message;
+                    return;
+                }
+
+                const payload = await response.json();
+                const resetMessage = String(payload?.message || 'In-memory ABAC counters reset.');
+                statusNode.textContent = 'governance_status=abac_memory_reset';
+                abacNode.textContent = resetMessage;
+                const resetInfoNode = document.getElementById("governance-reset-info");
+                if (resetInfoNode) {
+                    const resetBy = String(payload?.last_reset_by || '');
+                    const resetAt = String(payload?.last_reset_at || '');
+                    resetInfoNode.textContent = resetBy
+                        ? `Last memory reset: ${resetBy} at ${resetAt}`
+                        : '';
+                }
+                await refreshGovernancePanel();
+            } catch {
+                statusNode.textContent = 'governance_status=reset_connection_error';
+                abacNode.textContent = 'ABAC memory reset failed (connection error).';
+            } finally {
+                button.disabled = false;
+                button.textContent = originalLabel;
+            }
         }
 
         async function refreshAudit() {
@@ -3462,6 +4244,8 @@
             await refreshAudit();
             await refreshScenarioAnalyticsPanels();
             await refreshTelemetryPipelineStatus();
+            await refreshCpanelStatus();
+            await refreshGovernancePanel();
             await runSystemCheck();
             connectWebsocket();
             restoreModuleState();
@@ -3476,6 +4260,8 @@
             setInterval(refreshAudit, 2500);
             setInterval(refreshScenarioAnalyticsPanels, 10000);
             setInterval(refreshTelemetryPipelineStatus, 5000);
+            setInterval(refreshCpanelStatus, 8000);
+            setInterval(refreshGovernancePanel, 10000);
             setInterval(runSystemCheck, 10000);
         }
 
