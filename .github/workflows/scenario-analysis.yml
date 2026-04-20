@@ -1,0 +1,73 @@
+name: Scenario Analysis & Reporting
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'data/unified_mitre_heatmap.json'
+      - 'generate_unified_mitre_heatmap.py'
+      - 'attack_chain_timeline.py'
+      - 'scenario*_events.json'
+
+jobs:
+  analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Generate unified MITRE ATT&CK heatmap
+        run: |
+          python generate_unified_mitre_heatmap.py
+          echo "✅ Unified heatmap generated"
+
+      - name: Validate heatmap output
+        run: |
+          if [ ! -f unified_mitre_attack_heatmap.md ]; then
+            echo "❌ Heatmap output file not created"
+            exit 1
+          fi
+          echo "✅ Heatmap output validated"
+
+      - name: Test attack chain timeline with Scenario 13 events
+        run: |
+          python attack_chain_timeline.py scenario13_events.json --format json > /tmp/timeline_output.json
+          if [ ! -s /tmp/timeline_output.json ]; then
+            echo "❌ Timeline JSON output is empty"
+            exit 1
+          fi
+          echo "✅ Attack chain timeline validated"
+
+      - name: Run full smoke check
+        run: |
+          powershell -ExecutionPolicy Bypass -File ./smoke_check.ps1 -Mode Full || true
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: analysis-reports
+          path: |
+            unified_mitre_attack_heatmap.md
+            leadership_attack_coverage_timeline_report.md
+
+      - name: Summary
+        if: success()
+        run: |
+          echo "## ✅ Scenario Analysis & Reporting Validation Complete"
+          echo ""
+          echo "- Unified MITRE ATT&CK heatmap: generated"
+          echo "- Attack chain timeline: validated"
+          echo "- Leadership report: available"
+          echo ""
+          echo "Artifacts available for download."

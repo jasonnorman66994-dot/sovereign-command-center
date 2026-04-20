@@ -1,0 +1,12 @@
+{
+  "files": {
+    "main.css": "/sovereign-command-center/static/css/main.5ddaedfc.css",
+    "main.js": "/sovereign-command-center/static/js/main.e569ad0f.js",
+    "static/js/685.b24c64e6.chunk.js": "/sovereign-command-center/static/js/685.b24c64e6.chunk.js",
+    "index.html": "/sovereign-command-center/index.html"
+  },
+  "entrypoints": [
+    "static/css/main.5ddaedfc.css",
+    "static/js/main.e569ad0f.js"
+  ]
+}

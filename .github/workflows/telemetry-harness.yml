@@ -1,0 +1,40 @@
+name: Telemetry Harness
+
+on:
+  workflow_dispatch:
+
+jobs:
+  verify-phase2-telemetry:
+    name: Verify Phase 2 Telemetry Harness
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Prepare Python environment
+        shell: pwsh
+        run: |
+          python -m venv .venv
+          .\.venv\Scripts\python.exe -m pip install --upgrade pip
+          .\.venv\Scripts\python.exe -m pip install -r requirements.txt
+
+      - name: Run smoke check (Full)
+        shell: pwsh
+        run: powershell -ExecutionPolicy Bypass -File .\smoke_check.ps1 -Mode Full
+
+      - name: Run Phase 2 telemetry harness (retry once on transient failure)
+        shell: pwsh
+        run: |
+          .\.venv\Scripts\python.exe scripts/phase2_telemetry_harness.py
+          if ($LASTEXITCODE -ne 0) {
+            Write-Host "First harness run failed. Retrying once..."
+            .\.venv\Scripts\python.exe scripts/phase2_telemetry_harness.py
+          }
+          if ($LASTEXITCODE -ne 0) {
+            throw "Phase 2 telemetry harness failed after retry."
+          }

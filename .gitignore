@@ -1,0 +1,26 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.db
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Node / frontend
+node_modules/
+sovereign-hud/node_modules/
+sovereign-hud/build/
+
+# IDE / local
+.vscode/
+
+# Misc
+*.log
+
+# Generated IaC build outputs
+infra/bicep/**/main.json
