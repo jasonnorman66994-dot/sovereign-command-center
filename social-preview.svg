@@ -1,0 +1,35 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#0D1117"/>
+  <rect x="36" y="36" width="1128" height="558" rx="28" fill="url(#panel)" stroke="#46AAFF" stroke-opacity="0.32"/>
+  <circle cx="105" cy="103" r="10" fill="#50DC82"/>
+  <circle cx="145" cy="103" r="10" fill="#46AAFF" fill-opacity="0.85"/>
+  <circle cx="185" cy="103" r="10" fill="#C8D2DC" fill-opacity="0.55"/>
+  <rect x="72" y="150" width="272" height="272" rx="30" fill="#0F1722" stroke="#46AAFF" stroke-opacity="0.4"/>
+  <path d="M148 286C148 229.667 193.667 184 250 184C287.245 184 319.825 203.982 337.567 233.793L301.752 254.985C291.202 237.029 271.859 225 250 225C216.311 225 189 252.311 189 286C189 319.689 216.311 347 250 347C271.859 347 291.202 334.971 301.752 317.015L337.567 338.207C319.825 368.018 287.245 388 250 388C193.667 388 148 342.333 148 286Z" fill="#46AAFF"/>
+  <path d="M250 211C291.421 211 325 244.579 325 286C325 327.421 291.421 361 250 361C226.836 361 206.124 350.504 192.365 334.004L222.625 309.207C229.046 316.993 238.77 322 250 322C269.882 322 286 305.882 286 286C286 266.118 269.882 250 250 250C238.77 250 229.046 255.007 222.625 262.793L192.365 237.996C206.124 221.496 226.836 211 250 211Z" fill="#50DC82"/>
+  <text x="390" y="238" fill="#E6EDF3" font-family="Segoe UI, Arial, sans-serif" font-size="64" font-weight="700">Sovereign</text>
+  <text x="390" y="314" fill="#E6EDF3" font-family="Segoe UI, Arial, sans-serif" font-size="64" font-weight="700">Command Center</text>
+  <text x="390" y="382" fill="#C8D2DC" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="400">Cyber threat intelligence HUD for security operations</text>
+  <text x="390" y="420" fill="#C8D2DC" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="400">and mission control.</text>
+  <rect x="392" y="469" width="204" height="44" rx="22" fill="#46AAFF" fill-opacity="0.15" stroke="#46AAFF" stroke-opacity="0.38"/>
+  <text x="424" y="498" fill="#46AAFF" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="600">Security Operations</text>
+  <rect x="611" y="469" width="192" height="44" rx="22" fill="#50DC82" fill-opacity="0.14" stroke="#50DC82" stroke-opacity="0.35"/>
+  <text x="648" y="498" fill="#50DC82" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="600">Threat Intel</text>
+  <rect x="818" y="469" width="171" height="44" rx="22" fill="#C8D2DC" fill-opacity="0.08" stroke="#C8D2DC" stroke-opacity="0.25"/>
+  <text x="852" y="498" fill="#C8D2DC" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="600">Live Mission HUD</text>
+  <rect x="911" y="128" width="191" height="108" rx="20" fill="#0F1722" stroke="#46AAFF" stroke-opacity="0.25"/>
+  <text x="944" y="166" fill="#C8D2DC" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="600">AUTH GATE</text>
+  <text x="944" y="203" fill="#50DC82" font-family="Segoe UI, Arial, sans-serif" font-size="34" font-weight="700">ACTIVE</text>
+  <rect x="911" y="255" width="191" height="108" rx="20" fill="#0F1722" stroke="#46AAFF" stroke-opacity="0.25"/>
+  <text x="944" y="293" fill="#C8D2DC" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="600">SIGNAL FEED</text>
+  <text x="944" y="330" fill="#46AAFF" font-family="Segoe UI, Arial, sans-serif" font-size="34" font-weight="700">SYNCED</text>
+  <rect x="911" y="382" width="191" height="108" rx="20" fill="#0F1722" stroke="#46AAFF" stroke-opacity="0.25"/>
+  <text x="944" y="420" fill="#C8D2DC" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="600">RESPONSE MODE</text>
+  <text x="944" y="457" fill="#E6EDF3" font-family="Segoe UI, Arial, sans-serif" font-size="34" font-weight="700">READY</text>
+  <defs>
+    <linearGradient id="panel" x1="86" y1="64" x2="1120" y2="590" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#111927"/>
+      <stop offset="1" stop-color="#0B111A"/>
+    </linearGradient>
+  </defs>
+</svg>
